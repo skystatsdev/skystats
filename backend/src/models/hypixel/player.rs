@@ -3,13 +3,13 @@ use std::collections::HashMap;
 use serde::Deserialize;
 use uuid::Uuid;
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct Player {
     pub success: bool,
     pub player: PlayerData,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct PlayerData {
     pub uuid: Uuid,
     pub stats: PlayerStats,
@@ -18,18 +18,18 @@ pub struct PlayerData {
     pub other: HashMap<String, serde_json::Value>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct PlayerStats {
     #[serde(rename = "SkyBlock")]
     pub skyblock: PlayerSkyBlock,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct PlayerSkyBlock {
     pub profiles: HashMap<Uuid, PlayerSkyBlockProfile>,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Clone)]
 pub struct PlayerSkyBlockProfile {
     pub profile_id: Uuid,
     pub cute_name: String,

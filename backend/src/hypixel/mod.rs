@@ -1,7 +1,11 @@
-use std::sync::LazyLock;
+use std::{sync::LazyLock, time::Duration};
 
+use moka::future::Cache;
 use serde::de::DeserializeOwned;
 use thiserror::Error;
+use uuid::Uuid;
+
+use crate::models;
 
 #[derive(Clone)]
 pub struct Hypixel {
@@ -26,7 +30,7 @@ static HYPIXEL: LazyLock<Hypixel> = LazyLock::new(|| {
 });
 
 /// Do a request to the Hypixel API without handling caching.
-pub async fn request<T: DeserializeOwned>(
+async fn request<T: DeserializeOwned>(
     endpoint: &str,
     params: &[(&str, &str)],
 ) -> Result<T, HypixelError> {
@@ -41,4 +45,26 @@ pub async fn request<T: DeserializeOwned>(
         .send()
         .await?;
     Ok(res.json().await?)
+}
+
+static PLAYER_CACHE: LazyLock<Cache<Uuid, models::hypixel::player::Player>> = LazyLock::new(|| {
+    Cache::builder()
+        .time_to_live(Duration::from_secs(60))
+        .build()
+});
+
+pub async fn player(uuid: Uuid) -> Result<models::hypixel::player::Player, HypixelError> {
+    if let Some(player) = PLAYER_CACHE.get(&uuid) {
+        return Ok(player);
+    }
+
+    let res = request::<models::hypixel::player::Player>(
+        "player",
+        &[("uuid", uuid.to_string().as_str())],
+    )
+    .await?;
+
+    PLAYER_CACHE.insert(uuid, res.clone()).await;
+
+    Ok(res)
 }

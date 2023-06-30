@@ -35,10 +35,7 @@ static LOWERCASE_USERNAME_TO_PROFILE_CACHE: LazyLock<Cache<String, Profile>> =
 pub async fn profile_from_uuid(uuid: Uuid) -> Result<Profile, MojangError> {
     // already cached?
     if let Some(username) = UUID_TO_USERNAME_CACHE.get(&uuid) {
-        return Ok(Profile {
-            username: username.clone(),
-            uuid,
-        });
+        return Ok(Profile { username, uuid });
     }
 
     let url = format!("https://sessionserver.mojang.com/session/minecraft/profile/{uuid}");
@@ -59,7 +56,7 @@ pub async fn profile_from_uuid(uuid: Uuid) -> Result<Profile, MojangError> {
 pub async fn profile_from_username(username: &str) -> Result<Profile, MojangError> {
     // already cached?
     if let Some(profile) = LOWERCASE_USERNAME_TO_PROFILE_CACHE.get(&username.to_lowercase()) {
-        return Ok(profile.clone());
+        return Ok(profile);
     }
 
     let url = format!("https://api.mojang.com/users/profiles/minecraft/{username}");
