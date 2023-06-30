@@ -1,0 +1,23 @@
+{
+	ocsp_stapling on
+}
+
+example.com {
+	reverse_proxy :3000
+	tls /etc/ssl/certs/cert.pem /etc/ssl/private/key.pem {
+		client_auth {
+			mode require_and_verify
+			verify_ca_cert_file /etc/ssl/certs/ca.pem
+		}
+	}
+}
+
+api.example.com {
+	reverse_proxy :8000
+	tls /etc/ssl/certs/cert.pem /etc/ssl/private/key.pem {
+		client_auth {
+			mode require_and_verify
+			verify_ca_cert_file /etc/ssl/certs/ca.pem
+		}
+	}
+}
