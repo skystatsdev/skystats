@@ -15,6 +15,15 @@ async fn hello() -> impl Responder {
 async fn main() -> std::io::Result<()> {
     let _ = dotenv::dotenv();
 
+    let subscriber = tracing_subscriber::FmtSubscriber::builder()
+        .with_env_filter(
+            tracing_subscriber::EnvFilter::builder()
+                .with_default_directive(tracing::level_filters::LevelFilter::INFO.into())
+                .from_env_lossy(),
+        )
+        .finish();
+    tracing::subscriber::set_global_default(subscriber).expect("setting default subscriber failed");
+
     HttpServer::new(move || {
         App::new()
             .service(hello)
