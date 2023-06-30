@@ -1,3 +1,4 @@
+use crate::models;
 use moka::future::Cache;
 use once_cell::sync::Lazy;
 use serde::de::DeserializeOwned;
@@ -8,8 +9,6 @@ use std::{
 use thiserror::Error;
 use tokio::sync::Mutex;
 use uuid::Uuid;
-
-use crate::models;
 
 pub struct Hypixel {
     client: reqwest::Client,
@@ -84,7 +83,7 @@ async fn request<T: DeserializeOwned>(
     if HYPIXEL.rate_limiter.lock().await.is_rate_limited() {
         let time_till_reset = HYPIXEL.rate_limiter.lock().await.get_time_till_reset();
         println!("Sleeping for {time_till_reset} seconds");
-        std::thread::sleep(Duration::from_secs(time_till_reset));
+        tokio::time::sleep(Duration::from_secs(time_till_reset)).await;
     }
 
     let res = HYPIXEL
