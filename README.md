@@ -25,7 +25,7 @@ Close the containers with `docker-compose down` when you are done.
 
 1. Make a copy of both `.env.example` files in the subfolders and rename them to `.env.production`. Fill in the values with the internal hostnames of the containers and the correct information for your deployment.
 
-2. Startup the containers with the correct ovveride file as follows:
+2. Startup the containers with the correct override file as follows:
 
 ```bash
 docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
