@@ -23,9 +23,8 @@ struct RateLimiter {
 }
 
 impl RateLimiter {
-    pub async fn update(&mut self, res: &reqwest::Response) {
-        if let Some(remaining_limit) = res
-            .headers()
+    pub async fn update(&mut self, headers: &reqwest::header::HeaderMap) {
+        if let Some(remaining_limit) = rheaders
             .get("RateLimit-Remaining")
             .and_then(|header| header.to_str().ok())
             .and_then(|header| header.parse::<u64>().ok())
@@ -33,8 +32,7 @@ impl RateLimiter {
             self.remaining_limit = remaining_limit;
         }
 
-        if let Some(time_till_reset) = res
-            .headers()
+        if let Some(time_till_reset) = headers
             .get("RateLimit-Reset")
             .and_then(|header| header.to_str().ok())
             .and_then(|header| header.parse::<u64>().ok())
@@ -94,7 +92,12 @@ async fn request<T: DeserializeOwned>(
         .send()
         .await?;
 
-    HYPIXEL.rate_limiter.lock().await.update(&res).await;
+    HYPIXEL
+        .rate_limiter
+        .lock()
+        .await
+        .update(res.headers())
+        .await;
 
     Ok(res.json().await?)
 }
