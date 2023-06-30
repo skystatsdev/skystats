@@ -4,14 +4,14 @@ use uuid::Uuid;
 
 use crate::{
     hypixel,
-    models::player::{Player, PlayerSkyBlock},
+    models::player::{BasePlayer, Player, PlayerSkyBlock},
     mojang,
-    process::ProcessError,
+    routes::ApiError,
 };
 
-pub async fn player(uuid: Uuid) -> Result<Player, ProcessError> {
+pub async fn player(uuid: Uuid) -> Result<Player, ApiError> {
     let mojang_profile_task = tokio::spawn(mojang::profile_from_uuid(uuid));
-    let res = hypixel::player(uuid).await.unwrap();
+    let res = hypixel::player(uuid).await?;
     let mojang_profile = mojang_profile_task.await.unwrap()?;
 
     let mut profile_names = HashMap::new();
@@ -20,8 +20,10 @@ pub async fn player(uuid: Uuid) -> Result<Player, ProcessError> {
     }
 
     Ok(Player {
-        uuid: mojang_profile.uuid,
-        username: mojang_profile.username,
+        base: BasePlayer {
+            uuid: mojang_profile.uuid,
+            username: mojang_profile.username,
+        },
         skyblock: PlayerSkyBlock { profile_names },
     })
 }
