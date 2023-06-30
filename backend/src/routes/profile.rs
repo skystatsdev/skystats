@@ -1,16 +1,17 @@
-use actix_web::{get, web, Responder};
+use axum::{extract::Path, routing::get, Json, Router};
 use uuid::Uuid;
 
-use crate::{mojang, processing, routes::ApiError};
+use crate::{models::profile::ProfileMember, mojang, processing, routes::ApiError};
 
-pub fn config(cfg: &mut web::ServiceConfig) {
-    cfg.service(web::scope("profile").service(profile));
+use super::{RouterResponse, SkyResult};
+
+pub fn route() -> RouterResponse {
+    Router::new().route("/:user/:profile", get(profile))
 }
 
-#[get("{user}/{profile}")]
-async fn profile(path: web::Path<(String, String)>) -> Result<impl Responder, ApiError> {
-    let (player_uuid_or_username, profile_uuid_or_name) = path.into_inner();
-
+async fn profile(
+    Path((player_uuid_or_username, profile_uuid_or_name)): Path<(String, String)>,
+) -> SkyResult<Json<ProfileMember>> {
     let mojang_profile = mojang::profile_from_username_or_uuid(&player_uuid_or_username).await?;
 
     // get profile uuid
@@ -25,13 +26,13 @@ async fn profile(path: web::Path<(String, String)>) -> Result<impl Responder, Ap
                 .find(|(_, name)| name.to_lowercase() == profile_uuid_or_name.to_lowercase());
             let (profile_uuid, _) = profile.ok_or(ApiError::ProfileNotFound {
                 username: mojang_profile.username,
-                profile: profile_uuid_or_name,
+                profile: profile_uuid_or_name.to_owned(),
             })?;
             *profile_uuid
         }
     };
 
-    Ok(web::Json(
+    Ok(Json(
         processing::profile::profile(mojang_profile.uuid, profile_uuid).await?,
     ))
 }

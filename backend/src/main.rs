@@ -4,24 +4,30 @@ mod mojang;
 mod processing;
 mod routes;
 
-use actix_web::{get, App, HttpResponse, HttpServer, Responder};
+use std::net::SocketAddr;
 
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
-}
+use axum::{routing::get, Router};
 
-#[actix_web::main]
+#[tokio::main(flavor = "multi_thread", worker_threads = 10)]
 async fn main() -> std::io::Result<()> {
     let _ = dotenv::dotenv();
 
-    HttpServer::new(move || {
-        App::new()
-            .service(hello)
-            .configure(routes::player::config)
-            .configure(routes::profile::config)
-    })
-    .bind(("127.0.0.1", 8080))?
-    .run()
-    .await
+    run().await
+}
+
+async fn hello() -> &'static str {
+    "Hello, world!"
+}
+
+async fn run() -> std::io::Result<()> {
+    let app = Router::new()
+        .nest("/profile", routes::profile::route())
+        .nest("/player", routes::player::route())
+        .route("/", get(hello));
+
+    let addr = SocketAddr::from(([127, 0, 0, 1], 3020));
+    let _ = axum::Server::bind(&addr)
+        .serve(app.into_make_service())
+        .await;
+    Ok(())
 }
