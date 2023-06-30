@@ -4,6 +4,7 @@ use moka::future::Cache;
 use once_cell::sync::Lazy;
 use serde::Deserialize;
 use thiserror::Error;
+use tracing::info;
 use uuid::Uuid;
 
 #[derive(Deserialize, Clone, Debug)]
@@ -56,7 +57,9 @@ pub async fn profile_from_username(username: &str) -> Result<Profile, MojangErro
     .await
 }
 
+#[tracing::instrument]
 async fn mojang_request(url: &str) -> Result<Profile, MojangError> {
+    info!("Begin");
     let profile = reqwest::get(url).await?.json::<Profile>().await?;
 
     // put it in both caches
@@ -67,6 +70,7 @@ async fn mojang_request(url: &str) -> Result<Profile, MojangError> {
         .insert(profile.username.to_lowercase(), profile.clone())
         .await;
 
+    info!("End");
     Ok(profile)
 }
 
