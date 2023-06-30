@@ -21,9 +21,12 @@ jobs:
         toolchain: stable
         components: clippy
         override: true
-    - uses: actions-rs/clippy-check@v1
+    # clippy-check fork that adds working-directory
+    - uses: reinismu/clippy-check@master
       with:
         token: ${{ secrets.GITHUB_TOKEN }}
+        working-directory: ./backend
         args: --all-features
     - name: Run tests
+      working-directory: ./backend
       run: cargo test --verbose
