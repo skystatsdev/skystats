@@ -4,9 +4,16 @@ use serde::Serialize;
 use uuid::Uuid;
 
 #[derive(Debug, Serialize)]
-pub struct Player {
+pub struct BasePlayer {
     pub uuid: Uuid,
     pub username: String,
+    // also include rank and stuff
+}
+
+#[derive(Debug, Serialize)]
+pub struct Player {
+    #[serde(flatten)]
+    pub base: BasePlayer,
     pub skyblock: PlayerSkyBlock,
 }
 
