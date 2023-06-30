@@ -14,14 +14,20 @@ pnpm run dev
 pnpm run dev -- --open
 ```
 
+## When Contributing
+
+1. Make sure to run `pnpm run lint` and `pnpm run format` before committing to ensure your code is formatted correctly.
+
+2. Make use of PRs and branches to keep the codebase clean.
+
 ## Building
 
 To create a production version of your app:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
-You can preview the production build with `npm run preview`.
+You can preview the production build with `pnpm run preview`.
 
 > To deploy your app, you may need to install an [adapter](https://kit.svelte.dev/docs/adapters) for your target environment.
