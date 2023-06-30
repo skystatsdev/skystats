@@ -38,7 +38,7 @@ pub async fn profile_from_uuid(uuid: Uuid) -> Result<Profile, MojangError> {
         return Ok(Profile { username, uuid });
     }
 
-    mojang_request(format!(
+    mojang_request(&format!(
         "https://sessionserver.mojang.com/session/minecraft/profile/{uuid}"
     ))
     .await
@@ -50,14 +50,14 @@ pub async fn profile_from_username(username: &str) -> Result<Profile, MojangErro
         return Ok(profile);
     }
 
-    mojang_request(format!(
+    mojang_request(&format!(
         "https://api.mojang.com/users/profiles/minecraft/{username}"
     ))
     .await
 }
 
-async fn mojang_request(url: String) -> Result<Profile, MojangError> {
-    let profile = reqwest::get(&url).await?.json::<Profile>().await?;
+async fn mojang_request(url: &str) -> Result<Profile, MojangError> {
+    let profile = reqwest::get(url).await?.json::<Profile>().await?;
 
     // put it in both caches
     UUID_TO_USERNAME_CACHE

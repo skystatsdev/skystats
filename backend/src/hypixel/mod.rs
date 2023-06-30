@@ -18,12 +18,11 @@ pub struct Hypixel {
 
 struct RateLimiter {
     remaining_limit: u64,
-    time_till_reset: u64,
-    time: Instant,
+    next_reset: Instant,
 }
 
 impl RateLimiter {
-    pub async fn update(&mut self, headers: &reqwest::header::HeaderMap) {
+    pub fn update(&mut self, headers: &reqwest::header::HeaderMap) {
         if let Some(remaining_limit) = headers
             .get("RateLimit-Remaining")
             .and_then(|header| header.to_str().ok())
@@ -37,20 +36,18 @@ impl RateLimiter {
             .and_then(|header| header.to_str().ok())
             .and_then(|header| header.parse::<u64>().ok())
         {
-            self.time_till_reset = time_till_reset;
+            self.next_reset = Instant::now() + Duration::from_secs(time_till_reset);
         }
     }
 
     pub fn is_rate_limited(&self) -> bool {
-        self.remaining_limit <= 1
-            && self.time_till_reset > 0
-            && self.time + Duration::from_secs(self.time_till_reset) > Instant::now()
+        self.remaining_limit <= 1 && self.next_reset > Instant::now()
     }
 
-    pub fn get_time_till_reset(&self) -> u64 {
+    pub fn get_time_till_reset(&self) -> Duration {
         std::cmp::max(
-            0,
-            ((self.time + Duration::from_secs(self.time_till_reset)) - Instant::now()).as_secs(),
+            Duration::ZERO,
+            self.next_reset.duration_since(Instant::now()),
         )
     }
 }
@@ -68,8 +65,7 @@ static HYPIXEL: Lazy<Hypixel> = Lazy::new(|| Hypixel {
     key: std::env::var("HYPIXEL_API_KEY").unwrap(),
     rate_limiter: Mutex::new(RateLimiter {
         remaining_limit: 0,
-        time_till_reset: 0,
-        time: Instant::now(),
+        next_reset: Instant::now(),
     }),
 });
 
@@ -80,8 +76,8 @@ async fn request<T: DeserializeOwned>(
 ) -> Result<T, HypixelError> {
     if HYPIXEL.rate_limiter.lock().is_rate_limited() {
         let time_till_reset = HYPIXEL.rate_limiter.lock().get_time_till_reset();
-        println!("Sleeping for {time_till_reset} seconds");
-        tokio::time::sleep(Duration::from_secs(time_till_reset)).await;
+        println!("Sleeping for {time_till_reset:?}");
+        tokio::time::sleep(time_till_reset).await;
     }
 
     let res = HYPIXEL
@@ -92,7 +88,7 @@ async fn request<T: DeserializeOwned>(
         .send()
         .await?;
 
-    HYPIXEL.rate_limiter.lock().update(res.headers()).await;
+    HYPIXEL.rate_limiter.lock().update(res.headers());
 
     Ok(res.json().await?)
 }
