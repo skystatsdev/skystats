@@ -1,0 +1,7 @@
+# cargo +nightly fmt
+max_width = 100
+comment_width = 100
+wrap_comments = true
+reorder_imports = true
+binop_separator = "Front"
+imports_granularity = "Crate"
