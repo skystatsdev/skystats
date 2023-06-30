@@ -1,13 +1,13 @@
 use crate::models;
 use moka::future::Cache;
 use once_cell::sync::Lazy;
+use parking_lot::Mutex;
 use serde::de::DeserializeOwned;
 use std::{
     sync::Arc,
     time::{Duration, Instant},
 };
 use thiserror::Error;
-use tokio::sync::Mutex;
 use uuid::Uuid;
 
 pub struct Hypixel {
@@ -78,8 +78,8 @@ async fn request<T: DeserializeOwned>(
     endpoint: &str,
     params: &[(&str, &str)],
 ) -> Result<T, HypixelError> {
-    if HYPIXEL.rate_limiter.lock().await.is_rate_limited() {
-        let time_till_reset = HYPIXEL.rate_limiter.lock().await.get_time_till_reset();
+    if HYPIXEL.rate_limiter.lock().is_rate_limited() {
+        let time_till_reset = HYPIXEL.rate_limiter.lock().get_time_till_reset();
         println!("Sleeping for {time_till_reset} seconds");
         tokio::time::sleep(Duration::from_secs(time_till_reset)).await;
     }
@@ -92,12 +92,7 @@ async fn request<T: DeserializeOwned>(
         .send()
         .await?;
 
-    HYPIXEL
-        .rate_limiter
-        .lock()
-        .await
-        .update(res.headers())
-        .await;
+    HYPIXEL.rate_limiter.lock().update(res.headers()).await;
 
     Ok(res.json().await?)
 }
