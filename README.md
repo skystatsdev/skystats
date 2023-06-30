@@ -1,5 +1,6 @@
-# SkyStats
-SkyStats Website/API Monorepo
+# [SkyStats](https://skystats.dev)
+
+A *blazingly fast* SkyBlock stats website using SvelteKit and Rust 🚀 🚀 🚀
 
 ## Setup
 1. Clone the repo
