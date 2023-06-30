@@ -24,7 +24,7 @@ struct RateLimiter {
 
 impl RateLimiter {
     pub async fn update(&mut self, headers: &reqwest::header::HeaderMap) {
-        if let Some(remaining_limit) = rheaders
+        if let Some(remaining_limit) = headers
             .get("RateLimit-Remaining")
             .and_then(|header| header.to_str().ok())
             .and_then(|header| header.parse::<u64>().ok())
