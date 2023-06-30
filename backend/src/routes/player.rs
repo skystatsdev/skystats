@@ -1,7 +1,6 @@
 use axum::{extract::Path, routing::get, Json, Router};
 
-use crate::models::player::Player;
-use crate::{mojang, processing};
+use crate::{models::player::Player, mojang, processing};
 
 use super::{RouterResponse, SkyResult};
 
