@@ -1,17 +1,61 @@
-use std::time::Duration;
-
 use moka::future::Cache;
 use once_cell::sync::Lazy;
 use serde::de::DeserializeOwned;
+use std::{
+    sync::Arc,
+    time::{Duration, Instant},
+};
 use thiserror::Error;
+use tokio::sync::Mutex;
 use uuid::Uuid;
 
 use crate::models;
 
-#[derive(Clone)]
 pub struct Hypixel {
     client: reqwest::Client,
-    api_key: String,
+    key: String,
+    rate_limiter: Mutex<RateLimiter>,
+}
+
+struct RateLimiter {
+    remaining_limit: u64,
+    time_till_reset: u64,
+    time: Instant,
+}
+
+impl RateLimiter {
+    pub async fn update(&mut self, res: &reqwest::Response) {
+        if let Some(remaining_limit) = res
+            .headers()
+            .get("RateLimit-Remaining")
+            .and_then(|header| header.to_str().ok())
+            .and_then(|header| header.parse::<u64>().ok())
+        {
+            self.remaining_limit = remaining_limit;
+        }
+
+        if let Some(time_till_reset) = res
+            .headers()
+            .get("RateLimit-Reset")
+            .and_then(|header| header.to_str().ok())
+            .and_then(|header| header.parse::<u64>().ok())
+        {
+            self.time_till_reset = time_till_reset;
+        }
+    }
+
+    pub fn is_rate_limited(&self) -> bool {
+        self.remaining_limit <= 1
+            && self.time_till_reset > 0
+            && self.time + Duration::from_secs(self.time_till_reset) > Instant::now()
+    }
+
+    pub fn get_time_till_reset(&self) -> u64 {
+        std::cmp::max(
+            0,
+            ((self.time + Duration::from_secs(self.time_till_reset)) - Instant::now()).as_secs(),
+        )
+    }
 }
 
 #[derive(Error, Debug)]
@@ -22,12 +66,14 @@ pub enum HypixelError {
     Json(#[from] serde_json::Error),
 }
 
-static HYPIXEL: Lazy<Hypixel> = Lazy::new(|| {
-    let api_key = std::env::var("HYPIXEL_API_KEY").expect("HYPIXEL_API_KEY must be set");
-    Hypixel {
-        client: reqwest::Client::new(),
-        api_key,
-    }
+static HYPIXEL: Lazy<Hypixel> = Lazy::new(|| Hypixel {
+    client: reqwest::Client::new(),
+    key: std::env::var("HYPIXEL_API_KEY").unwrap(),
+    rate_limiter: Mutex::new(RateLimiter {
+        remaining_limit: 0,
+        time_till_reset: 0,
+        time: Instant::now(),
+    }),
 });
 
 /// Do a request to the Hypixel API without handling caching.
@@ -35,35 +81,40 @@ async fn request<T: DeserializeOwned>(
     endpoint: &str,
     params: &[(&str, &str)],
 ) -> Result<T, HypixelError> {
-    let url =
-        reqwest::Url::parse_with_params(&format!("https://api.hypixel.net/{endpoint}"), params)
-            .expect("url should always be valid");
+    if HYPIXEL.rate_limiter.lock().await.is_rate_limited() {
+        let time_till_reset = HYPIXEL.rate_limiter.lock().await.get_time_till_reset();
+        println!("Sleeping for {time_till_reset} seconds");
+        std::thread::sleep(Duration::from_secs(time_till_reset));
+    }
 
     let res = HYPIXEL
         .client
-        .get(url)
-        .header("API-Key", &HYPIXEL.api_key)
+        .get(format!("https://api.hypixel.net/{endpoint}"))
+        .query(params)
+        .header("API-Key", &HYPIXEL.key)
         .send()
         .await?;
+
+    HYPIXEL.rate_limiter.lock().await.update(&res).await;
+
     Ok(res.json().await?)
 }
 
-static PLAYER_CACHE: Lazy<Cache<Uuid, models::hypixel::player::Player>> = Lazy::new(|| {
+static PLAYER_CACHE: Lazy<Cache<Uuid, Arc<models::hypixel::player::Player>>> = Lazy::new(|| {
     Cache::builder()
         .time_to_live(Duration::from_secs(60))
         .build()
 });
 
-pub async fn player(uuid: Uuid) -> Result<models::hypixel::player::Player, HypixelError> {
+pub async fn player(uuid: Uuid) -> Result<Arc<models::hypixel::player::Player>, HypixelError> {
     if let Some(player) = PLAYER_CACHE.get(&uuid) {
         return Ok(player);
     }
 
-    let res = request::<models::hypixel::player::Player>(
-        "player",
-        &[("uuid", uuid.to_string().as_str())],
-    )
-    .await?;
+    let res = Arc::new(
+        request::<models::hypixel::player::Player>("player", &[("uuid", &uuid.to_string())])
+            .await?,
+    );
 
     PLAYER_CACHE.insert(uuid, res.clone()).await;
 
