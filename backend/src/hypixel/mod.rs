@@ -1,6 +1,7 @@
-use std::{sync::LazyLock, time::Duration};
+use std::time::Duration;
 
 use moka::future::Cache;
+use once_cell::sync::Lazy;
 use serde::de::DeserializeOwned;
 use thiserror::Error;
 use uuid::Uuid;
@@ -21,7 +22,7 @@ pub enum HypixelError {
     Json(#[from] serde_json::Error),
 }
 
-static HYPIXEL: LazyLock<Hypixel> = LazyLock::new(|| {
+static HYPIXEL: Lazy<Hypixel> = Lazy::new(|| {
     let api_key = std::env::var("HYPIXEL_API_KEY").expect("HYPIXEL_API_KEY must be set");
     Hypixel {
         client: reqwest::Client::new(),
@@ -47,7 +48,7 @@ async fn request<T: DeserializeOwned>(
     Ok(res.json().await?)
 }
 
-static PLAYER_CACHE: LazyLock<Cache<Uuid, models::hypixel::player::Player>> = LazyLock::new(|| {
+static PLAYER_CACHE: Lazy<Cache<Uuid, models::hypixel::player::Player>> = Lazy::new(|| {
     Cache::builder()
         .time_to_live(Duration::from_secs(60))
         .build()

@@ -1,5 +1,3 @@
-#![feature(lazy_cell)]
-
 mod hypixel;
 mod models;
 mod mojang;

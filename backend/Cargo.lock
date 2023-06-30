@@ -1492,6 +1492,7 @@ dependencies = [
  "actix-web",
  "dotenv",
  "moka",
+ "once_cell",
  "parking_lot",
  "reqwest",
  "serde",

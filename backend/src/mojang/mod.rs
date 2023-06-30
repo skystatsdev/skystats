@@ -1,6 +1,7 @@
-use std::{sync::LazyLock, time::Duration};
+use std::time::Duration;
 
 use moka::future::Cache;
+use once_cell::sync::Lazy;
 use serde::Deserialize;
 use thiserror::Error;
 use uuid::Uuid;
@@ -19,18 +20,17 @@ pub enum MojangError {
     RequestError(#[from] reqwest::Error),
 }
 
-static UUID_TO_USERNAME_CACHE: LazyLock<Cache<Uuid, String>> = LazyLock::new(|| {
+static UUID_TO_USERNAME_CACHE: Lazy<Cache<Uuid, String>> = Lazy::new(|| {
     Cache::builder()
         // 1 hour
         .time_to_live(Duration::from_secs(60 * 60))
         .build()
 });
-static LOWERCASE_USERNAME_TO_PROFILE_CACHE: LazyLock<Cache<String, Profile>> =
-    LazyLock::new(|| {
-        Cache::builder()
-            .time_to_live(Duration::from_secs(60 * 60))
-            .build()
-    });
+static LOWERCASE_USERNAME_TO_PROFILE_CACHE: Lazy<Cache<String, Profile>> = Lazy::new(|| {
+    Cache::builder()
+        .time_to_live(Duration::from_secs(60 * 60))
+        .build()
+});
 
 pub async fn profile_from_uuid(uuid: Uuid) -> Result<Profile, MojangError> {
     // already cached?
