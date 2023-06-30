@@ -38,19 +38,10 @@ pub async fn profile_from_uuid(uuid: Uuid) -> Result<Profile, MojangError> {
         return Ok(Profile { username, uuid });
     }
 
-    let url = format!("https://sessionserver.mojang.com/session/minecraft/profile/{uuid}");
-    let response = reqwest::get(&url).await?;
-    let profile = response.json::<Profile>().await?;
-
-    // put it in both caches
-    UUID_TO_USERNAME_CACHE
-        .insert(uuid, profile.username.clone())
-        .await;
-    LOWERCASE_USERNAME_TO_PROFILE_CACHE
-        .insert(profile.username.to_lowercase(), profile.clone())
-        .await;
-
-    Ok(profile)
+    mojang_request(&format!(
+        "https://sessionserver.mojang.com/session/minecraft/profile/{uuid}"
+    ))
+    .await
 }
 
 pub async fn profile_from_username(username: &str) -> Result<Profile, MojangError> {
@@ -59,9 +50,14 @@ pub async fn profile_from_username(username: &str) -> Result<Profile, MojangErro
         return Ok(profile);
     }
 
-    let url = format!("https://api.mojang.com/users/profiles/minecraft/{username}");
-    let response = reqwest::get(&url).await?;
-    let profile = response.json::<Profile>().await?;
+    mojang_request(&format!(
+        "https://api.mojang.com/users/profiles/minecraft/{username}"
+    ))
+    .await
+}
+
+async fn mojang_request(url: &str) -> Result<Profile, MojangError> {
+    let profile = reqwest::get(url).await?.json::<Profile>().await?;
 
     // put it in both caches
     UUID_TO_USERNAME_CACHE
@@ -75,8 +71,7 @@ pub async fn profile_from_username(username: &str) -> Result<Profile, MojangErro
 }
 
 pub async fn profile_from_username_or_uuid(username_or_uuid: &str) -> Result<Profile, MojangError> {
-    let uuid = Uuid::parse_str(username_or_uuid);
-    match uuid {
+    match Uuid::parse_str(username_or_uuid) {
         Ok(uuid) => profile_from_uuid(uuid).await,
         Err(_) => profile_from_username(username_or_uuid).await,
     }
