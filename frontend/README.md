@@ -1,6 +1,6 @@
 # SkyStats Frontend
 
-## Developing
+## Setup
 
 1. Install dependencies with `pnpm install`
 
