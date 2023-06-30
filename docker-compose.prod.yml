@@ -1,24 +1,24 @@
 version: '3.9'
 services:
-  api:
-    env_file:
-      - ./backend/.env.production
-    ports:
-      - 8000:8000
-  website:
-    env_file:
-      - ./frontend/.env.production
-    environment:
-      - NODE_ENV=production
-    ports:
-      - 3000:3000
-    depends_on:
-      - api
-  database:
-    env_file:
-      - ./backend/.env.production
-    ports:
-      - 5432:5432
+    api:
+        env_file:
+            - ./backend/.env.production
+        ports:
+            - 8000:8000
+    website:
+        env_file:
+            - ./frontend/.env.production
+        environment:
+            - NODE_ENV=production
+        ports:
+            - 3000:3000
+        depends_on:
+            - api
+    database:
+        env_file:
+            - ./backend/.env.production
+        ports:
+            - 5432:5432
 #  caddy:
 #    image: caddy:latest
 #    restart: unless-stopped
