@@ -8,7 +8,7 @@ use std::net::SocketAddr;
 
 use axum::{routing::get, Router};
 
-#[tokio::main(flavor = "multi_thread", worker_threads = 10)]
+#[tokio::main]
 async fn main() -> std::io::Result<()> {
     let _ = dotenv::dotenv();
 
@@ -25,7 +25,7 @@ async fn run() -> std::io::Result<()> {
         .nest("/player", routes::player::route())
         .route("/", get(hello));
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3020));
+    let addr = SocketAddr::from(([127, 0, 0, 1], 8080));
     let _ = axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await;
