@@ -3,12 +3,11 @@ name: Rust
 on:
   push:
     branches: [ "main" ]
-    paths: 
-      - backend/**
+    paths: [ "backend/**" ]
+    
   pull_request:
     branches: [ "main" ]
-    paths: 
-      - backend/**
+    paths: [ "backend/**" ]
 
 env:
   CARGO_TERM_COLOR: always
