@@ -6,7 +6,7 @@ use crate::{models::profile::ProfileMember, mojang, processing, routes::ApiError
 use super::{RouterResponse, SkyResult};
 
 pub fn route() -> RouterResponse {
-    Router::new().route("/:user/:profile", get(profile))
+    Router::new().route("/:player/:profile", get(profile))
 }
 
 async fn profile(
@@ -19,16 +19,15 @@ async fn profile(
         Ok(profile_uuid_or_name) => profile_uuid_or_name,
         Err(_) => {
             let player = processing::player::player(mojang_profile.uuid).await?;
-            let profile = player
-                .skyblock
-                .profile_names
-                .iter()
-                .find(|(_, name)| name.to_lowercase() == profile_uuid_or_name.to_lowercase());
-            let (profile_uuid, _) = profile.ok_or(ApiError::ProfileNotFound {
+            let profile =
+                player.skyblock.profiles.iter().find(|profile| {
+                    profile.name.to_lowercase() == profile_uuid_or_name.to_lowercase()
+                });
+            let profile = profile.ok_or(ApiError::ProfileNotFound {
                 username: mojang_profile.username,
                 profile: profile_uuid_or_name.to_owned(),
             })?;
-            *profile_uuid
+            profile.uuid
         }
     };
 
