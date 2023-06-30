@@ -25,6 +25,7 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
 
     Ok(ProfileMember {
         player: player.base,
+        profile_name: profile.cute_name.clone(),
         fairy_souls: member.fairy_souls_collected,
     })
 }
