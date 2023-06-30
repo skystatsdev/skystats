@@ -8,6 +8,7 @@ use std::{
     time::{Duration, Instant},
 };
 use thiserror::Error;
+use tracing::info;
 use uuid::Uuid;
 
 pub struct Hypixel {
@@ -70,13 +71,15 @@ static HYPIXEL: Lazy<Hypixel> = Lazy::new(|| Hypixel {
 });
 
 /// Do a request to the Hypixel API without handling caching.
+#[tracing::instrument]
 async fn request<T: DeserializeOwned>(
     endpoint: &str,
     params: &[(&str, &str)],
 ) -> Result<T, HypixelError> {
+    info!("Begin");
     if HYPIXEL.rate_limiter.lock().is_rate_limited() {
         let time_till_reset = HYPIXEL.rate_limiter.lock().get_time_till_reset();
-        println!("Sleeping for {time_till_reset:?}");
+        info!("Ratelimited, sleeping for {time_till_reset:?}");
         tokio::time::sleep(time_till_reset).await;
     }
 
@@ -90,7 +93,9 @@ async fn request<T: DeserializeOwned>(
 
     HYPIXEL.rate_limiter.lock().update(res.headers());
 
-    Ok(res.json().await?)
+    let res = res.json().await?;
+    info!("End");
+    Ok(res)
 }
 
 static PLAYER_CACHE: Lazy<Cache<Uuid, Arc<models::hypixel::player::Player>>> = Lazy::new(|| {
