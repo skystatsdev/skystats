@@ -4,7 +4,7 @@ services:
         env_file:
             - ./backend/.env.production
         ports:
-            - 8000:8000
+            - 8080:8080
     website:
         env_file:
             - ./frontend/.env.production
@@ -26,6 +26,7 @@ services:
             - "443:443/udp"
         volumes:
             - ./Caddyfile:/etc/caddy/Caddyfile
+            - /etc/ssl/skystats:/etc/ssl/skystats
             - caddy-data:/data
             - caddy-config:/config
 

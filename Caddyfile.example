@@ -1,5 +1,5 @@
 example.com {
-	reverse_proxy :3000
+	reverse_proxy website:3000
 	tls /etc/ssl/certs/cert.pem /etc/ssl/private/key.pem {
 		client_auth {
 			mode require_and_verify
@@ -9,7 +9,7 @@ example.com {
 }
 
 api.example.com {
-	reverse_proxy :8000
+	reverse_proxy api:8080
 	tls /etc/ssl/certs/cert.pem /etc/ssl/private/key.pem {
 		client_auth {
 			mode require_and_verify
