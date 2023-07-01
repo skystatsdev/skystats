@@ -6,7 +6,6 @@ use thiserror::Error;
 use crate::models;
 
 pub mod player;
-pub mod profile;
 
 pub type SkyResult<T> = Result<T, ApiError>;
 pub type RouterResponse = Router<(), axum::body::Body>;
@@ -19,12 +18,18 @@ pub enum ApiError {
     Hypixel(#[from] crate::hypixel::HypixelError),
     #[error("Profile not found")]
     ProfileNotFound { username: String, profile: String },
+    #[error("Couldn't decode NBT: {0}")]
+    Nbt(#[from] fastnbt::error::Error),
+    #[error("Couldn't decode base64: {0}")]
+    Base64(#[from] base64::DecodeError),
 }
 
 impl ApiError {
     fn status_code(&self) -> StatusCode {
         match self {
-            ApiError::Mojang(_) | ApiError::Hypixel(_) => StatusCode::INTERNAL_SERVER_ERROR,
+            ApiError::Mojang(_) | ApiError::Hypixel(_) | ApiError::Nbt(_) | ApiError::Base64(_) => {
+                StatusCode::INTERNAL_SERVER_ERROR
+            }
             ApiError::ProfileNotFound { .. } => StatusCode::NOT_FOUND,
         }
     }
@@ -38,6 +43,8 @@ impl IntoResponse for ApiError {
             ApiError::Mojang(_) => "mojang",
             ApiError::Hypixel(_) => "hypixel",
             ApiError::ProfileNotFound { .. } => "profile_not_found",
+            ApiError::Nbt(_) => "nbt",
+            ApiError::Base64(_) => "base64",
         };
 
         let description = self.to_string();

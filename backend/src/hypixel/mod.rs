@@ -55,7 +55,7 @@ impl RateLimiter {
 
 #[derive(Error, Debug)]
 pub enum HypixelError {
-    #[error("reqwest error: {0}")]
+    #[error(transparent)]
     Reqwest(#[from] reqwest::Error),
     #[error("json error: {0}")]
     Json(#[from] serde_json::Error),
@@ -119,21 +119,26 @@ pub async fn player(uuid: Uuid) -> Result<Arc<models::hypixel::player::Player>, 
     Ok(res)
 }
 
-static PROFILES_CACHE: Lazy<Cache<Uuid, models::hypixel::profiles::Profiles>> = Lazy::new(|| {
-    Cache::builder()
-        .time_to_live(Duration::from_secs(60))
-        .build()
-});
-pub async fn profiles(uuid: Uuid) -> Result<models::hypixel::profiles::Profiles, HypixelError> {
+static PROFILES_CACHE: Lazy<Cache<Uuid, Arc<models::hypixel::profiles::Profiles>>> =
+    Lazy::new(|| {
+        Cache::builder()
+            .time_to_live(Duration::from_secs(60))
+            .build()
+    });
+pub async fn profiles(
+    uuid: Uuid,
+) -> Result<Arc<models::hypixel::profiles::Profiles>, HypixelError> {
     if let Some(profiles) = PROFILES_CACHE.get(&uuid) {
         return Ok(profiles);
     }
 
-    let res = request::<models::hypixel::profiles::Profiles>(
-        "skyblock/profiles",
-        &[("uuid", uuid.to_string().as_str())],
-    )
-    .await?;
+    let res = Arc::new(
+        request::<models::hypixel::profiles::Profiles>(
+            "skyblock/profiles",
+            &[("uuid", uuid.to_string().as_str())],
+        )
+        .await?,
+    );
 
     PROFILES_CACHE.insert(uuid, res.clone()).await;
 
