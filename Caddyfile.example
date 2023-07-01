@@ -1,0 +1,21 @@
+# Caddyfile for a reverse proxy with Cloudflare TLS client authentication
+
+example.com {
+	reverse_proxy website:3000
+	tls /etc/ssl/certs/cert.pem /etc/ssl/private/key.pem {
+		client_auth {
+			mode require_and_verify
+			trusted_ca_cert_file /etc/ssl/certs/ca.pem
+		}
+	}
+}
+
+api.example.com {
+	reverse_proxy api:8000
+	tls /etc/ssl/certs/cert.pem /etc/ssl/private/key.pem {
+		client_auth {
+			mode require_and_verify
+			trusted_ca_cert_file /etc/ssl/certs/ca.pem
+		}
+	}
+}
