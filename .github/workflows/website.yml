@@ -1,0 +1,107 @@
+name: Website
+description: Checks for formatting/linting/warnings in the front end
+
+on:
+  push:
+    paths: [ "frontend/**", ".github/workflows/website.yml" ]
+    
+  pull_request:
+    paths: [ "frontend/**", ".github/workflows/website.yml" ]
+
+defaults:
+  run:
+    working-directory: ./frontend
+
+env:
+  NODE_VERSION: "19"
+  CONTAINER_REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  pnpm:
+    name: install dependencies (pnpm)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install node dependencies
+        run: pnpm i
+
+  es-lint:
+    name: check linting (es-lint)
+    needs: [pnpm]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install node dependencies
+        run: pnpm i
+
+      - name: Check ESlint
+        run: pnpm lint
+
+  prettier:
+    name: check format (prettier)
+    needs: [pnpm]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install node dependencies
+        run: pnpm i
+
+      - name: Check Prettier
+        run: pnpm prettier
+
+  sveltecheck:
+    name: check svelte
+    needs: [pnpm]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v2
+
+      - name: Use Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: "pnpm"
+
+      - name: Install node dependencies
+        run: pnpm i
+
+      - name: Check Svelte
+        run: pnpm run check
