@@ -1,3 +1,15 @@
-<h1>Hi</h1>
+<script lang="ts">
+	import type { PageData } from './$types';
 
-<p>This will be list of profiles</p>
+	export let data: PageData;
+
+	$: player = data.player;
+</script>
+
+<h1>{player.username} Profiles</h1>
+
+{#each player.skyblock.profiles as profile}
+	<a href="/@{player.username}/{profile.name}" class="text-blue-600">
+		<p>{profile.name}</p>
+	</a>
+{/each}
