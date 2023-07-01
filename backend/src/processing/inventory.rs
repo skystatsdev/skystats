@@ -49,7 +49,18 @@ pub fn inventory(
             id: item_nbt.id,
             damage: item_nbt.damage,
             count: item_nbt.count,
+
+            head_texture_id: item_nbt
+                .tag
+                .skull_owner
+                .and_then(|skull_owner| {
+                    texture_id_from_base64(&skull_owner.properties.textures[0].value)
+                })
+                .or_else(|| item_nbt.tag.extra_attributes.id.clone()),
+
             skyblock_id: item_nbt.tag.extra_attributes.id,
+            reforge: item_nbt.tag.extra_attributes.modifier,
+
             display: ItemDisplay {
                 name: item_nbt.tag.display.name,
                 lore: item_nbt.tag.display.lore,
@@ -62,4 +73,17 @@ pub fn inventory(
     }
 
     Ok(items)
+}
+
+fn texture_id_from_base64(base64: &str) -> Option<String> {
+    let data_bytes = base64::engine::general_purpose::STANDARD
+        .decode(base64.as_bytes())
+        .ok()?;
+
+    // convert to json, then textures.SKIN.url and get the last part of the url
+    let json: serde_json::Value = serde_json::from_slice(&data_bytes).ok()?;
+    let texture_url = json["textures"]["SKIN"]["url"].as_str()?;
+    let texture_id = texture_url.split('/').last()?.to_owned();
+
+    Some(texture_id)
 }

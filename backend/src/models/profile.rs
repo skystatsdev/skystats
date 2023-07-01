@@ -44,7 +44,12 @@ pub struct Item {
     pub id: i16,
     pub damage: i16,
     pub count: i8,
+
+    pub head_texture_id: Option<String>,
+
     pub skyblock_id: Option<String>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub reforge: Option<String>,
 
     pub display: ItemDisplay,
 

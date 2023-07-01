@@ -38,6 +38,9 @@ pub struct ItemTag {
     #[serde(rename = "ExtraAttributes")]
     pub extra_attributes: ItemExtraAttributes,
     pub display: ItemDisplay,
+    #[serde(rename = "SkullOwner")]
+    #[serde(default)]
+    pub skull_owner: Option<ItemSkullOwner>,
 }
 
 #[derive(Deserialize)]
@@ -74,4 +77,19 @@ pub struct ItemDisplay {
     pub name: String,
     #[serde(default)]
     pub color: Option<i32>,
+}
+
+#[derive(Deserialize)]
+pub struct ItemSkullOwner {
+    #[serde(rename = "Properties")]
+    pub properties: ItemSkullOwnerProperty,
+}
+#[derive(Deserialize)]
+pub struct ItemSkullOwnerProperty {
+    pub textures: Vec<ItemSkullOwnerTexture>,
+}
+#[derive(Deserialize)]
+pub struct ItemSkullOwnerTexture {
+    #[serde(rename = "Value")]
+    pub value: String,
 }
