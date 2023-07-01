@@ -6,4 +6,4 @@ api.skystats.dev
 
 1. Copy `.env.example` to `.env` and fill in the values.
 
-2. `cargo run`, runs on [`localhost:8080`]
+2. `cargo run`, runs on [`localhost:8000`]

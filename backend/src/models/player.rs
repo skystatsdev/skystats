@@ -1,16 +1,14 @@
-use std::collections::HashMap;
-
 use serde::Serialize;
 use uuid::Uuid;
 
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct BasePlayer {
     pub uuid: Uuid,
     pub username: String,
     // also include rank and stuff
 }
 
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct Player {
     #[serde(flatten)]
     pub base: BasePlayer,
@@ -18,7 +16,14 @@ pub struct Player {
 }
 
 /// SkyBlock stuff that applies to all of the player's profiles.
-#[derive(Debug, Serialize)]
+#[derive(Serialize)]
 pub struct PlayerSkyBlock {
-    pub profile_names: HashMap<Uuid, String>,
+    pub profiles: Vec<PlayerProfileInfo>,
+    pub selected_profile: Option<Uuid>,
+}
+
+#[derive(Serialize)]
+pub struct PlayerProfileInfo {
+    pub uuid: Uuid,
+    pub name: String,
 }

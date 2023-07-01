@@ -8,6 +8,7 @@ use std::{
     time::{Duration, Instant},
 };
 use thiserror::Error;
+use tracing::info;
 use uuid::Uuid;
 
 pub struct Hypixel {
@@ -54,7 +55,7 @@ impl RateLimiter {
 
 #[derive(Error, Debug)]
 pub enum HypixelError {
-    #[error("reqwest error: {0}")]
+    #[error(transparent)]
     Reqwest(#[from] reqwest::Error),
     #[error("json error: {0}")]
     Json(#[from] serde_json::Error),
@@ -70,13 +71,15 @@ static HYPIXEL: Lazy<Hypixel> = Lazy::new(|| Hypixel {
 });
 
 /// Do a request to the Hypixel API without handling caching.
+#[tracing::instrument]
 async fn request<T: DeserializeOwned>(
     endpoint: &str,
     params: &[(&str, &str)],
 ) -> Result<T, HypixelError> {
+    info!("Begin");
     if HYPIXEL.rate_limiter.lock().is_rate_limited() {
         let time_till_reset = HYPIXEL.rate_limiter.lock().get_time_till_reset();
-        println!("Sleeping for {time_till_reset:?}");
+        info!("Ratelimited, sleeping for {time_till_reset:?}");
         tokio::time::sleep(time_till_reset).await;
     }
 
@@ -90,7 +93,9 @@ async fn request<T: DeserializeOwned>(
 
     HYPIXEL.rate_limiter.lock().update(res.headers());
 
-    Ok(res.json().await?)
+    let res = res.json().await?;
+    info!("End");
+    Ok(res)
 }
 
 static PLAYER_CACHE: Lazy<Cache<Uuid, Arc<models::hypixel::player::Player>>> = Lazy::new(|| {
@@ -114,21 +119,26 @@ pub async fn player(uuid: Uuid) -> Result<Arc<models::hypixel::player::Player>, 
     Ok(res)
 }
 
-static PROFILES_CACHE: Lazy<Cache<Uuid, models::hypixel::profiles::Profiles>> = Lazy::new(|| {
-    Cache::builder()
-        .time_to_live(Duration::from_secs(60))
-        .build()
-});
-pub async fn profiles(uuid: Uuid) -> Result<models::hypixel::profiles::Profiles, HypixelError> {
+static PROFILES_CACHE: Lazy<Cache<Uuid, Arc<models::hypixel::profiles::Profiles>>> =
+    Lazy::new(|| {
+        Cache::builder()
+            .time_to_live(Duration::from_secs(60))
+            .build()
+    });
+pub async fn profiles(
+    uuid: Uuid,
+) -> Result<Arc<models::hypixel::profiles::Profiles>, HypixelError> {
     if let Some(profiles) = PROFILES_CACHE.get(&uuid) {
         return Ok(profiles);
     }
 
-    let res = request::<models::hypixel::profiles::Profiles>(
-        "skyblock/profiles",
-        &[("uuid", uuid.to_string().as_str())],
-    )
-    .await?;
+    let res = Arc::new(
+        request::<models::hypixel::profiles::Profiles>(
+            "skyblock/profiles",
+            &[("uuid", uuid.to_string().as_str())],
+        )
+        .await?,
+    );
 
     PROFILES_CACHE.insert(uuid, res.clone()).await;
 
