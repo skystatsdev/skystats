@@ -3,6 +3,8 @@ use std::collections::HashMap;
 use serde::Deserialize;
 use uuid::Uuid;
 
+use super::inventory::Inventory;
+
 #[derive(Deserialize)]
 pub struct Profiles {
     pub success: bool,
@@ -29,6 +31,27 @@ pub struct ListedProfileMember {
     pub coin_purse: f64,
     #[serde(default)]
     pub leveling: SkyBlockLeveling,
+
+    #[serde(default)]
+    pub inv_armor: Option<Inventory>,
+    #[serde(default)]
+    pub inv_contents: Option<Inventory>,
+    #[serde(default)]
+    pub ender_chest_contents: Option<Inventory>,
+    #[serde(default)]
+    pub talisman_bag: Option<Inventory>,
+    #[serde(default)]
+    pub potion_bag: Option<Inventory>,
+    #[serde(default)]
+    pub fishing_bag: Option<Inventory>,
+    #[serde(default)]
+    pub quiver: Option<Inventory>,
+    #[serde(default)]
+    pub candy_inventory_contents: Option<Inventory>,
+    #[serde(default)]
+    pub wardrobe_contents: Option<Inventory>,
+    #[serde(default)]
+    pub personal_vault_contents: Option<Inventory>,
 }
 
 #[derive(Deserialize, Default)]

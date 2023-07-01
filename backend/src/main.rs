@@ -30,7 +30,6 @@ async fn hello() -> &'static str {
 
 async fn run() -> std::io::Result<()> {
     let app = Router::new()
-        .nest("/profile", routes::profile::route())
         .nest("/player", routes::player::route())
         .route("/", get(hello));
 

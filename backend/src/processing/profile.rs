@@ -2,7 +2,10 @@ use uuid::Uuid;
 
 use crate::{
     hypixel,
-    models::{self, profile::ProfileMember},
+    models::{
+        self,
+        profile::{Inventories, ProfileMember},
+    },
     mojang, processing,
     routes::ApiError,
 };
@@ -30,7 +33,7 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
 
     // get the usernames of all profile members
     let mut mojang_profiles_futures = Vec::new();
-    for (&uuid, _) in &profile.members {
+    for &uuid in profile.members.keys() {
         mojang_profiles_futures.push(tokio::spawn(mojang::profile_from_uuid(uuid)));
     }
     let mut profile_members: Vec<models::player::BasePlayer> = Vec::new();
@@ -53,5 +56,12 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
 
         skyblock_level: member.leveling.experience as f64 / 100.,
         fairy_souls: member.fairy_souls_collected,
+        inventories: Inventories {
+            armor: member
+                .inv_armor
+                .as_ref()
+                .map(processing::inventory::inventory)
+                .transpose()?,
+        },
     })
 }
