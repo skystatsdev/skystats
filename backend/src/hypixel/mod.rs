@@ -59,6 +59,8 @@ pub enum HypixelError {
     Reqwest(#[from] reqwest::Error),
     #[error("json error: {0}")]
     Json(#[from] serde_json::Error),
+    #[error(transparent)]
+    ApiError(#[from] models::hypixel::HypixelApiError),
 }
 
 static HYPIXEL: Lazy<Hypixel> = Lazy::new(|| Hypixel {
@@ -93,9 +95,12 @@ async fn request<T: DeserializeOwned>(
 
     HYPIXEL.rate_limiter.lock().update(res.headers());
 
-    let res = res.json().await?;
+    let res = res.json::<models::hypixel::HypixelApiResult<T>>().await?;
     info!("End");
-    Ok(res)
+    match res {
+        models::hypixel::HypixelApiResult::Success(res) => Ok(res),
+        models::hypixel::HypixelApiResult::Error(err) => Err(err.into()),
+    }
 }
 
 static PLAYER_CACHE: Lazy<Cache<Uuid, Arc<models::hypixel::player::Player>>> = Lazy::new(|| {
