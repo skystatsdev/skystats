@@ -27,7 +27,9 @@ export const load = (async ({ params, fetch }) => {
 		throw error(profilesReq.status, 'Profiles not found');
 	}
 
-	const { profiles } = (await profilesReq.json()) as Profiles;
+	const { profiles } = 
+	
+	(await profilesReq.json()) as Profiles;
 
 	const selectedProfile = profiles.find(
 		(profile) => profile.cute_name === profileName || profile.profile_id === profileName
