@@ -5,8 +5,8 @@
 	export let data: PageData;
 </script>
 
-<Head title="{data.ign} | Skyblock Stats" description="Very cool stats" />
+<Head title="{data.player.username} | Skyblock Stats" description="Very cool stats" />
 
-<h1>{data.ign} | {data.profileName}</h1>
-<p>Skyblock Level - {data.profile.member.leveling.experience / 100}</p>
-<img src="https://mc-heads.net/body/{data.account.id}" alt="Minecraft Skin" />
+<h1>{data.player.username} | {data.profile.profile_name}</h1>
+<p>Skyblock Level - {data.profile.skyblock_level}</p>
+<img src="https://mc-heads.net/body/{data.player.uuid}" alt="Minecraft Skin" />
