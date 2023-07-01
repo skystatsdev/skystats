@@ -17,17 +17,19 @@ services:
     database:
         env_file:
             - ./backend/.env.production
+    caddy:
+        image: caddy:latest
+        restart: unless-stopped
         ports:
-            - 5432:5432
-#  caddy:
-#    image: caddy:latest
-#    restart: unless-stopped
-#    ports:
-#      - "80:80"
-#      - "443:443"
-#      - "443:443/udp"
-#    volumes:
-#      - ./Caddyfile:/etc/caddy/Caddyfile
-#      - ./frontend/static:/srv
-#      - caddy_data:/data
-#      - caddy_config:/config
+            - "80:80"
+            - "443:443"
+            - "443:443/udp"
+        volumes:
+            - ./Caddyfile:/etc/caddy/Caddyfile
+            - /etc/ssl/skystats:/etc/ssl/skystats
+            - caddy-data:/data
+            - caddy-config:/config
+
+volumes:
+    caddy-data: {}
+    caddy-config: {}
