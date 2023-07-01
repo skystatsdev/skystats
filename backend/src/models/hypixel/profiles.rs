@@ -52,6 +52,29 @@ pub struct ListedProfileMember {
     pub wardrobe_contents: Option<Inventory>,
     #[serde(default)]
     pub personal_vault_contents: Option<Inventory>,
+
+    #[serde(default)]
+    pub experience_skill_runecrafting: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_alchemy: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_taming: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_combat: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_farming: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_social2: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_enchanting: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_fishing: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_foraging: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_carpentry: Option<f64>,
+    #[serde(default)]
+    pub experience_skill_mining: Option<f64>,
 }
 
 #[derive(Deserialize, Default)]

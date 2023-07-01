@@ -4,7 +4,9 @@ use crate::{
     hypixel,
     models::{
         self,
-        profile::{Inventories, ProfileMember},
+        hypixel::inventory::process_optional_inventory,
+        hypixel::skills::get_level_by_xp,
+        profile::{Inventories, ProfileMember, Skills},
     },
     mojang, processing,
     routes::ApiError,
@@ -45,13 +47,6 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         });
     }
 
-    fn process_optional_inventory(
-        inv: &Option<models::hypixel::inventory::Inventory>,
-    ) -> Result<Option<Vec<Option<models::profile::Item>>>, ApiError> {
-        inv.as_ref()
-            .map(processing::inventory::inventory)
-            .transpose()
-    }
     let inventories = Inventories {
         armor: process_optional_inventory(&member.inv_armor)?.map(|mut armor| {
             // reverse it so helmet is first
@@ -69,6 +64,64 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         personal_vault: process_optional_inventory(&member.personal_vault_contents)?,
     };
 
+    let skills = Skills {
+        farming: get_level_by_xp(
+            "skills",
+            "farming",
+            member.experience_skill_farming.unwrap_or(0.0),
+        ),
+        mining: get_level_by_xp(
+            "skills",
+            "mining",
+            member.experience_skill_mining.unwrap_or(0.0),
+        ),
+        combat: get_level_by_xp(
+            "skills",
+            "combat",
+            member.experience_skill_combat.unwrap_or(0.0),
+        ),
+        foraging: get_level_by_xp(
+            "skills",
+            "foraging",
+            member.experience_skill_foraging.unwrap_or(0.0),
+        ),
+        fishing: get_level_by_xp(
+            "skills",
+            "fishing",
+            member.experience_skill_fishing.unwrap_or(0.0),
+        ),
+        enchanting: get_level_by_xp(
+            "skills",
+            "enchanting",
+            member.experience_skill_enchanting.unwrap_or(0.0),
+        ),
+        alchemy: get_level_by_xp(
+            "skills",
+            "alchemy",
+            member.experience_skill_alchemy.unwrap_or(0.0),
+        ),
+        carpentry: get_level_by_xp(
+            "skills",
+            "carpentry",
+            member.experience_skill_carpentry.unwrap_or(0.0),
+        ),
+        runecrafting: get_level_by_xp(
+            "skills",
+            "runecrafting",
+            member.experience_skill_runecrafting.unwrap_or(0.0),
+        ),
+        social2: get_level_by_xp(
+            "skills",
+            "social",
+            member.experience_skill_social2.unwrap_or(0.0),
+        ),
+        taming: get_level_by_xp(
+            "skills",
+            "taming",
+            member.experience_skill_taming.unwrap_or(0.0),
+        ),
+    };
+
     Ok(ProfileMember {
         player: player.base,
         profile: models::profile::Profile {
@@ -81,5 +134,6 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         skyblock_level: member.leveling.experience as f64 / 100.,
         fairy_souls: member.fairy_souls_collected,
         inventories,
+        skills,
     })
 }

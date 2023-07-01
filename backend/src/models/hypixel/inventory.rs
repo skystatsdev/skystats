@@ -2,6 +2,12 @@ use std::collections::HashMap;
 
 use serde::Deserialize;
 
+use crate::{
+    models::{self},
+    processing,
+    routes::ApiError,
+};
+
 #[derive(Deserialize)]
 pub struct Inventory {
     #[serde(rename = "type")]
@@ -92,4 +98,12 @@ pub struct ItemSkullOwnerProperty {
 pub struct ItemSkullOwnerTexture {
     #[serde(rename = "Value")]
     pub value: String,
+}
+
+pub fn process_optional_inventory(
+    inv: &Option<models::hypixel::inventory::Inventory>,
+) -> Result<Option<Vec<Option<models::profile::Item>>>, ApiError> {
+    inv.as_ref()
+        .map(processing::inventory::inventory)
+        .transpose()
 }

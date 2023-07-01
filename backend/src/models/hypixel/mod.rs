@@ -3,3 +3,4 @@
 pub mod inventory;
 pub mod player;
 pub mod profiles;
+pub mod skills;
