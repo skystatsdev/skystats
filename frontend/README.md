@@ -7,6 +7,7 @@
 2. Make a copy of `.env.example` and rename it to `.env`. Fill in the values with your own.
 
 3. Start the server with with the following:
+
 ```bash
 pnpm run dev
 
