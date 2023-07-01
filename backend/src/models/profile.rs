@@ -28,6 +28,15 @@ pub struct ProfileMember {
 #[derive(Serialize)]
 pub struct Inventories {
     pub armor: Option<Vec<Option<Item>>>,
+    pub player: Option<Vec<Option<Item>>>,
+    pub ender_chest: Option<Vec<Option<Item>>>,
+    pub accessory_bag: Option<Vec<Option<Item>>>,
+    pub potion_bag: Option<Vec<Option<Item>>>,
+    pub fishing_bag: Option<Vec<Option<Item>>>,
+    pub quiver: Option<Vec<Option<Item>>>,
+    pub trick_or_treat_bag: Option<Vec<Option<Item>>>,
+    pub wardrobe: Option<Vec<Option<Item>>>,
+    pub personal_vault: Option<Vec<Option<Item>>>,
 }
 
 #[derive(Serialize)]
@@ -38,8 +47,10 @@ pub struct Item {
     pub skyblock_id: Option<String>,
 
     pub display: ItemDisplay,
-    pub enchantments: HashMap<String, i32>,
 
+    #[serde(skip_serializing_if = "HashMap::is_empty")]
+    pub enchantments: HashMap<String, i32>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub timestamp: Option<String>,
 }
 
@@ -47,7 +58,9 @@ pub struct Item {
 pub struct ItemDisplay {
     pub name: String,
     pub lore: Vec<String>,
-    pub color: Option<i32>,
 
     pub has_glint: bool,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub color: Option<i32>,
 }

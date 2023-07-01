@@ -45,6 +45,30 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         });
     }
 
+    fn process_optional_inventory(
+        inv: &Option<models::hypixel::inventory::Inventory>,
+    ) -> Result<Option<Vec<Option<models::profile::Item>>>, ApiError> {
+        inv.as_ref()
+            .map(processing::inventory::inventory)
+            .transpose()
+    }
+    let inventories = Inventories {
+        armor: process_optional_inventory(&member.inv_armor)?.map(|mut armor| {
+            // reverse it so helmet is first
+            armor.reverse();
+            armor
+        }),
+        player: process_optional_inventory(&member.inv_contents)?,
+        ender_chest: process_optional_inventory(&member.ender_chest_contents)?,
+        accessory_bag: process_optional_inventory(&member.talisman_bag)?,
+        potion_bag: process_optional_inventory(&member.potion_bag)?,
+        fishing_bag: process_optional_inventory(&member.fishing_bag)?,
+        quiver: process_optional_inventory(&member.quiver)?,
+        trick_or_treat_bag: process_optional_inventory(&member.candy_inventory_contents)?,
+        wardrobe: process_optional_inventory(&member.wardrobe_contents)?,
+        personal_vault: process_optional_inventory(&member.personal_vault_contents)?,
+    };
+
     Ok(ProfileMember {
         player: player.base,
         profile: models::profile::Profile {
@@ -56,12 +80,6 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
 
         skyblock_level: member.leveling.experience as f64 / 100.,
         fairy_souls: member.fairy_souls_collected,
-        inventories: Inventories {
-            armor: member
-                .inv_armor
-                .as_ref()
-                .map(processing::inventory::inventory)
-                .transpose()?,
-        },
+        inventories,
     })
 }
