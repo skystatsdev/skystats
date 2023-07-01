@@ -23,11 +23,12 @@ jobs:
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
+        
+      - name: cd
+        run: cd frontend
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
-        with: 
-            dest: ./frontend/setup-pnpm
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
