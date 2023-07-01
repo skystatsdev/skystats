@@ -1,5 +1,4 @@
 name: Website
-description: Checks for formatting/linting/warnings in the front end
 
 on:
   push:
