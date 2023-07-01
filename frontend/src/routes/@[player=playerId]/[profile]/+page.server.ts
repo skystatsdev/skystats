@@ -1,48 +1,32 @@
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
-import type { Profiles } from '$lib/skyblock';
+import { API_HOST_URL } from '$env/static/private';
 
-export const load = (async ({ params, fetch }) => {
-	const { player, profile } = params;
+export const load = (async ({ params, fetch, parent }) => {
+	const { player } = await parent();
+	const { profile } = params;
 
-	let ign = player;
-	let uuid = player;
-	let profileName = profile;
-
-	//! Very temporary calls to other API as the main one is being built
-
-	const accountRequest = await fetch(`https://elitebot.dev/api/account/${player}`);
-
-	if (accountRequest.status !== 200) {
-		throw error(accountRequest.status, 'Player not found');
-	}
-
-	const { account } = await accountRequest.json();
-	ign = account.name;
-	uuid = account.id;
-
-	const profilesReq = await fetch(`https://elitebot.dev/api/profiles/${uuid}`);
+	const profilesReq = await fetch(`${API_HOST_URL}/player/${player.uuid}/${profile}`);
 
 	if (profilesReq.status !== 200) {
 		throw error(profilesReq.status, 'Profiles not found');
 	}
 
-	const { profiles } = (await profilesReq.json()) as Profiles;
-
-	const selectedProfile = profiles.find(
-		(profile) => profile.cute_name === profileName || profile.profile_id === profileName
-	);
-
-	if (!selectedProfile) {
-		throw error(404, 'Profile not found');
-	}
-
-	profileName = selectedProfile.cute_name;
+	//! Very temporary type information
+	const data = (await profilesReq.json()) as {
+		profile: {
+			uuid: string;
+			members: {
+				uuid: string;
+				username: string;
+			}[];
+		};
+		profile_name: string;
+		skyblock_level: number;
+		fairy_souls: number;
+	};
 
 	return {
-		account: account,
-		ign: ign,
-		profileName: profileName,
-		profile: selectedProfile
+		profile: data
 	};
 }) satisfies PageServerLoad;
