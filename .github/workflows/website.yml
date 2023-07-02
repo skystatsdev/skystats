@@ -118,6 +118,12 @@ jobs:
 
       - name: Install node dependencies
         run: pnpm i
+        
+      - name: Make dummy env for types
+            run:|
+                echo "ls -a ."
+                ls -a .
+                mv .env.example .env
 
       - name: Check Svelte
         run: pnpm run check
