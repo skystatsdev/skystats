@@ -37,9 +37,6 @@ jobs:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
 
-      - name: Install node dependencies
-        run: pnpm install --filter "{$cwd}/frontend"
-
   es-lint:
     name: check linting (es-lint)
     needs: [pnpm]
