@@ -6,6 +6,7 @@ use thiserror::Error;
 pub mod inventory;
 pub mod player;
 pub mod profiles;
+pub mod skills;
 
 #[derive(Deserialize, Error, Debug)]
 #[error("{cause}")]

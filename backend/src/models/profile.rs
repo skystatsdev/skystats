@@ -23,6 +23,7 @@ pub struct ProfileMember {
     pub skyblock_level: f64,
     pub fairy_souls: u32,
     pub inventories: Inventories,
+    pub skills: Skills,
 }
 
 #[derive(Serialize)]
@@ -68,4 +69,33 @@ pub struct ItemDisplay {
 
     #[serde(skip_serializing_if = "Option::is_none")]
     pub color: Option<i32>,
+}
+
+#[derive(Serialize)]
+pub struct Skill {
+    pub xp: f64,
+    pub level: u32,
+    pub max_level: u32,
+    pub xp_current: f64,
+    pub xp_for_next: u32,
+    pub progress: f64,
+    pub level_cap: u32,
+    pub uncapped_level: usize,
+    pub level_with_progress: f64,
+    pub uncapped_level_with_progress: f64,
+}
+
+#[derive(Serialize)]
+pub struct Skills {
+    pub farming: Skill,
+    pub mining: Skill,
+    pub combat: Skill,
+    pub foraging: Skill,
+    pub fishing: Skill,
+    pub enchanting: Skill,
+    pub alchemy: Skill,
+    pub carpentry: Skill,
+    pub runecrafting: Skill,
+    pub social2: Skill,
+    pub taming: Skill,
 }
