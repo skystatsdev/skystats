@@ -1,6 +1,6 @@
 use crate::models::profile::Skill;
 
-pub const LEVELING_XP: [(u32, u32); 60] = [
+const LEVELING_XP: [(u32, u32); 60] = [
     (1, 50),
     (2, 125),
     (3, 200),
@@ -63,7 +63,7 @@ pub const LEVELING_XP: [(u32, u32); 60] = [
     (60, 7000000),
 ];
 
-pub const LEVELING_XP_RUNECRAFTING: [(u32, u32); 25] = [
+const LEVELING_XP_RUNECRAFTING: [(u32, u32); 25] = [
     (1, 50),
     (2, 100),
     (3, 125),
@@ -91,7 +91,7 @@ pub const LEVELING_XP_RUNECRAFTING: [(u32, u32); 25] = [
     (25, 19050),
 ];
 
-pub const LEVELING_XP_SOCIAL: [(u32, u32); 25] = [
+const LEVELING_XP_SOCIAL: [(u32, u32); 25] = [
     (1, 50),
     (2, 100),
     (3, 150),
@@ -119,7 +119,7 @@ pub const LEVELING_XP_SOCIAL: [(u32, u32); 25] = [
     (25, 50000),
 ];
 
-pub const DUNGEONEERING_XP: [(u32, u32); 50] = [
+const DUNGEONEERING_XP: [(u32, u32); 50] = [
     (1, 50),
     (2, 75),
     (3, 110),
@@ -172,7 +172,7 @@ pub const DUNGEONEERING_XP: [(u32, u32); 50] = [
     (50, 116250000),
 ];
 
-pub const DEFAULT_SKILL_CAPS: [(&str, u32); 11] = [
+const DEFAULT_SKILL_CAPS: [(&str, u32); 11] = [
     ("farming", 50),
     ("mining", 60),
     ("combat", 60),
@@ -186,9 +186,9 @@ pub const DEFAULT_SKILL_CAPS: [(&str, u32); 11] = [
     ("social2", 25),
 ];
 
-pub const MAXED_SKILL_CAPS: [(&str, u32); 1] = [("farming", 60)];
+const MAXED_SKILL_CAPS: [(&str, u32); 1] = [("farming", 60)];
 
-pub fn get_leveling_table(r#type: &str, skill_name: &str) -> &'static [(u32, u32)] {
+fn get_leveling_table(r#type: &str, skill_name: &str) -> &'static [(u32, u32)] {
     match r#type {
         "skills" => match skill_name {
             "runecrafting" => &LEVELING_XP_RUNECRAFTING,
@@ -241,7 +241,7 @@ pub fn get_level_by_xp(r#type: &str, skill_name: &str, xp: f64, cap: Option<u32>
     }
 
     // the maximum level that any player can achieve (used for gold progress bars)
-    // TODO: add ignoreCap argument
+    // TODO: add ignoreCap argument (used for catacombs level above 50)
     let max_level = MAXED_SKILL_CAPS
         .iter()
         .find(|(name, _)| name == &skill)
