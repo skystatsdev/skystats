@@ -1,5 +1,8 @@
 <script lang="ts">
+	import '../app.css';
 	import { page } from '$app/stores';
+	import Header from '$comp/header.svelte';
+	console.log($page.url.toString());
 </script>
 
 <svelte:head>
@@ -9,9 +12,3 @@
 </svelte:head>
 
 <slot />
-
-<style lang="postcss">
-	@tailwind base;
-	@tailwind components;
-	@tailwind utilities;
-</style>
