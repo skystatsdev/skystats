@@ -73,13 +73,16 @@ pub struct ItemDisplay {
 
 #[derive(Serialize)]
 pub struct Skill {
-    pub experience: f64,
+    pub xp: f64,
     pub level: u32,
     pub max_level: u32,
-    pub xp_current: u32,
+    pub xp_current: f64,
     pub xp_for_next: u32,
-    pub progress: f32,
-    pub level_with_progress: f32,
+    pub progress: f64,
+    pub level_cap: u32,
+    pub uncapped_level: usize,
+    pub level_with_progress: f64,
+    pub uncapped_level_with_progress: f64,
 }
 
 #[derive(Serialize)]

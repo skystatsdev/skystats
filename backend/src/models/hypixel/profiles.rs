@@ -75,10 +75,25 @@ pub struct ListedProfileMember {
     pub experience_skill_carpentry: Option<f64>,
     #[serde(default)]
     pub experience_skill_mining: Option<f64>,
+
+    #[serde(default)]
+    pub jacob2: Option<Jacob2>,
 }
 
 #[derive(Deserialize, Default)]
 pub struct SkyBlockLeveling {
     #[serde(default)]
     pub experience: u64,
+}
+
+#[derive(Deserialize, Default)]
+pub struct Jacob2 {
+    #[serde(default)]
+    pub perks: Option<JacobPerks>,
+}
+
+#[derive(Deserialize, Default)]
+pub struct JacobPerks {
+    #[serde(default)]
+    pub farming_level_cap: usize,
 }
