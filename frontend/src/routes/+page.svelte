@@ -17,7 +17,7 @@
 		search = e.target.value;
 	}
 
-	export let search: string = '';
+	export let search = '';
 </script>
 
 <div
@@ -27,6 +27,7 @@
 		class="grid col-[1/-1] justify-items-center gap-[25px] py-[25px] text-[30px] rounded-[10px] backdrop-blur-lg backdrop-brightness-50"
 	>
 		<p class="block w-[100%] text-center font-semibold">Show Skyblock stats for</p>
+		<!-- svelte-ignore a11y-autofocus -->
 		<input
 			on:change={(e) => handleInput(e)}
 			autofocus

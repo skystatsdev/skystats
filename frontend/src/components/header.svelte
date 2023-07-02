@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let showSearchBar: boolean = true;
+	export let showSearchBar = true;
 </script>
 
 <header
