@@ -26,15 +26,17 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: |
+            - cwd: frontend
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
-
-      - name: Install node dependencies
-        run: pnpm i
+          cache-dependency-path: 'frontend'
 
   es-lint:
     name: check linting (es-lint)
@@ -46,12 +48,17 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: |
+            - cwd: frontend
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
+          cache-dependency-path: 'frontend'
 
       - name: Install node dependencies
         run: pnpm i
@@ -69,18 +76,23 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: |
+            - cwd: frontend
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
+          cache-dependency-path: 'frontend'
 
       - name: Install node dependencies
         run: pnpm i
 
       - name: Check Prettier
-        run: pnpm prettier
+        run: pnpm prettier --check .
 
   sveltecheck:
     name: check svelte
@@ -92,15 +104,26 @@ jobs:
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
+        with:
+          version: 7
+          run_install: |
+            - cwd: frontend
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
+          cache-dependency-path: 'frontend'
 
       - name: Install node dependencies
         run: pnpm i
+        
+      - name: Make dummy env for types
+        run: |
+            echo "ls -a ."
+            ls -a .
+            mv .env.example .env
 
       - name: Check Svelte
         run: pnpm run check
