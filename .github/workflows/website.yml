@@ -38,7 +38,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install node dependencies
-        run: pnpm install --filter "{$cwd}/frontend"
+        run: cd .. && pnpm i
 
   es-lint:
     name: check linting (es-lint)
