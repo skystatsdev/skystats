@@ -172,62 +172,79 @@ const DUNGEONEERING_XP: [(u32, u32); 50] = [
     (50, 116250000),
 ];
 
-const DEFAULT_SKILL_CAPS: [(&str, u32); 11] = [
-    ("farming", 50),
-    ("mining", 60),
-    ("combat", 60),
-    ("foraging", 50),
-    ("fishing", 50),
-    ("enchanting", 60),
-    ("alchemy", 50),
-    ("taming", 50),
-    ("carpentry", 50),
-    ("runecrafting", 25),
-    ("social2", 25),
-];
+#[derive(Copy, Clone, Debug, PartialEq, Eq, Hash)]
+pub enum SkillKind {
+    Farming,
+    Mining,
+    Combat,
+    Foraging,
+    Fishing,
+    Enchanting,
+    Alchemy,
+    Taming,
+    Dungeoneering,
+    Carpentry,
+    Runecrafting,
+    Social,
+}
 
-const MAXED_SKILL_CAPS: [(&str, u32); 1] = [("farming", 60)];
+impl SkillKind {
+    pub fn default_level_cap(self) -> u32 {
+        match self {
+            SkillKind::Farming => 50,
+            SkillKind::Mining => 60,
+            SkillKind::Combat => 60,
+            SkillKind::Foraging => 50,
+            SkillKind::Fishing => 50,
+            SkillKind::Enchanting => 60,
+            SkillKind::Alchemy => 50,
+            SkillKind::Taming => 50,
+            SkillKind::Dungeoneering => 50,
+            SkillKind::Carpentry => 50,
+            SkillKind::Runecrafting => 25,
+            SkillKind::Social => 25,
+        }
+    }
 
-fn get_leveling_table(r#type: &str, skill_name: &str) -> &'static [(u32, u32)] {
-    match r#type {
-        "skills" => match skill_name {
-            "runecrafting" => &LEVELING_XP_RUNECRAFTING,
-            "social2" => &LEVELING_XP_SOCIAL,
+    pub fn max_level_cap(self) -> u32 {
+        match self {
+            SkillKind::Farming => 60,
+            _ => self.default_level_cap(),
+        }
+    }
+
+    pub fn leveling_table(self) -> &'static [(u32, u32)] {
+        match self {
+            SkillKind::Runecrafting => &LEVELING_XP_RUNECRAFTING,
+            SkillKind::Social => &LEVELING_XP_SOCIAL,
+            SkillKind::Dungeoneering => &DUNGEONEERING_XP,
             _ => &LEVELING_XP,
-        },
-        "dungeons" => &DUNGEONEERING_XP,
-        _ => panic!("Invalid type"),
+        }
     }
 }
 
-pub fn get_level_by_xp(r#type: &str, skill_name: &str, xp: f64, cap: Option<u32>) -> Skill {
-    // the name of the skill in lowercase
-    let skill: String = skill_name.to_lowercase();
-
+pub fn get_level_by_xp(skill: SkillKind, xp: f64, additional_cap: Option<u32>) -> Skill {
     // the table of xp required for each level
-    let xp_table = get_leveling_table(r#type, skill.as_str());
+    let xp_table = skill.leveling_table();
 
     // the level that this player is caped at
-    // ? let levelCap = (DEFAULT_SKILL_CAPS[skill] ?? xp_table.length) + (cap ?? 0)
-    let level_cap = DEFAULT_SKILL_CAPS
-        .iter()
-        .find(|(name, _)| name == &skill)
-        .map(|(_, level)| *level)
-        .unwrap_or(xp_table.len() as u32)
-        + cap.unwrap_or(0);
+    let level_cap = skill.default_level_cap() + additional_cap.unwrap_or(0);
 
     // the level ignoring the cap and using only the table
-    let mut uncapped_level = 0;
+    let mut uncapped_level: u32 = 0;
 
-    // the amount of xp over the amount required for the level (used for calculation progress to next level)
+    // the amount of xp over the amount required for the level (used for calculation progress to
+    // next level)
     let mut xp_current = xp;
 
     // like xpCurrent but ignores cap
     let mut xp_remaining = xp;
 
-    while uncapped_level < xp_table.len() && xp_table[uncapped_level].1 <= xp_remaining as u32 {
-        xp_remaining -= xp_table[uncapped_level].1 as f64;
-        if uncapped_level <= level_cap as usize {
+    while uncapped_level < (xp_table.len() as u32)
+        && xp_table[uncapped_level as usize].1 <= xp_remaining as u32
+    {
+        xp_remaining -= xp_table[uncapped_level as usize].1 as f64;
+        if uncapped_level <= level_cap {
             xp_current = xp_remaining;
         }
 
@@ -235,27 +252,20 @@ pub fn get_level_by_xp(r#type: &str, skill_name: &str, xp: f64, cap: Option<u32>
     }
 
     // adds support for catacombs level above 50
-    if r#type == "dungeoneering" {
-        uncapped_level += (xp_current / 200_000_000.0) as usize;
+    if skill == SkillKind::Dungeoneering {
+        uncapped_level += (xp_current / 200_000_000.0) as u32;
         xp_current %= 200_000_000.0;
     }
 
     // the maximum level that any player can achieve (used for gold progress bars)
     // TODO: add ignoreCap argument (used for catacombs level above 50)
-    let max_level = MAXED_SKILL_CAPS
-        .iter()
-        .find(|(name, _)| name == &skill)
-        .map(|(_, level)| *level)
-        .unwrap_or(level_cap);
+    let max_level = skill.max_level_cap();
 
     // the level as displayed by in game UI
-    let level = if uncapped_level > level_cap as usize {
-        level_cap
-    } else {
-        uncapped_level as u32
-    };
+    let level = u32::min(uncapped_level, level_cap);
 
-    // the amount amount of xp needed to reach the next level (used for calculation progress to next level)
+    // the amount amount of xp needed to reach the next level (used for calculation progress to next
+    // level)
     let xp_for_next = if level < max_level {
         xp_table[level as usize].1
     } else {
@@ -266,17 +276,19 @@ pub fn get_level_by_xp(r#type: &str, skill_name: &str, xp: f64, cap: Option<u32>
     let progress = if level == max_level {
         1.0
     } else {
-        xp_current as f64 / xp_for_next as f64
+        xp_current / xp_for_next as f64
     };
 
-    // a floating point value representing the current level for example if you are half way to level 5 it would be 4.5
+    // a floating point value representing the current level for example if you are half way to
+    // level 5 it would be 4.5
     let level_with_progress = if level == level_cap {
         level as f64
     } else {
         level as f64 + progress
     };
 
-    // a floating point value representing the current level ignoring the in-game unlockable caps for example if you are half way to level 5 it would be 4.5
+    // a floating point value representing the current level ignoring the in-game unlockable caps
+    // for example if you are half way to level 5 it would be 4.5
     let uncapped_level_with_progress = if level == max_level {
         uncapped_level as f64
     } else {

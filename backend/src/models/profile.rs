@@ -80,7 +80,7 @@ pub struct Skill {
     pub xp_for_next: u32,
     pub progress: f64,
     pub level_cap: u32,
-    pub uncapped_level: usize,
+    pub uncapped_level: u32,
     pub level_with_progress: f64,
     pub uncapped_level_with_progress: f64,
 }
@@ -96,6 +96,6 @@ pub struct Skills {
     pub alchemy: Skill,
     pub carpentry: Skill,
     pub runecrafting: Skill,
-    pub social2: Skill,
+    pub social: Skill,
     pub taming: Skill,
 }
