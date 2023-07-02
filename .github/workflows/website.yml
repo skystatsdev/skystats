@@ -27,6 +27,7 @@ jobs:
       - name: Setup pnpm
         uses: pnpm/action-setup@v2
         with:
+          version: 7
           run_install: |
             - cwd: frontend
 
@@ -37,7 +38,7 @@ jobs:
           cache: "pnpm"
 
       - name: Install node dependencies
-        run: pnpm i
+        run: cd frontend && pnpm i
 
   es-lint:
     name: check linting (es-lint)
