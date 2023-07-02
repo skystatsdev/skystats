@@ -225,7 +225,7 @@ pub fn get_level_by_xp(r#type: &str, skill_name: &str, xp: f64, cap: Option<u32>
     // like xpCurrent but ignores cap
     let mut xp_remaining = xp;
 
-    while xp_table[uncapped_level].1 <= xp_remaining as u32 {
+    while uncapped_level < xp_table.len() && xp_table[uncapped_level].1 <= xp_remaining as u32 {
         xp_remaining -= xp_table[uncapped_level].1 as f64;
         if uncapped_level <= level_cap as usize {
             xp_current = xp_remaining;
