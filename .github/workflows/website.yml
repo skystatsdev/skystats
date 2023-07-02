@@ -36,6 +36,7 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: "pnpm"
+          cache-dependency-path: 'frontend'
 
   es-lint:
     name: check linting (es-lint)
