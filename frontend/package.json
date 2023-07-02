@@ -13,7 +13,7 @@
 		"deploy": "node build/index.js",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-    "fix": "prettier --write . && eslint --fix"
+		"fix": "prettier --write . && eslint --fix"
 	},
 	"devDependencies": {
 		"@storybook/addon-essentials": "^7.0.24",
