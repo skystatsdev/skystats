@@ -1,8 +1,8 @@
 <script lang="ts">
-	import "../app.css";
+	import '../app.css';
 	import { page } from '$app/stores';
 	import Header from '$comp/header.svelte';
-	console.log($page.url.toString())
+	console.log($page.url.toString());
 </script>
 
 <svelte:head>

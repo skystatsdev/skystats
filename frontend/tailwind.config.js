@@ -27,9 +27,9 @@ export default {
 			textShadow: {
 				sm: '0 1px 2px rgba(0, 0, 0, 0.1)',
 				default: '0 2px 4px rgba(0, 0, 0, 0.1)',
-				lg: '0 8px 16px rgba(0, 0, 0, 0.1)',
+				lg: '0 8px 16px rgba(0, 0, 0, 0.1)'
 			}
-		},
+		}
 	},
 	plugins: [require('flowbite/plugin')]
 };
