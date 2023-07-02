@@ -19,6 +19,15 @@ export default {
 					800: '#CC4522',
 					900: '#A5371B'
 				}
+			},
+			backgroundImage: (theme) => ({
+				'hero-pattern': 'url(https://sky.shiiyu.moe/resources/img/bg.webp)',
+				'footer-texture': 'url(https://sky.shiiyu.moe/resources/img/footer-texture.png)'
+			}),
+			textShadow: {
+				sm: '0 1px 2px rgba(0, 0, 0, 0.1)',
+				default: '0 2px 4px rgba(0, 0, 0, 0.1)',
+				lg: '0 8px 16px rgba(0, 0, 0, 0.1)'
 			}
 		}
 	},
