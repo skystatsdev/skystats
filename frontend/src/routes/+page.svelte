@@ -10,14 +10,12 @@
 	];
 	$: user = users;
 
-	function routeToPage(route: string, replaceState: boolean) {
-		goto(`/@${route}`, { replaceState });
-	}
-	function handleInput(e: any) {
-		search = e.target.value;
-	}
+	let search: string;
 
-	export let search = '';
+	function gotoPlayer() {
+		if (!search) return;
+		goto(`/@${search}`);
+	}
 </script>
 
 <div
@@ -27,20 +25,19 @@
 		class="grid col-[1/-1] justify-items-center gap-[25px] py-[25px] text-[30px] rounded-[10px] backdrop-blur-lg backdrop-brightness-50"
 	>
 		<p class="block w-[100%] text-center font-semibold">Show Skyblock stats for</p>
-		<!-- svelte-ignore a11y-autofocus -->
-		<input
-			on:change={(e) => handleInput(e)}
-			autofocus
-			enterkeyhint="go"
-			aria-label="username"
-			required
-			placeholder="Enter a username"
-			class="relative w-[100%] h-[2.25em] text-[30px] text-center box-border bg-white/10 border-0 text-white"
-		/>
-		<button
-			on:click={() => routeToPage(search, false)}
+		<form class="w-full" on:submit|preventDefault={gotoPlayer}>
+			<input
+				bind:value={search}
+				aria-label="username"
+				required
+				placeholder="Enter a username"
+				class="relative w-[100%] h-[2.25em] text-[30px] text-center box-border bg-white/10 border-0 text-white"
+			/>
+		</form>
+		<a
+			href="/@{search}"
 			class="flex h-[48px] rounded-3xl px-[24px] items-center border-0 appearance-none bg-[#C24100] uppercase text-[16px] text-white font-bold [text-shadow:0_0_3px_rgba(0,0,0,.5)] hover:scale-[1.02] duration-150 ease-in-out"
-			>Submit</button
+			>Submit</a
 		>
 	</div>
 	<a
