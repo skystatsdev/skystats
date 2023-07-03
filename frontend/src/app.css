@@ -5,7 +5,7 @@
 @layer base {
 	html {
 		font-family: 'icomoon', 'Montserrat', sans-serif;
-		background: url(https://sky.shiiyu.moe/resources/img/bg.webp) no-repeat center center fixed #121212;
+		background: url(/images/bg.webp) no-repeat center center fixed #121212;
 		background-size: cover;
 		scroll-behavior: smooth;
 		color: white;

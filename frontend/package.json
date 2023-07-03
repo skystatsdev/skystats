@@ -38,6 +38,7 @@
 		"prettier-plugin-svelte": "^2.10.1",
 		"react": "^18.2.0",
 		"react-dom": "^18.2.0",
+		"skinview3d": "3.0.0-alpha.1",
 		"storybook": "^7.0.24",
 		"svelte": "^4.0.0",
 		"svelte-check": "^3.4.3",

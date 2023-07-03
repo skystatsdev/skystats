@@ -21,6 +21,7 @@
 	{/if}
 	{#if imageUrl}
 		<meta property="og:image" content={imageUrl} />
+		<link rel="icon" href={imageUrl} />
 	{/if}
 	<slot />
 </svelte:head>
