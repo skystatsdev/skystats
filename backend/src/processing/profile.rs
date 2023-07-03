@@ -5,12 +5,13 @@ use crate::{
     models::{
         self,
         hypixel::inventory::process_optional_inventory,
-        hypixel::skills::get_level_by_xp,
         profile::{Inventories, ProfileMember, Skills},
     },
     mojang, processing,
     routes::ApiError,
 };
+
+use super::skills::{get_level_by_xp, SkillKind};
 
 pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMember, ApiError> {
     let player = processing::player::player(player_uuid).await?;
@@ -72,68 +73,57 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
 
     let skills = Skills {
         farming: get_level_by_xp(
-            "skills",
-            "farming",
+            SkillKind::Farming,
             member.experience_skill_farming.unwrap_or(0.0),
             Some(farming_level_cap as u32),
         ),
         mining: get_level_by_xp(
-            "skills",
-            "mining",
+            SkillKind::Mining,
             member.experience_skill_mining.unwrap_or(0.0),
             None,
         ),
         combat: get_level_by_xp(
-            "skills",
-            "combat",
+            SkillKind::Combat,
             member.experience_skill_combat.unwrap_or(0.0),
             None,
         ),
         foraging: get_level_by_xp(
-            "skills",
-            "foraging",
+            SkillKind::Foraging,
             member.experience_skill_foraging.unwrap_or(0.0),
             None,
         ),
         fishing: get_level_by_xp(
-            "skills",
-            "fishing",
+            SkillKind::Fishing,
             member.experience_skill_fishing.unwrap_or(0.0),
             None,
         ),
         enchanting: get_level_by_xp(
-            "skills",
-            "enchanting",
+            SkillKind::Enchanting,
             member.experience_skill_enchanting.unwrap_or(0.0),
             None,
         ),
         alchemy: get_level_by_xp(
-            "skills",
-            "alchemy",
+            SkillKind::Alchemy,
             member.experience_skill_alchemy.unwrap_or(0.0),
             None,
         ),
         carpentry: get_level_by_xp(
-            "skills",
-            "carpentry",
+            SkillKind::Carpentry,
             member.experience_skill_carpentry.unwrap_or(0.0),
             None,
         ),
         runecrafting: get_level_by_xp(
-            "skills",
-            "runecrafting",
+            SkillKind::Runecrafting,
             member.experience_skill_runecrafting.unwrap_or(0.0),
             None,
         ),
-        social2: get_level_by_xp(
-            "skills",
-            "social",
+        social: get_level_by_xp(
+            SkillKind::Social,
             member.experience_skill_social2.unwrap_or(0.0),
             None,
         ),
         taming: get_level_by_xp(
-            "skills",
-            "taming",
+            SkillKind::Taming,
             member.experience_skill_taming.unwrap_or(0.0),
             None,
         ),

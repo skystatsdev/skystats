@@ -27,6 +27,19 @@ export const load = (async ({ params, fetch, parent }) => {
 		player: {
 			uuid: string;
 			username: string;
+		skills: {
+			[name: string]: {
+				xp: number;
+				level: number;
+				max_level: number;
+				xp_current: number;
+				xp_for_next: number;
+				progress: number;
+				level_cap: number;
+				uncapped_level: number;
+				level_with_progress: number;
+				uncapped_level_with_progress: number;
+			};
 		};
 	};
 
