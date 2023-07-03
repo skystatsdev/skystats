@@ -27,6 +27,7 @@ export const load = (async ({ params, fetch, parent }) => {
 		player: {
 			uuid: string;
 			username: string;
+		};
 		skills: {
 			[name: string]: {
 				xp: number;
