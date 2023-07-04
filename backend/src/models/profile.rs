@@ -1,6 +1,7 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, time::Duration};
 
 use serde::Serialize;
+use serde_with::{serde_as, DurationMilliSeconds};
 use uuid::Uuid;
 
 use super::player::BasePlayer;
@@ -101,10 +102,23 @@ pub struct Skills {
     pub taming: Skill,
 }
 
-#[derive(Serialize, Default)]
+#[serde_as]
+#[derive(Serialize)]
 pub struct Stats {
     pub deaths: MobStats,
     pub kills: MobStats,
+
+    // serialize as milliseconds since otherwise it looks weird
+    #[serde_as(as = "HashMap<_, DurationMilliSeconds>")]
+    pub races: HashMap<String, Duration>,
+
+    pub auctions: HashMap<String, u32>,
+    pub dragon: HashMap<String, u32>,
+    pub rift: HashMap<String, u32>,
+    pub fishing: FishingStats,
+    pub mythos: MythosStats,
+    pub highest_damage: HighestDamageStats,
+    pub winter_records: HashMap<String, u32>,
 
     pub misc: HashMap<String, f64>,
 }
@@ -113,4 +127,24 @@ pub struct Stats {
 pub struct MobStats {
     pub total: u32,
     pub by_mob: HashMap<String, u32>,
+}
+
+#[derive(Serialize, Default)]
+pub struct FishingStats {
+    pub total_items_fished: u32,
+    pub items_fished: HashMap<String, u32>,
+    pub sea_creature_kills: u32,
+    pub shredder: HashMap<String, u32>,
+}
+
+#[derive(Serialize, Default)]
+pub struct MythosStats {
+    pub kills: u32,
+    pub burrows: HashMap<String, u32>,
+}
+
+#[derive(Serialize, Default)]
+pub struct HighestDamageStats {
+    pub normal: f64,
+    pub critical: f64,
 }
