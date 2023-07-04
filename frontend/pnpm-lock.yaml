@@ -85,6 +85,9 @@ devDependencies:
   react-dom:
     specifier: ^18.2.0
     version: 18.2.0(react@18.2.0)
+  skinview3d:
+    specifier: 3.0.0-alpha.1
+    version: 3.0.0-alpha.1
   storybook:
     specifier: ^7.0.24
     version: 7.0.24
@@ -4150,6 +4153,10 @@ packages:
     resolution: {integrity: sha512-WKG4gTr8przEZBiJ5r3s8ZIAoMXNbOgQ+j/d5O4X3x6kZJRLNvyUJuUK/KoG3+8BaOHPhp2m7WC6JKKeovDSzQ==}
     dev: true
 
+  /@types/offscreencanvas@2019.7.0:
+    resolution: {integrity: sha512-PGcyveRIpL1XIqK8eBsmRBt76eFgtzuPiSTyKHZxnGemp2yzGzWpjYKAfK3wIMiU7eH+851yEpiuP8JZerTmWg==}
+    dev: true
+
   /@types/pretty-hrtime@1.0.1:
     resolution: {integrity: sha512-VjID5MJb1eGKthz2qUerWT8+R4b9N+CHvGCzg9fn4kWZgaF9AhdYikQio3R7wV8YY1NsQKPaCwKz1Yff+aHNUQ==}
     dev: true
@@ -4205,8 +4212,18 @@ packages:
       '@types/node': 20.3.3
     dev: true
 
+  /@types/three@0.142.0:
+    resolution: {integrity: sha512-YNVnlqthfgqsxKuSNbT/G2r+ha/6x+aJm7kvjT+sxa4jUROw/KOPm5xzGj33sk1+Librg6NwH/wJ6LCDX33UZg==}
+    dependencies:
+      '@types/webxr': 0.5.2
+    dev: true
+
   /@types/unist@2.0.6:
     resolution: {integrity: sha512-PBjIUxZHOuj0R15/xuwJYjFi+KZdNFrehocChv4g5hu6aFroHue8m0lBP0POdK2nKzbw0cgV1mws8+V/JAcEkQ==}
+    dev: true
+
+  /@types/webxr@0.5.2:
+    resolution: {integrity: sha512-szL74BnIcok9m7QwYtVmQ+EdIKwbjPANudfuvDrAF8Cljg9MKUlIoc1w5tjj9PMpeSH3U1Xnx//czQybJ0EfSw==}
     dev: true
 
   /@types/yargs-parser@21.0.0:
@@ -8314,6 +8331,20 @@ packages:
     resolution: {integrity: sha512-bLGGlR1QxBcynn2d5YmDX4MGjlZvy2MRBDRNHLJ8VI6l6+9FUiyTFNJ0IveOSP0bcXgVDPRcfGqA0pjaqUpfVg==}
     dev: true
 
+  /skinview-utils@0.7.0:
+    resolution: {integrity: sha512-ecbbUp0AuvZX5fCIOOwbNPxr/JIbrAGhCcdLcww0Ov9PbvAbeYjNDSIu1ebCJBe4CWc6ZYYn8MFNp68DDta0iQ==}
+    dependencies:
+      '@types/offscreencanvas': 2019.7.0
+    dev: true
+
+  /skinview3d@3.0.0-alpha.1:
+    resolution: {integrity: sha512-Y5v5yxQIVZZwpQlnRHeVZ9pgDOETLkPrkeMcwJN92OFAYQ0+WTHy6WlZOu0M1DRys+h8iyBdxRb/9976ftt72Q==}
+    dependencies:
+      '@types/three': 0.142.0
+      skinview-utils: 0.7.0
+      three: 0.142.0
+    dev: true
+
   /slash@3.0.0:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
@@ -8753,6 +8784,10 @@ packages:
     resolution: {integrity: sha512-RVZSIV5IG10Hk3enotrhvz0T9em6cyHBLkH/YAZuKqd8hRkKhSfCGIcP2KUY0EPxndzANBmNllzWPwak+bheSw==}
     dependencies:
       any-promise: 1.3.0
+    dev: true
+
+  /three@0.142.0:
+    resolution: {integrity: sha512-ESjPO+3geFr+ZUfVMpMnF/eVU2uJPOh0e2ZpMFqjNca1wApS9lJb7E4MjwGIczgt9iuKd8PEm6Pfgp2bJ92Xtg==}
     dev: true
 
   /through2@2.0.5:

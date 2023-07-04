@@ -1,5 +1,6 @@
 <script lang="ts">
 	import Head from '$comp/head.svelte';
+	import PlayerRender from '$comp/playerRender.svelte';
 	import Header from '$comp/header.svelte';
 	import SkillComponent from '$comp/skillComponent.svelte';
 	import type { PageData } from './$types';
@@ -7,11 +8,16 @@
 	export let data: PageData;
 </script>
 
-<Head title="{data.player.username} | Skyblock Stats" description="Very cool stats" />
+<Head
+	title="{data.player.username} | Skyblock Stats"
+	description="Very cool stats"
+	imageUrl="https://mc-heads.net/avatar/{data.player.username}"
+/>
 
 <Header />
 
 <p>Skyblock Level - {data.profile.skyblock_level}</p>
+<PlayerRender uuid={data.player.uuid} />
 <img src="https://mc-heads.net/body/{data.player.uuid}" alt="Minecraft Skin" />
 <h1>{data.player.username} | {data.profile.profile_name}</h1>
 
