@@ -5,7 +5,7 @@ use crate::{
     models::{
         self,
         hypixel::inventory::process_optional_inventory,
-        profile::{Inventories, MobStats, ProfileMember, Skills, Stats},
+        profile::{Inventories, ProfileMember, Skills},
     },
     mojang, processing,
     routes::ApiError,
