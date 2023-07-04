@@ -24,6 +24,10 @@ export const load = (async ({ params, fetch, parent }) => {
 		profile_name: string;
 		skyblock_level: number;
 		fairy_souls: number;
+		player: {
+			uuid: string;
+			username: string;
+		};
 		skills: {
 			[name: string]: {
 				xp: number;
