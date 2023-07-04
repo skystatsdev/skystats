@@ -78,6 +78,9 @@ pub struct ListedProfileMember {
 
     #[serde(default)]
     pub jacob2: Option<Jacob2>,
+
+    #[serde(default)]
+    pub stats: HashMap<String, f64>,
 }
 
 #[derive(Deserialize, Default)]

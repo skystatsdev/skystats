@@ -24,6 +24,7 @@ pub struct ProfileMember {
     pub fairy_souls: u32,
     pub inventories: Inventories,
     pub skills: Skills,
+    pub stats: Stats,
 }
 
 #[derive(Serialize)]
@@ -98,4 +99,18 @@ pub struct Skills {
     pub runecrafting: Skill,
     pub social: Skill,
     pub taming: Skill,
+}
+
+#[derive(Serialize, Default)]
+pub struct Stats {
+    pub deaths: MobStats,
+    pub kills: MobStats,
+
+    pub misc: HashMap<String, f64>,
+}
+
+#[derive(Serialize, Default)]
+pub struct MobStats {
+    pub total: u32,
+    pub by_mob: HashMap<String, u32>,
 }
