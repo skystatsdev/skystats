@@ -11,7 +11,10 @@ use crate::{
     routes::ApiError,
 };
 
-use super::skills::{get_level_by_xp, SkillKind};
+use super::{
+    skills::{get_level_by_xp, SkillKind},
+    stats::process_stats,
+};
 
 pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMember, ApiError> {
     let player = processing::player::player(player_uuid).await?;
@@ -142,5 +145,6 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         fairy_souls: member.fairy_souls_collected,
         inventories,
         skills,
+        stats: process_stats(&member.stats),
     })
 }

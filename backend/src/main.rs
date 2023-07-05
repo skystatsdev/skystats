@@ -34,8 +34,10 @@ async fn run() -> std::io::Result<()> {
         .nest("/player", routes::player::route())
         .route("/", get(hello));
 
-    let addr = SocketAddr::from(([0, 0, 0, 0], 8000));
-    info!("Listening on {}", addr);
+    let port = 8000;
+
+    info!("Listening on http://localhost:{port}");
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
     let _ = axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await;

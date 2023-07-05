@@ -25,3 +25,4 @@ tracing-subscriber = { version = "0.3.17", features = ["env-filter"] }
 fastnbt = "2.4.4"
 base64 = "0.21.2"
 flate2 = "1.0.26"
+serde_with = "3.0.0"
