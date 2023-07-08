@@ -1,11 +1,12 @@
+use tracing::warn;
 use uuid::Uuid;
 
 use crate::{
     hypixel,
     models::{
         self,
-        hypixel::inventory::process_optional_inventory,
-        profile::{Inventories, ProfileMember, Skills},
+        inventory::{Inventories, Item, WardrobeSlot},
+        profile::{ProfileMember, Skills},
     },
     mojang, processing,
     routes::ApiError,
@@ -61,7 +62,7 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         fishing_bag: process_optional_inventory(&member.fishing_bag)?,
         quiver: process_optional_inventory(&member.quiver)?,
         trick_or_treat_bag: process_optional_inventory(&member.candy_inventory_contents)?,
-        wardrobe: process_optional_inventory(&member.wardrobe_contents)?,
+        wardrobe: process_optional_inventory(&member.wardrobe_contents)?.map(process_wardrobe),
         personal_vault: process_optional_inventory(&member.personal_vault_contents)?,
     };
 
@@ -143,4 +144,52 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         inventories,
         skills,
     })
+}
+
+pub fn process_optional_inventory(
+    inv: &Option<models::hypixel::inventory::Inventory>,
+) -> Result<Option<Vec<Option<Item>>>, ApiError> {
+    inv.as_ref()
+        .map(processing::inventory::inventory)
+        .transpose()
+}
+
+pub fn process_wardrobe(inv: Vec<Option<Item>>) -> Vec<WardrobeSlot> {
+    if inv.len() % 4 != 0 {
+        warn!("Wardrobe inventory length is not a multiple of 4");
+    }
+
+    let mut wardrobe = Vec::new();
+
+    // first process it into pages of 9*4 and then the first 9 are helmet, second 9 are chestplate,
+    // etc.
+
+    for page in inv.chunks(9 * 4) {
+        for i in 0..9 {
+            let helmet = page.get(i).cloned().flatten();
+            let chestplate = page.get(i + 9).cloned().flatten();
+            let leggings = page.get(i + 9 * 2).cloned().flatten();
+            let boots = page.get(i + 9 * 3).cloned().flatten();
+
+            let slot = WardrobeSlot {
+                helmet,
+                chestplate,
+                leggings,
+                boots,
+            };
+
+            // ignore the slot if it's completely empty
+            if slot.helmet.is_none()
+                && slot.chestplate.is_none()
+                && slot.leggings.is_none()
+                && slot.boots.is_none()
+            {
+                continue;
+            }
+
+            wardrobe.push(slot);
+        }
+    }
+
+    wardrobe
 }
