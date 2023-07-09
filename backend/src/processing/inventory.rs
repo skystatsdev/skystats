@@ -8,7 +8,7 @@ use crate::{
     models::{
         self,
         hypixel::inventory::InventoryNbt,
-        profile::{Item, ItemDisplay},
+        inventory::{Item, ItemDisplay},
     },
     routes::ApiError,
 };
