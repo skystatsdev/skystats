@@ -133,7 +133,7 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
     };
 
     Ok(ProfileMember {
-        player: player.base,
+        player,
         profile: models::profile::Profile {
             uuid: profile.profile_id,
             members: profile_members,

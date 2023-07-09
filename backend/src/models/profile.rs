@@ -4,7 +4,7 @@ use serde::Serialize;
 use serde_with::{serde_as, DurationMilliSeconds};
 use uuid::Uuid;
 
-use super::player::BasePlayer;
+use super::player::{BasePlayer, Player};
 
 #[derive(Serialize)]
 pub struct Profile {
@@ -14,7 +14,7 @@ pub struct Profile {
 
 #[derive(Serialize)]
 pub struct ProfileMember {
-    pub player: BasePlayer,
+    pub player: Player,
     pub profile: Profile,
 
     /// Profile names can be different for each player, so they're here instead
