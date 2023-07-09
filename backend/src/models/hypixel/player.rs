@@ -10,10 +10,33 @@ pub struct Player {
 }
 
 #[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct PlayerData {
     pub uuid: Uuid,
     #[serde(default)]
     pub stats: PlayerStats,
+
+    #[serde(default)]
+    pub prefix: Option<String>,
+    #[serde(default)]
+    pub rank: Option<String>,
+    #[serde(default)]
+    pub monthly_package_rank: Option<String>,
+    #[serde(default)]
+    pub new_package_rank: Option<String>,
+    #[serde(default)]
+    pub package_rank: Option<String>,
+
+    #[serde(default)]
+    pub monthly_rank_color: Option<String>,
+    #[serde(default)]
+    pub rank_plus_color: Option<String>,
+    #[serde(default)]
+    pub most_recent_monthly_package_rank: Option<String>,
+    #[serde(default)]
+    pub build_team: bool,
+    #[serde(default)]
+    pub build_team_admin: bool,
 
     #[serde(flatten)]
     pub other: HashMap<String, serde_json::Value>,
