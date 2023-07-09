@@ -16,7 +16,7 @@ async fn main() -> std::io::Result<()> {
     let subscriber = tracing_subscriber::FmtSubscriber::builder()
         .with_env_filter(
             tracing_subscriber::EnvFilter::builder()
-                .with_default_directive(tracing::level_filters::LevelFilter::DEBUG.into())
+                .with_default_directive("skystats=debug".parse().unwrap())
                 .from_env_lossy(),
         )
         .finish();
