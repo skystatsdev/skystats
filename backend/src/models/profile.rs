@@ -4,17 +4,14 @@ use serde::Serialize;
 use serde_with::{serde_as, DurationMilliSeconds};
 use uuid::Uuid;
 
-use super::{inventory::Inventories, player::BasePlayer};
-
-#[derive(Serialize)]
-pub struct Profile {
-    pub uuid: Uuid,
-    pub members: Vec<BasePlayer>,
-}
+use super::{
+    inventory::Inventories,
+    player::{BasePlayer, Player},
+};
 
 #[derive(Serialize)]
 pub struct ProfileMember {
-    pub player: BasePlayer,
+    pub player: Player,
     pub profile: Profile,
 
     /// Profile names can be different for each player, so they're here instead
@@ -26,6 +23,23 @@ pub struct ProfileMember {
     pub inventories: Inventories,
     pub skills: Skills,
     pub stats: Stats,
+}
+
+#[derive(Serialize)]
+pub struct Profile {
+    pub uuid: Uuid,
+    pub game_mode: GameMode,
+    pub members: Vec<BasePlayer>,
+}
+
+#[derive(Serialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum GameMode {
+    #[default]
+    Normal,
+    Bingo,
+    Island,
+    Ironman,
 }
 
 #[derive(Serialize)]

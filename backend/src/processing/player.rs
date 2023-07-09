@@ -21,6 +21,11 @@ pub async fn player(uuid: Uuid) -> Result<Player, ApiError> {
         profiles.push(PlayerProfileInfo {
             uuid: profile.profile_id,
             name: profile.cute_name.clone(),
+            game_mode: profile
+                .game_mode
+                .as_deref()
+                .map(super::profile::game_mode_from_name)
+                .unwrap_or_default(),
         });
         if profile.selected {
             selected_profile = Some(profile.profile_id);
