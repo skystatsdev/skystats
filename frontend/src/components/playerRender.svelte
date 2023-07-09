@@ -29,4 +29,6 @@
 	});
 </script>
 
-<canvas bind:this={canvas} class="absolute top-[50%] left-[50%] cursor-grab translate-x-[-50%] translate-y-[-50%]" />
+<div class="fixed top-[20vh] left-0 w-[30vw] bottom-[5vh]">
+	<canvas bind:this={canvas} class="absolute top-[50%] left-[50%] cursor-grab translate-x-[-50%] translate-y-[-50%]" />
+</div>
