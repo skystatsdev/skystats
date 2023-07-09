@@ -1,6 +1,8 @@
 use serde::Serialize;
 use uuid::Uuid;
 
+use super::profile::GameMode;
+
 #[derive(Serialize)]
 pub struct BasePlayer {
     pub uuid: Uuid,
@@ -26,4 +28,5 @@ pub struct PlayerSkyBlock {
 pub struct PlayerProfileInfo {
     pub uuid: Uuid,
     pub name: String,
+    pub game_mode: GameMode,
 }

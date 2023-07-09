@@ -16,6 +16,8 @@ pub struct ListedProfile {
     pub profile_id: Uuid,
     pub cute_name: String,
     pub selected: bool,
+    #[serde(default)]
+    pub game_mode: Option<String>,
 
     pub members: HashMap<Uuid, ListedProfileMember>,
 

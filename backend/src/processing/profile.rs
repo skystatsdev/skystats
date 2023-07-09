@@ -6,7 +6,7 @@ use crate::{
     models::{
         self,
         inventory::{Inventories, Item, WardrobeSlot},
-        profile::{ProfileMember, Skills},
+        profile::{GameMode, ProfileMember, Skills},
     },
     mojang, processing,
     routes::ApiError,
@@ -138,6 +138,11 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         profile: models::profile::Profile {
             uuid: profile.profile_id,
             members: profile_members,
+            game_mode: profile
+                .game_mode
+                .as_deref()
+                .map(super::profile::game_mode_from_name)
+                .unwrap_or_default(),
         },
 
         profile_name: profile.cute_name.clone(),
@@ -196,4 +201,13 @@ pub fn process_wardrobe(inv: Vec<Option<Item>>) -> Vec<WardrobeSlot> {
     }
 
     wardrobe
+}
+
+pub fn game_mode_from_name(name: &str) -> GameMode {
+    match name {
+        "bingo" => GameMode::Bingo,
+        "island" => GameMode::Island,
+        "ironman" => GameMode::Ironman,
+        _ => GameMode::Normal,
+    }
 }

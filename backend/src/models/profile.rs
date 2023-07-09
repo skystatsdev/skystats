@@ -12,7 +12,18 @@ use super::{
 #[derive(Serialize)]
 pub struct Profile {
     pub uuid: Uuid,
+    pub game_mode: GameMode,
     pub members: Vec<BasePlayer>,
+}
+
+#[derive(Serialize, Default)]
+#[serde(rename_all = "snake_case")]
+pub enum GameMode {
+    #[default]
+    Normal,
+    Bingo,
+    Island,
+    Ironman,
 }
 
 #[derive(Serialize)]
