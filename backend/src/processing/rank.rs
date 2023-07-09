@@ -51,7 +51,6 @@ pub fn rank(player: &PlayerData) -> Rank {
             .or(player.package_rank.to_owned())
             .unwrap_or("NONE".to_owned())
             .replace("_PLUS", "+")
-            .to_owned()
     };
 
     let mut bracket_color = None;
@@ -75,10 +74,10 @@ pub fn rank(player: &PlayerData) -> Rank {
 
     if name == "YOUTUBE" {
         // the text is white, but only in the prefix
-        rank_color_prefix = format!("§f");
+        rank_color_prefix = "§f".to_owned();
     }
 
-    let plus_index = name.find('+').unwrap_or_else(|| name.len());
+    let plus_index = name.find('+').unwrap_or(name.len());
     let (name_without_plusses, plusses) = name.split_at(plus_index);
 
     if plusses.is_empty() {
@@ -92,16 +91,12 @@ pub fn rank(player: &PlayerData) -> Rank {
         } else {
             format!("${rank_color_prefix}[{name_without_plusses}§{plus_color_code}{plusses}{rank_color_prefix}]")
         }
+    } else if name == "NONE" {
+        rank_color_prefix
+    } else if let Some(bracket_color) = bracket_color {
+        format!("§{bracket_color}[{rank_color_prefix}{name}§{bracket_color}]")
     } else {
-        if name == "NONE" {
-            rank_color_prefix
-        } else {
-            if let Some(bracket_color) = bracket_color {
-                format!("§{bracket_color}[{rank_color_prefix}{name}§{bracket_color}]")
-            } else {
-                format!("{rank_color_prefix}[{name}]")
-            }
-        }
+        format!("{rank_color_prefix}[{name}]")
     };
 
     Rank {
