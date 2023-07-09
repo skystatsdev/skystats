@@ -13,6 +13,7 @@ use crate::{
 };
 
 use super::{
+    rank::rank,
     skills::{get_level_by_xp, SkillKind},
     stats::process_stats,
 };
@@ -38,17 +39,24 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
             profile: profile_uuid.to_string(),
         })?;
 
-    // get the usernames of all profile members
+    // get the usernames and ranks of all profile members
     let mut mojang_profiles_futures = Vec::new();
+    let mut hypixel_player_futures = Vec::new();
     for &uuid in profile.members.keys() {
         mojang_profiles_futures.push(tokio::spawn(mojang::profile_from_uuid(uuid)));
+        hypixel_player_futures.push(tokio::spawn(hypixel::player(uuid)));
     }
     let mut profile_members: Vec<models::player::BasePlayer> = Vec::new();
-    for future in mojang_profiles_futures {
-        let mojang_profile = future.await.unwrap()?;
+    for (mojang_future, hypixel_player_future) in mojang_profiles_futures
+        .into_iter()
+        .zip(hypixel_player_futures)
+    {
+        let mojang_profile = mojang_future.await.unwrap()?;
+        let hypixel_player = hypixel_player_future.await.unwrap()?;
         profile_members.push(models::player::BasePlayer {
             uuid: mojang_profile.uuid,
             username: mojang_profile.username,
+            rank: rank(&hypixel_player.player),
         });
     }
 

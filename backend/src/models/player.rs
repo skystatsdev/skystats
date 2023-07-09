@@ -7,7 +7,7 @@ use super::profile::GameMode;
 pub struct BasePlayer {
     pub uuid: Uuid,
     pub username: String,
-    // also include rank and stuff
+    pub rank: Rank,
 }
 
 #[derive(Serialize)]
@@ -29,4 +29,15 @@ pub struct PlayerProfileInfo {
     pub uuid: Uuid,
     pub name: String,
     pub game_mode: GameMode,
+}
+
+#[derive(Serialize)]
+pub struct Rank {
+    /// The plain name like `MVP+`.
+    pub name: String,
+    /// Hex color code, prefixed with a #.
+    pub color: String,
+    pub plus_color: Option<String>,
+    /// The name formatted with Minecraft color codes, like `§b[MVP§2+§b]`.
+    pub formatted: String,
 }

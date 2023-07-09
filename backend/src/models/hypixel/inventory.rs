@@ -36,6 +36,7 @@ pub struct ItemTag {
     #[serde(default)]
     pub ench: Option<Vec<ItemVanillaEnchantment>>,
     #[serde(rename = "ExtraAttributes")]
+    #[serde(default)]
     pub extra_attributes: ItemExtraAttributes,
     pub display: ItemDisplay,
     #[serde(rename = "SkullOwner")]
@@ -49,7 +50,7 @@ pub struct ItemVanillaEnchantment {
     pub lvl: i16,
 }
 
-#[derive(Deserialize)]
+#[derive(Deserialize, Default)]
 pub struct ItemExtraAttributes {
     #[serde(default)]
     pub anvil_uses: Option<i32>,

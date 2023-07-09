@@ -7,13 +7,15 @@ use crate::{
     routes::ApiError,
 };
 
+use super::rank::rank;
+
 pub async fn player(uuid: Uuid) -> Result<Player, ApiError> {
     let mojang_profile_task = tokio::spawn(mojang::profile_from_uuid(uuid));
     let player_task = tokio::spawn(hypixel::player(uuid));
     let profiles_res = hypixel::profiles(uuid).await?;
 
     let mojang_profile = mojang_profile_task.await.unwrap()?;
-    let _player_res = player_task.await.unwrap()?;
+    let player_res = player_task.await.unwrap()?;
 
     let mut selected_profile = None;
     let mut profiles = Vec::new();
@@ -36,6 +38,7 @@ pub async fn player(uuid: Uuid) -> Result<Player, ApiError> {
         base: BasePlayer {
             uuid: mojang_profile.uuid,
             username: mojang_profile.username,
+            rank: rank(&player_res.player),
         },
         skyblock: PlayerSkyBlock {
             profiles,
