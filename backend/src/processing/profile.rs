@@ -208,6 +208,9 @@ pub fn game_mode_from_name(name: &str) -> GameMode {
         "bingo" => GameMode::Bingo,
         "island" => GameMode::Island,
         "ironman" => GameMode::Ironman,
-        _ => GameMode::Normal,
+        _ => {
+            warn!("Unknown game mode: {name}");
+            GameMode::Normal
+        }
     }
 }
