@@ -23,6 +23,7 @@ pub struct ProfileMember {
     pub inventories: Inventories,
     pub skills: Skills,
     pub stats: Stats,
+    pub dungeons: Dungeons,
 }
 
 #[derive(Serialize)]
@@ -116,4 +117,19 @@ pub struct MythosStats {
 pub struct HighestDamageStats {
     pub normal: f64,
     pub critical: f64,
+}
+
+#[derive(Serialize)]
+pub struct Dungeons {
+    pub dungeoneering: Skill,
+    pub classes: Classes,
+}
+
+#[derive(Serialize)]
+pub struct Classes {
+    pub healer: Skill,
+    pub mage: Skill,
+    pub berserk: Skill,
+    pub archer: Skill,
+    pub tank: Skill,
 }

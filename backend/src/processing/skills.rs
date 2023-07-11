@@ -1,4 +1,7 @@
-use crate::models::profile::Skill;
+use crate::models::{
+    hypixel::profiles::ListedProfileMember,
+    profile::{Skill, Skills},
+};
 
 const LEVELING_XP: [(u32, u32); 60] = [
     (1, 50),
@@ -223,7 +226,12 @@ impl SkillKind {
     }
 }
 
-pub fn get_level_by_xp(skill: SkillKind, xp: f64, additional_cap: Option<u32>) -> Skill {
+pub fn get_level_by_xp(
+    skill: SkillKind,
+    xp: f64,
+    additional_cap: Option<u32>,
+    ignore_cap: bool,
+) -> Skill {
     // the table of xp required for each level
     let xp_table = skill.leveling_table();
 
@@ -258,30 +266,45 @@ pub fn get_level_by_xp(skill: SkillKind, xp: f64, additional_cap: Option<u32>) -
     }
 
     // the maximum level that any player can achieve (used for gold progress bars)
-    // TODO: add ignoreCap argument (used for catacombs level above 50)
-    let max_level = skill.max_level_cap();
+    let max_level = if ignore_cap && uncapped_level > level_cap {
+        uncapped_level
+    } else {
+        skill.max_level_cap()
+    };
 
     // the level as displayed by in game UI
-    let level = u32::min(uncapped_level, level_cap);
+    let level = if ignore_cap {
+        uncapped_level
+    } else {
+        u32::min(uncapped_level, level_cap)
+    };
 
     // the amount amount of xp needed to reach the next level (used for calculation progress to next
     // level)
     let xp_for_next = if level < max_level {
         xp_table[level as usize].1
     } else {
-        0
+        if SkillKind::Dungeoneering == skill && level == max_level {
+            200_000_000
+        } else {
+            0
+        }
     };
 
     // the fraction of the way toward the next level
     let progress = if level == max_level {
-        1.0
+        if ignore_cap {
+            xp_current / xp_for_next as f64
+        } else {
+            1.0
+        }
     } else {
         xp_current / xp_for_next as f64
     };
 
     // a floating point value representing the current level for example if you are half way to
     // level 5 it would be 4.5
-    let level_with_progress = if level == level_cap {
+    let level_with_progress = if level == level_cap && ignore_cap == false {
         level as f64
     } else {
         level as f64 + progress
@@ -289,7 +312,7 @@ pub fn get_level_by_xp(skill: SkillKind, xp: f64, additional_cap: Option<u32>) -
 
     // a floating point value representing the current level ignoring the in-game unlockable caps
     // for example if you are half way to level 5 it would be 4.5
-    let uncapped_level_with_progress = if level == max_level {
+    let uncapped_level_with_progress = if level == max_level && ignore_cap == false {
         uncapped_level as f64
     } else {
         uncapped_level as f64 + progress
@@ -307,4 +330,83 @@ pub fn get_level_by_xp(skill: SkillKind, xp: f64, additional_cap: Option<u32>) -
         level_with_progress,
         uncapped_level_with_progress,
     }
+}
+
+pub fn process_skills(raw_stats: &ListedProfileMember) -> Skills {
+    let farming_level_cap = raw_stats
+        .jacob2
+        .as_ref()
+        .and_then(|j| j.perks.as_ref())
+        .map_or(0, |p| p.farming_level_cap);
+
+    let skills = Skills {
+        farming: get_level_by_xp(
+            SkillKind::Farming,
+            raw_stats.experience_skill_farming.unwrap_or(0.0),
+            Some(farming_level_cap as u32),
+            false,
+        ),
+        mining: get_level_by_xp(
+            SkillKind::Mining,
+            raw_stats.experience_skill_mining.unwrap_or(0.0),
+            None,
+            false,
+        ),
+        combat: get_level_by_xp(
+            SkillKind::Combat,
+            raw_stats.experience_skill_combat.unwrap_or(0.0),
+            None,
+            false,
+        ),
+        foraging: get_level_by_xp(
+            SkillKind::Foraging,
+            raw_stats.experience_skill_foraging.unwrap_or(0.0),
+            None,
+            false,
+        ),
+        fishing: get_level_by_xp(
+            SkillKind::Fishing,
+            raw_stats.experience_skill_fishing.unwrap_or(0.0),
+            None,
+            false,
+        ),
+        enchanting: get_level_by_xp(
+            SkillKind::Enchanting,
+            raw_stats.experience_skill_enchanting.unwrap_or(0.0),
+            None,
+            false,
+        ),
+        alchemy: get_level_by_xp(
+            SkillKind::Alchemy,
+            raw_stats.experience_skill_alchemy.unwrap_or(0.0),
+            None,
+            false,
+        ),
+        carpentry: get_level_by_xp(
+            SkillKind::Carpentry,
+            raw_stats.experience_skill_carpentry.unwrap_or(0.0),
+            None,
+            false,
+        ),
+        runecrafting: get_level_by_xp(
+            SkillKind::Runecrafting,
+            raw_stats.experience_skill_runecrafting.unwrap_or(0.0),
+            None,
+            false,
+        ),
+        social: get_level_by_xp(
+            SkillKind::Social,
+            raw_stats.experience_skill_social2.unwrap_or(0.0),
+            None,
+            false,
+        ),
+        taming: get_level_by_xp(
+            SkillKind::Taming,
+            raw_stats.experience_skill_taming.unwrap_or(0.0),
+            None,
+            false,
+        ),
+    };
+
+    skills
 }

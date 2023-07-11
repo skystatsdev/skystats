@@ -1,0 +1,76 @@
+{
+  "dungeoneering": {
+    "xp": 3055976849.3248625,
+    "level": 62,
+    "max_level": 62,
+    "xp_current": 86167209.32486248,
+    "xp_for_next": 200000000,
+    "progress": 0.4308360466243124,
+    "level_cap": 50,
+    "uncapped_level": 62,
+    "level_with_progress": 62.430836046624314,
+    "uncapped_level_with_progress": 62.430836046624314
+  },
+  "classes": {
+    "healer": {
+      "xp": 629068184.5634724,
+      "level": 50,
+      "max_level": 50,
+      "xp_current": 59258544.56347239,
+      "xp_for_next": 200000000,
+      "progress": 0.29629272281736196,
+      "level_cap": 50,
+      "uncapped_level": 50,
+      "level_with_progress": 50.29629272281736,
+      "uncapped_level_with_progress": 50.29629272281736
+    },
+    "mage": {
+      "xp": 942954393.7096196,
+      "level": 51,
+      "max_level": 51,
+      "xp_current": 173144753.70961964,
+      "xp_for_next": 200000000,
+      "progress": 0.8657237685480982,
+      "level_cap": 50,
+      "uncapped_level": 51,
+      "level_with_progress": 51.8657237685481,
+      "uncapped_level_with_progress": 51.8657237685481
+    },
+    "berserk": {
+      "xp": 629311713.661871,
+      "level": 50,
+      "max_level": 50,
+      "xp_current": 59502073.66187096,
+      "xp_for_next": 200000000,
+      "progress": 0.2975103683093548,
+      "level_cap": 50,
+      "uncapped_level": 50,
+      "level_with_progress": 50.297510368309354,
+      "uncapped_level_with_progress": 50.297510368309354
+    },
+    "archer": {
+      "xp": 736163962.8750687,
+      "level": 50,
+      "max_level": 50,
+      "xp_current": 166354322.87506866,
+      "xp_for_next": 200000000,
+      "progress": 0.8317716143753433,
+      "level_cap": 50,
+      "uncapped_level": 50,
+      "level_with_progress": 50.83177161437534,
+      "uncapped_level_with_progress": 50.83177161437534
+    },
+    "tank": {
+      "xp": 629109887.0817541,
+      "level": 50,
+      "max_level": 50,
+      "xp_current": 59300247.08175409,
+      "xp_for_next": 200000000,
+      "progress": 0.29650123540877044,
+      "level_cap": 50,
+      "uncapped_level": 50,
+      "level_with_progress": 50.29650123540877,
+      "uncapped_level_with_progress": 50.29650123540877
+    }
+  }
+}
