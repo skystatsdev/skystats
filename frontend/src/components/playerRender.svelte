@@ -1,32 +1,34 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
 
-	export let uuid: string;
+	export let username: string;
 
 	let canvas: HTMLCanvasElement;
 
-	onMount(async () => {
-		const skin = await import('skinview3d');
-		const cape: string | undefined = await fetch(`https://api.capes.dev/load/${uuid}/`).then(async (res) => {
-			const data = await res.json();
-			if (data?.optifine?.exists) {
-				return data.optifine.imageUrl;
-			} else if (data?.minecraft?.exists) {
-				return data.minecraft.imageUrl;
-			} else {
-				return undefined;
-			}
-		});
+	$: (async () => {
+		if (browser) {
+			const skin = await import('skinview3d');
+			const cape = await fetch(`https://api.capes.dev/load/${username}/`).then(async (res) => {
+				const data = await res.json();
+				if (data?.optifine?.exists) {
+					return data.optifine.imageUrl;
+				} else if (data?.minecraft?.exists) {
+					return data.minecraft.imageUrl;
+				} else {
+					return undefined;
+				}
+			});
 
-		new skin.SkinViewer({
-			canvas: canvas,
-			width: 350,
-			height: 500,
-			skin: `https://mc-heads.net/skin/${uuid}`,
-			cape: cape,
-			animation: new skin.IdleAnimation()
-		});
-	});
+			new skin.SkinViewer({
+				canvas,
+				width: 350,
+				height: 500,
+				skin: `https://mc-heads.net/skin/${username}`,
+				cape: cape,
+				animation: new skin.IdleAnimation()
+			});
+		}
+	})();
 </script>
 
 <div class="fixed top-[20vh] left-0 w-[30vw] bottom-[5vh]">

@@ -52,32 +52,38 @@ export type SkyblockInventoryType =
 	| 'wardrobe'
 	| 'personal_vault';
 
+export type PlayerHypixelRankData = {
+	name: string;
+	color: string;
+	plus_color?: string;
+	formatted: string;
+};
+
+export type PlayerSkyblockProfileData = {
+	uuid: string;
+	name: string;
+	game_mode: string;
+};
+
+export type ProfileMemberData = {
+	uuid: string;
+	username: string;
+};
+
 export interface SkyblockProfile {
 	player: {
 		uuid: string;
 		username: string;
 		skyblock: {
-			profiles: {
-				uuid: string;
-				name: string;
-				game_mode: string;
-			}[];
+			profiles: PlayerSkyblockProfileData[];
 			selected_profile: string;
 		};
-		rank: {
-			name: string;
-			color: string;
-			plus_color?: string;
-			formatted: string;
-		};
+		rank: PlayerHypixelRankData;
 	};
 	profile: {
 		uuid: string;
 		game_mode: string;
-		members: {
-			uuid: string;
-			username: string;
-		}[];
+		members: ProfileMemberData[];
 	};
 	profile_name: string;
 	skyblock_level: number;
