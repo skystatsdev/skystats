@@ -31,7 +31,7 @@ pub struct PlayerProfileInfo {
     pub game_mode: GameMode,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, PartialEq, Eq, Debug)]
 pub struct Rank {
     /// The plain name like `MVP+`.
     pub name: String,

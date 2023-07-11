@@ -1,6 +1,6 @@
-use crate::models::{hypixel::player::PlayerData, player::Rank};
+use crate::models::{self, player::Rank};
 
-pub fn rank(player: &PlayerData) -> Rank {
+pub fn rank(player: &models::hypixel::player::Rank) -> Rank {
     if let Some(prefix) = &player.prefix {
         // prefix overrides all
 
@@ -89,7 +89,7 @@ pub fn rank(player: &PlayerData) -> Rank {
         if let Some(bracket_color) = bracket_color {
             format!("§{bracket_color}[{rank_color_prefix}{name_without_plusses}§{plus_color_code}{plusses}{rank_color_prefix}§{bracket_color}]")
         } else {
-            format!("${rank_color_prefix}[{name_without_plusses}§{plus_color_code}{plusses}{rank_color_prefix}]")
+            format!("{rank_color_prefix}[{name_without_plusses}§{plus_color_code}{plusses}{rank_color_prefix}]")
         }
     } else if name == "NONE" {
         rank_color_prefix
@@ -130,7 +130,7 @@ fn color_code_to_hex(color_code: char) -> &'static str {
 }
 
 fn color_name_to_code(color_name: &str) -> char {
-    match color_name {
+    match color_name.to_lowercase().as_str() {
         "black" => '0',
         "dark_blue" => '1',
         "dark_green" => '2',
@@ -162,5 +162,34 @@ fn get_rank_color(rank_name: &str) -> char {
         "MOD" | "GM" => '2',
         "ADMIN" => 'c',
         _ => '7',
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_rank() {
+        assert_eq!(
+            rank(&models::hypixel::player::Rank {
+                prefix: None,
+                rank: None,
+                monthly_package_rank: Some("NONE".to_string()),
+                new_package_rank: Some("MVP_PLUS".to_string()),
+                package_rank: None,
+                monthly_rank_color: Some("GOLD".to_string()),
+                rank_plus_color: Some("DARK_AQUA".to_string()),
+                most_recent_monthly_package_rank: Some("SUPERSTAR".to_string()),
+                build_team: false,
+                build_team_admin: false
+            }),
+            Rank {
+                name: "MVP+".to_string(),
+                color: "#3ffefe".to_string(),
+                plus_color: Some("#00bebe".to_string()),
+                formatted: "§b[MVP§3+§b]".to_string()
+            }
+        );
     }
 }
