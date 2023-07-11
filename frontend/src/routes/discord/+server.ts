@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { redirect } from '@sveltejs/kit';
 import { PUBLIC_DISCORD_INVITE } from '$env/static/public';
 import type { RequestHandler } from './$types';
