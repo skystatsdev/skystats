@@ -10,4 +10,15 @@
 		scroll-behavior: smooth;
 		color: white;
 	}
+	body::-webkit-scrollbar {
+		background-color: #282828;
+	}
+	*::-webkit-scrollbar {
+		width: 12px;
+		height: 12px;
+	}
+	*::-webkit-scrollbar-thumb {
+		border-radius: 12px;
+		background-color: #c24100;
+	}
 }

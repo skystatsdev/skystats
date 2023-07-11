@@ -16,6 +16,16 @@ pub struct PlayerData {
     #[serde(default)]
     pub stats: PlayerStats,
 
+    #[serde(flatten)]
+    pub rank: Rank,
+
+    #[serde(flatten)]
+    pub other: HashMap<String, serde_json::Value>,
+}
+
+#[derive(Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Rank {
     #[serde(default)]
     pub prefix: Option<String>,
     #[serde(default)]
@@ -37,9 +47,6 @@ pub struct PlayerData {
     pub build_team: bool,
     #[serde(default)]
     pub build_team_admin: bool,
-
-    #[serde(flatten)]
-    pub other: HashMap<String, serde_json::Value>,
 }
 
 #[derive(Deserialize, Default)]

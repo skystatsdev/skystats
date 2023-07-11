@@ -43,7 +43,7 @@ pub async fn player(uuid: Uuid) -> Result<Player, ApiError> {
         base: BasePlayer {
             uuid: mojang_profile.uuid,
             username: mojang_profile.username,
-            rank: rank(player),
+            rank: rank(&player.rank),
         },
         skyblock: PlayerSkyBlock {
             profiles,
