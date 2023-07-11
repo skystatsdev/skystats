@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { SkillObject } from '../../lib/skyblock.js';
+	import type { SkillObject } from '$lib/skyblock.js';
 	export let skillData: SkillObject;
 	export let skillName: string;
 
