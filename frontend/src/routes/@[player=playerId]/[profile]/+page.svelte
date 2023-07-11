@@ -2,10 +2,11 @@
 	import Head from '$comp/head.svelte';
 	import PlayerRender from '$comp/playerRender.svelte';
 	import Header from '$comp/header.svelte';
-	import SkillComponent from '$comp/skillComponent.svelte';
-	import type { PageData } from './$types';
+	import type { SkyblockProfile } from '$types';
+	import PlayerProfile from '$comp/PlayerProfile/PlayerProfile.svelte';
+	import BasicStats from '$comp/BasicStats/BasicStats.svelte';
 
-	export let data: PageData;
+	export let data: SkyblockProfile;
 </script>
 
 <Head
@@ -16,26 +17,16 @@
 
 <Header />
 
-<p>Skyblock Level - {data.profile.skyblock_level}</p>
-<PlayerRender uuid={data.player.uuid} />
-<img src="https://mc-heads.net/body/{data.player.uuid}" alt="Minecraft Skin" />
-<h1>{data.player.username} | {data.profile.profile_name}</h1>
-
-<h1>SkyBlock Level: {data.profile.skyblock_level}</h1>
-<h1>Fairy Souls: {data.profile.fairy_souls}</h1>
-<br />
-
-<div class="skills">
-	{#each Object.keys(data.profile.skills) as skill}
-		<SkillComponent skillData={data.profile.skills[skill]} skillName={skill} />
-	{/each}
+<PlayerRender username={data.player.username} />
+<div
+	class="relative ml-[30vw] backdrop-blur-lg backdrop-brightness-50 p-[30px] pt-[calc(48px)] pb-[30px] min-h-[1500px] box-border select-none"
+>
+	<PlayerProfile
+		rankData={data.player.rank}
+		username={data.player.username}
+		playerProfiles={data.player.skyblock.profiles}
+		profileMembers={data.profile.members}
+		profileName={data.profile_name}
+	/>
+	<BasicStats skillData={data.skills} />
 </div>
-
-<style>
-	.skills {
-		display: grid;
-		grid-template-columns: repeat(2, 1fr);
-		grid-gap: 10px;
-		max-width: 50%;
-	}
-</style>

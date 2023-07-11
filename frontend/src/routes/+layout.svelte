@@ -1,7 +1,6 @@
 <script lang="ts">
 	import '../app.css';
 	import { page } from '$app/stores';
-	import Header from '$comp/header.svelte';
 </script>
 
 <svelte:head>
