@@ -12,12 +12,13 @@
 	<slot name="display-content" />
 </span>
 <Popover
+	offset={0}
 	triggeredBy="#{id}"
 	placement="bottom-start"
 	arrow={false}
 	transition={slide}
 	defaultClass=""
-	class="top-[100%] min-w-[260px] rounded-[17px] border-0 border-transparent px-0 py-0 m-0 bg-[rgba(30,30,30,0.95)]"
+	class="top-[100%] min-w-[260px] rounded-[17px] border-0 border-transparent px-0 py-0 m-0 bg-[rgba(30,30,30,0.95)] z-[100]"
 >
 	<slot name="popover-content" />
 </Popover>
