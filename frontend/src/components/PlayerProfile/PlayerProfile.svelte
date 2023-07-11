@@ -52,7 +52,7 @@
 			{/if}
 			{username}
 		</div>
-		<div slot="popover-content">
+		<div slot="popover-content" data-sveltekit-preload-data="tap">
 			{#each profileMembers as member, memberIndex}
 				<PopoverItem href="/@{member.username}" index={memberIndex} totalItems={profileMembers.length}
 					>{member.username}</PopoverItem
@@ -63,7 +63,7 @@
 	<span>on</span>
 	<Popover id="stats-for-profile">
 		<div slot="display-content">{profileName}</div>
-		<div slot="popover-content">
+		<div slot="popover-content" data-sveltekit-preload-data="tap">
 			{#each playerProfiles as profile, profileIndex}
 				<PopoverItem href="/@{username}/{profile.name}" index={profileIndex} totalItems={playerProfiles.length}
 					>{profile.name}</PopoverItem
