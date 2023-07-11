@@ -25,8 +25,9 @@
 	$: rankFormatted = rankData?.formatted.replace(/[^a-zA-Z0-9\][+§]/g, '');
 	$: rankColor = HYPIXEL_RANK_COLORS[rankFormatted.match(rankRegex)![0] as keyof typeof HYPIXEL_RANK_COLORS];
 	$: rankPlus = rankData.plus_color
-		? HYPIXEL_RANK_COLORS[rankRegex.exec(rankFormatted)![1] as keyof typeof HYPIXEL_RANK_COLORS]
+		? HYPIXEL_RANK_COLORS[rankFormatted.match(rankRegex)![1] as keyof typeof HYPIXEL_RANK_COLORS]
 		: undefined;
+	
 </script>
 
 <div class="text-[36px] mt-[50px] mb-[20px] flex flex-wrap gap-x-[10px] gap-y-[8px] items-center">
@@ -35,7 +36,7 @@
 		<div slot="display-content">
 			{#if rankName !== 'NONE'}
 				<div
-					class="inline-flex text-[18px] h-[34px] leading-[34px] mt-[10px] ml-[-5px] rounded-[100px] align-top font-[700px] overflow-clip"
+					class="inline-flex text-[18px] h-[34px] leading-[34px] mt-[10px] ml-[-5px] rounded-[100px] align-top font-[700] overflow-clip"
 				>
 					<div class="{rankColor} px-[15px] inline-block">
 						{rankName?.replaceAll('+', '')}
@@ -43,7 +44,7 @@
 					{#if rankPlus !== undefined}
 						<div
 							class="{rankPlus ||
-								''} pr-[8px] relative z-[1px] inline-block before:content-[''] before:z-[-1px] before:absolute before:top-0 before:bottom-0 before:left-[-7px] before:right-0 before:skew-y-[-20deg] before:skew-x-[-20deg]"
+								''} pr-[8px] relative z-[1] inline-block before:content-[''] before:z-[-1] before:absolute before:top-0 before:bottom-0 before:left-[-7px] before:right-0 before:[transform:skew(-20deg)] before:bg-inherit"
 						>
 							{rankName?.replace(/[A-z]/g, '')}
 						</div>
