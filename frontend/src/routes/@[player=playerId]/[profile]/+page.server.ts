@@ -9,10 +9,9 @@ export const load = (async ({ params, fetch }) => {
 	const profilesReq = await fetch(`${API_HOST_URL}/player/${player}/${profile}`);
 
 	if (profilesReq.status !== 200) {
-		throw error(profilesReq.status, 'Profiles not found');
+		throw error(profilesReq.status, 'An error occurred while fetching profiles');
 	}
 
-	//! Very temporary type information
 	const data = (await profilesReq.json()) as SkyblockProfile;
 
 	return data;
