@@ -90,7 +90,7 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         skyblock_level: member.leveling.experience as f64 / 100.,
         fairy_souls: member.fairy_souls_collected,
         inventories,
-        skills: process_skills(&member),
+        skills: process_skills(&member, &profile),
         stats: process_stats(&member.stats),
         dungeons: process_dungeons(&member),
     })

@@ -1,5 +1,5 @@
 use crate::models::{
-    hypixel::profiles::ListedProfileMember,
+    hypixel::profiles::{ListedProfile, ListedProfileMember},
     profile::{Skill, Skills},
 };
 
@@ -332,12 +332,18 @@ pub fn get_level_by_xp(
     }
 }
 
-pub fn process_skills(raw_stats: &ListedProfileMember) -> Skills {
+pub fn process_skills(raw_stats: &ListedProfileMember, profile: &ListedProfile) -> Skills {
     let farming_level_cap = raw_stats
         .jacob2
         .as_ref()
         .and_then(|j| j.perks.as_ref())
         .map_or(0, |p| p.farming_level_cap);
+
+    let total_social_experience = profile
+        .members
+        .iter()
+        .map(|member| member.1.experience_skill_social2.unwrap_or(0.0))
+        .sum::<f64>();
 
     let skills = Skills {
         farming: get_level_by_xp(
@@ -394,12 +400,7 @@ pub fn process_skills(raw_stats: &ListedProfileMember) -> Skills {
             None,
             false,
         ),
-        social: get_level_by_xp(
-            SkillKind::Social,
-            raw_stats.experience_skill_social2.unwrap_or(0.0),
-            None,
-            false,
-        ),
+        social: get_level_by_xp(SkillKind::Social, total_social_experience, None, false),
         taming: get_level_by_xp(
             SkillKind::Taming,
             raw_stats.experience_skill_taming.unwrap_or(0.0),
