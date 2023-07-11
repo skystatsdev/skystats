@@ -14,7 +14,11 @@ export const load = (async ({ params }) => {
 	const { selected_profile: selected_profile_id } = data.skyblock;
 	const selected_profile_cute_name = data.skyblock.profiles.find(
 		(profile: { uuid: string; name: string }) => profile.uuid === selected_profile_id
-	).name;
+	)?.name;
+
+	if (!selected_profile_cute_name) {
+		throw error(404, 'Profile not found!');
+	}
 
 	throw redirect(301, `/@${player}/${selected_profile_cute_name}`);
 }) satisfies PageServerLoad;
