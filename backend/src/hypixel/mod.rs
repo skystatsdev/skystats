@@ -95,12 +95,15 @@ async fn request<T: DeserializeOwned>(
 
     HYPIXEL.rate_limiter.lock().update(res.headers());
 
-    let res = res.json::<models::hypixel::HypixelApiResult<T>>().await?;
+    let res = res.json::<serde_json::Value>().await?;
     info!("End");
-    match res {
-        models::hypixel::HypixelApiResult::Success(res) => Ok(res),
-        models::hypixel::HypixelApiResult::Error(err) => Err(err.into()),
-    }
+
+    // if it looks like an error, return it
+    if let Ok(error) = serde_json::from_value::<models::hypixel::HypixelApiError>(res.clone()) {
+        return Err(HypixelError::ApiError(error));
+    };
+    println!("{:#?}", res);
+    serde_json::from_value::<T>(res).map_err(HypixelError::Json)
 }
 
 static PLAYER_CACHE: Lazy<Cache<Uuid, Arc<models::hypixel::player::Player>>> = Lazy::new(|| {

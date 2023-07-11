@@ -16,6 +16,11 @@ pub async fn player(uuid: Uuid) -> Result<Player, ApiError> {
 
     let mojang_profile = mojang_profile_task.await.unwrap()?;
     let player_res = player_task.await.unwrap()?;
+    let Some(player) = &player_res.player else {
+        return Err(ApiError::PlayerNotFound {
+            username: mojang_profile.username,
+        });
+    };
 
     let mut selected_profile = None;
     let mut profiles = Vec::new();
@@ -38,7 +43,7 @@ pub async fn player(uuid: Uuid) -> Result<Player, ApiError> {
         base: BasePlayer {
             uuid: mojang_profile.uuid,
             username: mojang_profile.username,
-            rank: rank(&player_res.player),
+            rank: rank(player),
         },
         skyblock: PlayerSkyBlock {
             profiles,

@@ -53,11 +53,13 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
     {
         let mojang_profile = mojang_future.await.unwrap()?;
         let hypixel_player = hypixel_player_future.await.unwrap()?;
-        profile_members.push(models::player::BasePlayer {
-            uuid: mojang_profile.uuid,
-            username: mojang_profile.username,
-            rank: rank(&hypixel_player.player),
-        });
+        if let Some(hypixel_player) = &hypixel_player.player {
+            profile_members.push(models::player::BasePlayer {
+                uuid: mojang_profile.uuid,
+                username: mojang_profile.username,
+                rank: rank(&hypixel_player),
+            });
+        }
     }
 
     let inventories = Inventories {

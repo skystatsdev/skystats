@@ -1,13 +1,16 @@
 use std::collections::HashMap;
 
 use serde::Deserialize;
+use serde_with::{serde_as, DefaultOnNull};
 use uuid::Uuid;
 
 use super::inventory::Inventory;
 
+#[serde_as]
 #[derive(Deserialize)]
 pub struct Profiles {
     pub success: bool,
+    #[serde_as(deserialize_as = "DefaultOnNull")]
     pub profiles: Vec<ListedProfile>,
 }
 

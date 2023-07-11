@@ -6,7 +6,7 @@ use uuid::Uuid;
 #[derive(Deserialize)]
 pub struct Player {
     pub success: bool,
-    pub player: PlayerData,
+    pub player: Option<PlayerData>,
 }
 
 #[derive(Deserialize)]

@@ -13,10 +13,3 @@ pub struct HypixelApiError {
     pub success: bool,
     pub cause: String,
 }
-
-#[derive(Deserialize)]
-#[serde(untagged)]
-pub enum HypixelApiResult<T> {
-    Success(T),
-    Error(HypixelApiError),
-}

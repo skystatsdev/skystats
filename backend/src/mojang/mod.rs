@@ -2,6 +2,7 @@ use std::time::Duration;
 
 use moka::future::Cache;
 use once_cell::sync::Lazy;
+use reqwest::StatusCode;
 use serde::Deserialize;
 use thiserror::Error;
 use tracing::info;
@@ -18,7 +19,12 @@ pub struct Profile {
 #[derive(Error, Debug)]
 pub enum MojangError {
     #[error(transparent)]
-    RequestError(#[from] reqwest::Error),
+    Request(#[from] reqwest::Error),
+    #[error(transparent)]
+    Json(#[from] serde_json::Error),
+
+    #[error("Unknown player")]
+    PlayerNotFound,
 }
 
 static UUID_TO_USERNAME_CACHE: Lazy<Cache<Uuid, String>> = Lazy::new(|| {
@@ -60,7 +66,12 @@ pub async fn profile_from_username(username: &str) -> Result<Profile, MojangErro
 #[tracing::instrument]
 async fn mojang_request(url: &str) -> Result<Profile, MojangError> {
     info!("Begin");
-    let profile = reqwest::get(url).await?.json::<Profile>().await?;
+    let profile_res = reqwest::get(url).await?;
+    if profile_res.status() == StatusCode::NOT_FOUND {
+        return Err(MojangError::PlayerNotFound);
+    }
+
+    let profile = profile_res.json::<Profile>().await?;
 
     // put it in both caches
     UUID_TO_USERNAME_CACHE

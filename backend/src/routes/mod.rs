@@ -18,6 +18,8 @@ pub enum ApiError {
     Hypixel(#[from] crate::hypixel::HypixelError),
     #[error("Profile not found")]
     ProfileNotFound { username: String, profile: String },
+    #[error("Player not found")]
+    PlayerNotFound { username: String },
     #[error("Couldn't decode NBT: {0}")]
     Nbt(#[from] fastnbt::error::Error),
     #[error("Couldn't decode base64: {0}")]
@@ -30,7 +32,9 @@ impl ApiError {
             ApiError::Mojang(_) | ApiError::Hypixel(_) | ApiError::Nbt(_) | ApiError::Base64(_) => {
                 StatusCode::INTERNAL_SERVER_ERROR
             }
-            ApiError::ProfileNotFound { .. } => StatusCode::NOT_FOUND,
+            ApiError::ProfileNotFound { .. } | ApiError::PlayerNotFound { .. } => {
+                StatusCode::NOT_FOUND
+            }
         }
     }
 }
@@ -43,6 +47,7 @@ impl IntoResponse for ApiError {
             ApiError::Mojang(_) => "mojang",
             ApiError::Hypixel(_) => "hypixel",
             ApiError::ProfileNotFound { .. } => "profile_not_found",
+            ApiError::PlayerNotFound { .. } => "player_not_found",
             ApiError::Nbt(_) => "nbt",
             ApiError::Base64(_) => "base64",
         };
