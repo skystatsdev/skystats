@@ -43,7 +43,7 @@
 					{#if rankPlus !== undefined}
 						<div
 							class="{rankPlus ||
-								''} pr-[8px] relative z-[1] inline-block before:content-[''] before:z-[-1] before:absolute before:top-0 before:bottom-0 before:left-[-7px] before:right-0 before:[transform:skew(-20deg)] before:bg-inherit"
+								''} pr-[8px] relative z-[1] inline-block before:content-[''] before:z-[-1] before:absolute before:top-0 before:bottom-[-0.1rem] before:left-[-7px] before:right-0 before:[transform:skew(-20deg)] before:bg-inherit"
 						>
 							{rankName?.replace(/[A-z]/g, '')}
 						</div>
