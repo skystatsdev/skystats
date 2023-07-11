@@ -27,7 +27,6 @@
 	$: rankPlus = rankData.plus_color
 		? HYPIXEL_RANK_COLORS[rankFormatted.match(rankRegex)![1] as keyof typeof HYPIXEL_RANK_COLORS]
 		: undefined;
-	
 </script>
 
 <div class="text-[36px] mt-[50px] mb-[20px] flex flex-wrap gap-x-[10px] gap-y-[8px] items-center">
