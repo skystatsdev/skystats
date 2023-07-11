@@ -56,7 +56,7 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         profile_members.push(models::player::BasePlayer {
             uuid: mojang_profile.uuid,
             username: mojang_profile.username,
-            rank: rank(&hypixel_player.player),
+            rank: rank(&hypixel_player.player.rank),
         });
     }
 
