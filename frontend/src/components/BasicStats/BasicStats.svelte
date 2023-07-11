@@ -1,5 +1,5 @@
 <script lang="ts">
-	import SkillComponent from '$comp/SkillComponent/skillComponent.svelte';
+	import SkillComponent from '$comp/SkillComponent/SkillComponent.svelte';
 	import type { SkyblockSkillData, SkyblockSkillName } from '$types';
 
 	export let skillData: Record<SkyblockSkillName, SkyblockSkillData>;
