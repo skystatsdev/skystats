@@ -72,4 +72,11 @@
 		</div>
 	</Popover>
 	<div class="text-[15px] relative w-full">Extra Stats Here</div>
+	<div class="">
+		<div class="h-[75px] w-[75px] rounded-[50%] shadow-outer p-[9px]">
+			<div class="h-[55px] w-[55px] rounded-[50%] shadow-inner flex items-center justify-center">
+				<div class="font-semibold text-[16px]">480</div>
+			</div>
+		</div>
+	</div>
 </div>

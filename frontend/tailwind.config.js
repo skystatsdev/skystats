@@ -29,6 +29,10 @@ export default {
 				default: '0 2px 4px rgba(0, 0, 0, 0.1)',
 				lg: '0 8px 16px rgba(0, 0, 0, 0.1)'
 			},
+			boxShadow: {
+				outer: '6px 6px 10px -1px rgba(0,0,0,0.15)',
+				inner: 'inset 4px 4px 6px -1px rgba(0,0,0,0.15), inset -4px -4px 6px -1px rgba(0,0,0,0.15)'
+			},
 			keyframes: {
 				shine: {
 					'0%': { transform: 'translateY(120%)' },
