@@ -38,12 +38,12 @@ pub fn rank(player: &models::hypixel::player::Rank) -> Rank {
         };
     }
 
-    let name = if player.monthly_package_rank.is_some()
+    let name = if player.rank.is_some() && player.rank != Some("NORMAL".to_owned()) {
+        player.rank.as_ref().unwrap().to_owned()
+    } else if player.monthly_package_rank.is_some()
         && player.monthly_package_rank != Some("NONE".to_owned())
     {
         player.monthly_package_rank.as_ref().unwrap().to_owned()
-    } else if player.rank.is_some() && player.rank != Some("NORMAL".to_owned()) {
-        player.rank.as_ref().unwrap().to_owned()
     } else {
         player
             .new_package_rank
@@ -170,7 +170,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_rank() {
+    fn test_mvp_plus() {
         assert_eq!(
             rank(&models::hypixel::player::Rank {
                 prefix: None,
@@ -189,6 +189,30 @@ mod tests {
                 color: "#3ffefe".to_string(),
                 plus_color: Some("#00bebe".to_string()),
                 formatted: "§b[MVP§3+§b]".to_string()
+            }
+        );
+    }
+
+    #[test]
+    fn test_mvp_plus_plus_admin() {
+        assert_eq!(
+            rank(&models::hypixel::player::Rank {
+                prefix: None,
+                rank: Some("ADMIN".to_string()),
+                monthly_package_rank: Some("SUPERSTAR".to_string()),
+                new_package_rank: Some("MVP_PLUS".to_string()),
+                package_rank: Some("MVP_PLUS".to_string()),
+                monthly_rank_color: None,
+                rank_plus_color: Some("BLACK".to_string()),
+                most_recent_monthly_package_rank: Some("SUPERSTAR".to_string()),
+                build_team: false,
+                build_team_admin: false
+            }),
+            Rank {
+                name: "ADMIN".to_string(),
+                color: "#fe3f3f".to_string(),
+                plus_color: None,
+                formatted: "§c[ADMIN]".to_string()
             }
         );
     }
