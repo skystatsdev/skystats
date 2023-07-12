@@ -123,6 +123,7 @@ pub struct HighestDamageStats {
 pub struct Dungeons {
     pub dungeoneering: Skill,
     pub classes: Classes,
+    pub catacombs: Catacombs,
 }
 
 #[derive(Serialize)]
@@ -132,4 +133,58 @@ pub struct Classes {
     pub berserk: Skill,
     pub archer: Skill,
     pub tank: Skill,
+}
+
+#[derive(Serialize)]
+pub struct Catacombs {
+    pub id: String,
+    pub visited: bool,
+    pub highest_flooor_beaten: u32,
+    pub floors: HashMap<i16, Floor>,
+    pub bonuses: HashMap<String, u32>,
+}
+
+#[derive(Serialize)]
+pub struct Floor {
+    pub name: String,
+    pub texture: String,
+    pub stats: FloorStats,
+    pub best_runs: Vec<FloorBestRun>,
+    pub most_damage: FloorMostDamage,
+}
+
+#[derive(Serialize)]
+pub struct FloorStats {
+    pub times_played: u32,
+    pub tier_completion: u32,
+    pub fastest_time: u32,
+    pub best_score: u32,
+    pub mobs_killed: u32,
+    pub most_mobs_killed: u32,
+    pub most_healing: u32,
+    pub watcher_kills: u32,
+}
+
+#[derive(Serialize)]
+pub struct FloorBestRun {
+    pub timestamp: u64,
+    pub score_exploration: u32,
+    pub score_speed: u32,
+    pub score_skill: u32,
+    pub score_bonus: u32,
+    pub dungeon_class: String,
+    pub teamates: Vec<String>,
+    pub elapsed_time: u32,
+    pub damage_dealt: f64,
+    pub deaths: u32,
+    pub mobs_killed: u32,
+    pub secrets_found: u32,
+    pub damage_mitigated: f64,
+    pub ally_healing: f64,
+}
+
+#[derive(Serialize)]
+pub struct FloorMostDamage {
+    pub class: String,
+    pub damage: f64,
 }

@@ -106,7 +106,7 @@ pub struct JacobPerks {
     pub farming_level_cap: usize,
 }
 
-#[derive(Deserialize, Eq, Hash, PartialEq)]
+#[derive(Deserialize, Eq, Hash, PartialEq, Debug)]
 #[serde(rename_all = "snake_case")]
 pub enum DungeonType {
     Catacombs,
@@ -136,77 +136,76 @@ pub struct Class {
     pub experience: f64,
 }
 
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Debug)]
 pub struct DungeonStats {
     #[serde(default)]
     pub experience: Option<f64>,
-    /*#[serde(default)]
-    pub times_played: Option<HashMap<u32, u32>>,
     #[serde(default)]
-    pub tier_completions: Option<HashMap<u32, u32>>,
+    pub times_played: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub fastest_time: Option<HashMap<u32, u32>>,
+    pub tier_completions: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub best_runs: Option<HashMap<u32, Vec<BestRun>>>,
+    pub fastest_time: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub best_score: Option<HashMap<u32, u32>>,
+    pub best_runs: Option<HashMap<String, Vec<BestRun>>>,
     #[serde(default)]
-    pub mobs_killed: Option<HashMap<u32, u32>>,
+    pub best_score: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub most_mobs_killed: Option<HashMap<u32, u32>>,
+    pub mobs_killed: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub most_damage_archer: Option<HashMap<u32, u32>>,
+    pub most_mobs_killed: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub most_healing: Option<HashMap<u32, u32>>,
+    pub most_damage_archer: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub watcher_kills: Option<HashMap<u32, u32>>,
+    pub most_healing: Option<HashMap<String, f64>>,
+    #[serde(default)]
+    pub watcher_kills: Option<HashMap<String, f64>>,
     #[serde(default)]
     pub highest_tier_completed: Option<u32>,
     #[serde(default)]
-    pub most_damage_tank: Option<HashMap<u32, u32>>,
+    pub most_damage_tank: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub fastest_time_s_plus: Option<HashMap<u32, u32>>,
+    pub fastest_time_s_plus: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub most_damage_mage: Option<HashMap<u32, u32>>,
+    pub most_damage_mage: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub most_damage_healer: Option<HashMap<u32, u32>>,
+    pub most_damage_healer: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub fastest_time_s: Option<HashMap<u32, u32>>,
+    pub fastest_time_s: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub most_damage_berserk: Option<HashMap<u32, u32>>,
+    pub most_damage_berserk: Option<HashMap<String, f64>>,
     #[serde(default)]
-    pub milestone_completions: Option<HashMap<u32, u32>>,*/
+    pub milestone_completions: Option<HashMap<String, f64>>,
 }
 
-/*
-#[derive(Deserialize, Default)]
+#[derive(Deserialize, Default, Debug)]
 pub struct BestRun {
     #[serde(default)]
-    timestamp: u64,
+    pub timestamp: Option<u64>,
     #[serde(default)]
-    score_exploration: u32,
+    pub score_exploration: Option<u32>,
     #[serde(default)]
-    score_speed: u32,
+    pub score_speed: Option<u32>,
     #[serde(default)]
-    score_skill: u32,
+    pub score_skill: Option<u32>,
     #[serde(default)]
-    score_bonus: u32,
+    pub score_bonus: Option<u32>,
     #[serde(default)]
-    dungeon_class: String,
+    pub dungeon_class: Option<String>,
     #[serde(default)]
-    teammates: Vec<String>,
+    pub teammates: Option<Vec<String>>,
     #[serde(default)]
-    elapsed_time: u32,
+    pub elapsed_time: Option<f64>,
     #[serde(default)]
-    damage_dealt: u32,
+    pub damage_dealt: Option<f64>,
     #[serde(default)]
-    deaths: u32,
+    pub deaths: Option<u32>,
     #[serde(default)]
-    mobs_killed: u32,
+    pub mobs_killed: Option<u32>,
     #[serde(default)]
-    secrets_found: u32,
+    pub secrets_found: Option<u32>,
     #[serde(default)]
-    damage_mitigated: Option<u32>,
+    pub damage_mitigated: Option<f64>,
     #[serde(default)]
-    ally_healing: Option<u32>,
-}*/
+    pub ally_healing: Option<f64>,
+}

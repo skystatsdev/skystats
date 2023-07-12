@@ -60,6 +60,7 @@ pub fn process_dungeons(raw_stats: &ListedProfileMember) -> Dungeons {
             true,
         ),
     };
+
     let dungeons = Dungeons {
         dungeoneering: get_level_by_xp(SkillKind::Dungeoneering, catacombs_experience, None, true),
         classes,
