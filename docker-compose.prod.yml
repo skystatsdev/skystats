@@ -1,35 +1,32 @@
-version: '3.9'
+version: "3.9"
 services:
-    api:
-        env_file:
-            - ./backend/.env.production
-        ports:
-            - 8000:8000
-    website:
-        env_file:
-            - ./frontend/.env.production
-        environment:
-            - NODE_ENV=production
-        ports:
-            - 3000:3000
-        depends_on:
-            - api
-    database:
-        env_file:
-            - ./backend/.env.production
-    caddy:
-        image: caddy:latest
-        restart: unless-stopped
-        ports:
-            - "80:80"
-            - "443:443"
-            - "443:443/udp"
-        volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile
-            - /etc/ssl/skystats:/etc/ssl/skystats
-            - caddy-data:/data
-            - caddy-config:/config
+  api:
+    env_file:
+      - ./backend/.env.production
+    ports:
+      - 8000:8000
+  website:
+    env_file:
+      - ./frontend/.env.production
+    environment:
+      - NODE_ENV=production
+    ports:
+      - 3000:3000
+    depends_on:
+      - api
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - /etc/ssl/skystats:/etc/ssl/skystats
+      - caddy-data:/data
+      - caddy-config:/config
 
 volumes:
-    caddy-data: {}
-    caddy-config: {}
+  caddy-data: {}
+  caddy-config: {}

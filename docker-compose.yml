@@ -1,23 +1,15 @@
-version: '3.9'
+version: "3.9"
 services:
-    api:
-        build: ./backend
-        restart: unless-stopped
-        depends_on:
-            - database
-    website:
-        build: ./frontend
-        restart: unless-stopped
-    database:
-        image: postgres:latest
-        restart: unless-stopped
-        volumes:
-            - db-data:/var/lib/postgresql/data
-            # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  api:
+    build: ./backend
+    restart: unless-stopped
+  website:
+    build: ./frontend
+    restart: unless-stopped
 
 networks:
-    default:
-        driver: bridge
+  default:
+    driver: bridge
 
 volumes:
-    db-data: {}
+  db-data: {}

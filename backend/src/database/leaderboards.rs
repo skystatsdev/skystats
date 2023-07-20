@@ -9,7 +9,11 @@ use dashmap::DashMap;
 use sqlx::{Column, PgPool, QueryBuilder, Row};
 use tracing::{info, warn};
 
-use crate::models::{leaderboard::MemberLeaderboardEntry, profile::ProfileMember};
+use crate::models::{
+    leaderboard::MemberLeaderboardEntry,
+    player::{BasePlayer, Rank},
+    profile::ProfileMember,
+};
 
 #[derive(Default, Clone)]
 pub struct Leaderboards {
@@ -17,7 +21,8 @@ pub struct Leaderboards {
     pub member_leaderboards: Arc<DashMap<MemberLeaderboardKind, Vec<MemberLeaderboardEntry>>>,
 }
 
-const LEADERBOARD_SIZE: usize = 2;
+// 1000 leaderboards takes up roughly 500mb in memory
+const LEADERBOARD_SIZE: usize = 1000;
 
 impl Leaderboards {
     pub async fn init(pool: &PgPool) -> Self {
@@ -54,7 +59,16 @@ impl Leaderboards {
                     .or_insert_with(Vec::new);
                 // leaderboards get sorted later
                 leaderboard.push(MemberLeaderboardEntry {
-                    player_uuid: entry.try_get("player_uuid").unwrap(),
+                    player: BasePlayer {
+                        uuid: entry.try_get("player_uuid").unwrap(),
+                        username: entry.try_get("player_username").unwrap(),
+                        rank: Rank {
+                            name: entry.try_get("player_rank_name").unwrap(),
+                            color: entry.try_get("player_rank_color").unwrap(),
+                            plus_color: entry.try_get("player_rank_plus_color").unwrap(),
+                            formatted: entry.try_get("player_rank_formatted").unwrap(),
+                        },
+                    },
                     profile_uuid: entry.try_get("profile_uuid").unwrap(),
                     value,
                 });
@@ -63,13 +77,8 @@ impl Leaderboards {
 
         // sort leaderboards
         for mut leaderboard in leaderboards.member_leaderboards.iter_mut() {
-            leaderboard.sort_by(|a, b| {
-                a.value
-                    .partial_cmp(&b.value)
-                    .unwrap()
-                    .reverse()
-                    .then(a.player_uuid.cmp(&b.player_uuid))
-            });
+            let leaderboard_kind = leaderboard.key().clone();
+            leaderboard_kind.sort(&mut leaderboard);
             if leaderboard.len() > LEADERBOARD_SIZE {
                 let name = leaderboard.key();
                 warn!(
@@ -104,7 +113,7 @@ impl Leaderboards {
 
         for (kind, &value) in &leaderboards {
             let entry = MemberLeaderboardEntry {
-                player_uuid: member.player.base.uuid,
+                player: member.player.base.clone(),
                 profile_uuid: member.profile.uuid,
                 value,
             };
@@ -112,7 +121,7 @@ impl Leaderboards {
 
             // check if we're already in the leaderboard
             if let Some(index) = leaderboard.iter().position(|entry| {
-                entry.player_uuid == member.player.base.uuid
+                entry.player.uuid == member.player.base.uuid
                     && entry.profile_uuid == member.profile.uuid
             }) {
                 if leaderboard[index].value != value {
@@ -177,11 +186,11 @@ impl Leaderboards {
                 SET {kind} = NULL
                 WHERE player_uuid = '{player_uuid}'
                 AND profile_uuid = '{profile_uuid}'",
-                player_uuid = entry.player_uuid,
+                player_uuid = entry.player.uuid,
                 profile_uuid = entry.profile_uuid
             ));
             query.build().execute(pool).await.unwrap();
-            println!("popped {} from {kind}", entry.player_uuid);
+            println!("popped {} from {kind}", entry.player.uuid);
         }
     }
 

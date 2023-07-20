@@ -23,12 +23,17 @@ impl Database {
     pub async fn init() -> Self {
         info!("Initializing database");
 
+        let port = std::env::var("POSTGRES_PORT")
+            .unwrap_or_else(|_| "5432".to_string())
+            .parse::<u16>()
+            .expect("POSTGRES_PORT must be a valid port number");
+        let password = std::env::var("POSTGRES_PASSWORD").expect("POSTGRES_PASSWORD must be set");
+
         let pg_settings = PgSettings {
             database_dir: PathBuf::from("data/db"),
-            port: 5432,
+            port,
             user: "postgres".to_string(),
-            // password doesn't matter since the database isn't public
-            password: "postgres".to_string(),
+            password,
             auth_method: PgAuthMethod::Plain,
             persistent: true,
             timeout: Some(Duration::from_secs(15)),

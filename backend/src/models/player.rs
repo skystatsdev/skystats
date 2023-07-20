@@ -3,7 +3,7 @@ use uuid::Uuid;
 
 use super::profile::GameMode;
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug, Clone)]
 pub struct BasePlayer {
     pub uuid: Uuid,
     pub username: String,
@@ -31,7 +31,7 @@ pub struct PlayerProfileInfo {
     pub game_mode: GameMode,
 }
 
-#[derive(Serialize)]
+#[derive(Serialize, Debug, Clone)]
 pub struct Rank {
     /// The plain name like `MVP+`.
     pub name: String,

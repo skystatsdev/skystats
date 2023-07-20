@@ -1,20 +1,22 @@
-use serde::{Deserialize, Serialize};
+use serde::Serialize;
 use uuid::Uuid;
 
-#[derive(Debug, Serialize, Deserialize, Clone)]
+use super::player::BasePlayer;
+
+#[derive(Debug, Serialize, Clone)]
 pub struct MemberLeaderboardEntry {
-    pub player_uuid: Uuid,
+    pub player: BasePlayer,
     pub profile_uuid: Uuid,
     pub value: f64,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 pub struct MemberLeaderboardResponse {
     pub slug: String,
     pub list: Vec<MemberLeaderboardEntry>,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize)]
 pub struct LeaderboardListResponse {
     pub leaderboards: Vec<String>,
 }
