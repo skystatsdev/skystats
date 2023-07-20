@@ -10,6 +10,7 @@ use crate::{
     },
     mojang, processing,
     routes::ApiError,
+    Context,
 };
 
 use super::{
@@ -18,7 +19,11 @@ use super::{
     stats::process_stats,
 };
 
-pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMember, ApiError> {
+pub async fn profile(
+    ctx: &mut Context,
+    player_uuid: Uuid,
+    profile_uuid: Uuid,
+) -> Result<ProfileMember, ApiError> {
     let player = processing::player::player(player_uuid).await?;
     let profiles = hypixel::profiles(player_uuid).await?;
 
@@ -141,7 +146,7 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         ),
     };
 
-    Ok(ProfileMember {
+    let profile_member = ProfileMember {
         player,
         profile: models::profile::Profile {
             uuid: profile.profile_id,
@@ -160,7 +165,14 @@ pub async fn profile(player_uuid: Uuid, profile_uuid: Uuid) -> Result<ProfileMem
         inventories,
         skills,
         stats: process_stats(&member.stats),
-    })
+    };
+
+    ctx.database
+        .leaderboards
+        .update_member(&ctx.database.pool, &profile_member)
+        .await;
+
+    Ok(profile_member)
 }
 
 pub fn process_optional_inventory(

@@ -1,9 +1,9 @@
-use axum::{extract::Path, routing::get, Json, Router};
+use axum::{extract::Path, routing::get, Extension, Json, Router};
 use uuid::Uuid;
 
 use crate::{
     models::{player::Player, profile::ProfileMember},
-    mojang, processing,
+    mojang, processing, Context,
 };
 
 use super::{ApiError, RouterResponse, SkyResult};
@@ -21,6 +21,7 @@ async fn player(Path(uuid_or_username): Path<String>) -> SkyResult<Json<Player>>
 }
 
 async fn player_profile(
+    mut ctx: Extension<Context>,
     Path((player_uuid_or_username, profile_uuid_or_name)): Path<(String, String)>,
 ) -> SkyResult<Json<ProfileMember>> {
     let mojang_profile = mojang::profile_from_username_or_uuid(&player_uuid_or_username).await?;
@@ -43,6 +44,6 @@ async fn player_profile(
     };
 
     Ok(Json(
-        processing::profile::profile(mojang_profile.uuid, profile_uuid).await?,
+        processing::profile::profile(&mut ctx, mojang_profile.uuid, profile_uuid).await?,
     ))
 }

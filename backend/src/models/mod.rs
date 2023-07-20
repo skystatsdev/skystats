@@ -4,5 +4,6 @@
 pub mod error;
 pub mod hypixel;
 pub mod inventory;
+pub mod leaderboard;
 pub mod player;
 pub mod profile;

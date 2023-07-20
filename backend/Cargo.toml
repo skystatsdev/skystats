@@ -26,3 +26,7 @@ fastnbt = "2.4.4"
 base64 = "0.21.2"
 flate2 = "1.0.26"
 serde_with = "3.0.0"
+pg-embed = { git = "https://github.com/faokunega/pg-embed" }
+rand = "0.8.5"
+sqlx = { version = "0.7.1", features = ["runtime-tokio", "postgres", "uuid"] }
+dashmap = "5.5.0"

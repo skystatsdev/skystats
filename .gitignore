@@ -1,2 +1,5 @@
 Caddyfile
 .idea
+
+# database
+/data

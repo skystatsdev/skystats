@@ -1,3 +1,4 @@
+mod database;
 mod hypixel;
 mod models;
 mod mojang;
@@ -6,7 +7,7 @@ mod routes;
 
 use std::net::SocketAddr;
 
-use axum::{routing::get, Router};
+use axum::{routing::get, Extension, Router};
 use tracing::info;
 
 #[tokio::main]
@@ -26,18 +27,31 @@ async fn main() -> std::io::Result<()> {
 }
 
 async fn hello() -> &'static str {
-    "Hello, world!"
+    "skystats backend :)\n\nSource code: https://github.com/skystatsdev/skystats/tree/main/backend"
+}
+
+/// Data that's shared across all requests.
+#[derive(Clone)]
+pub struct Context {
+    pub database: database::Database,
 }
 
 async fn run() -> std::io::Result<()> {
+    let context = Context {
+        database: database::Database::init().await,
+    };
+
     let app = Router::new()
         .nest("/player", routes::player::route())
-        .route("/", get(hello));
+        .nest("/leaderboards", routes::leaderboards::route())
+        .route("/", get(hello))
+        .layer(Extension(context));
 
     let port = 8000;
 
     info!("Listening on http://localhost:{port}");
     let addr = SocketAddr::from(([0, 0, 0, 0], port));
+
     let _ = axum::Server::bind(&addr)
         .serve(app.into_make_service())
         .await;
