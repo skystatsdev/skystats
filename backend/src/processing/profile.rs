@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use tracing::warn;
 use uuid::Uuid;
 
@@ -23,7 +25,7 @@ pub async fn profile(
     ctx: &mut Context,
     player_uuid: Uuid,
     profile_uuid: Uuid,
-) -> Result<ProfileMember, ApiError> {
+) -> Result<Arc<ProfileMember>, ApiError> {
     let player = processing::player::player(player_uuid).await?;
     let profiles = hypixel::profiles(player_uuid).await?;
 
@@ -167,10 +169,12 @@ pub async fn profile(
         stats: process_stats(&member.stats),
     };
 
-    ctx.database
-        .leaderboards
-        .update_member(&ctx.database.pool, &profile_member)
-        .await;
+    let profile_member = Arc::new(profile_member);
+
+    let mut leaderboards = ctx.database.leaderboards.clone();
+    let pool = ctx.database.pool.clone();
+    let profile_member_clone = profile_member.clone();
+    tokio::spawn(async move { leaderboards.update_member(pool, profile_member_clone).await });
 
     Ok(profile_member)
 }

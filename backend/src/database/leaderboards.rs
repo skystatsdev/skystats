@@ -6,7 +6,7 @@ use std::{
 };
 
 use dashmap::DashMap;
-use sqlx::{Column, Execute, PgPool, QueryBuilder, Row};
+use sqlx::{Column, PgPool, QueryBuilder, Row};
 use tracing::{info, warn};
 
 use crate::models::{
@@ -102,13 +102,13 @@ impl Leaderboards {
         leaderboards
     }
 
-    pub async fn update_member(&mut self, pool: &PgPool, member: &ProfileMember) {
-        let leaderboards = leaderboards_for_member(member);
+    pub async fn update_member(&mut self, pool: PgPool, member: Arc<ProfileMember>) {
+        let leaderboards = leaderboards_for_member(&member);
 
         // create new leaderboards if they don't exist
         for kind in leaderboards.keys() {
             if self.member_leaderboards.get(kind).is_none() {
-                self.create_new_leaderboard(pool, kind).await;
+                self.create_new_leaderboard(&pool, kind).await;
             }
         }
 
@@ -133,13 +133,11 @@ impl Leaderboards {
                 if leaderboard[index].value != value {
                     leaderboard[index].value = value;
                     kind.sort(&mut leaderboard);
-                    println!("updated {kind} for {}", member.player.base.uuid);
                 }
             } else {
                 let index = kind.insertion_index(&leaderboard, value);
                 if index < LEADERBOARD_SIZE {
                     leaderboard.insert(index, entry);
-                    println!("added to {kind}");
                     if leaderboard.len() > LEADERBOARD_SIZE {
                         let entry = leaderboard.pop().expect("there should be something to pop");
                         popped.push((kind.clone(), entry));
@@ -151,8 +149,8 @@ impl Leaderboards {
         // update database
 
         info!(
-            "Updating leaderboards for {}: {:?}",
-            member.player.base.username, leaderboards
+            "Updating leaderboards for {}/{}",
+            member.player.base.username, member.profile_name
         );
 
         let query = sqlx::query(
@@ -170,7 +168,7 @@ impl Leaderboards {
         .bind(member.player.base.rank.plus_color.clone())
         .bind(member.player.base.rank.formatted.clone());
 
-        query.execute(pool).await.unwrap();
+        query.execute(&pool).await.unwrap();
 
         // update member_leaderboards
         let mut query = QueryBuilder::new(format!(
@@ -208,7 +206,7 @@ impl Leaderboards {
             profile_uuid = member.profile.uuid
         ));
         let query = query.build();
-        query.execute(pool).await.unwrap();
+        query.execute(&pool).await.unwrap();
 
         // update the popped entries (members who were pushed out of the leaderboard)
         for (kind, entry) in popped {
@@ -220,9 +218,13 @@ impl Leaderboards {
                 player_uuid = entry.player.uuid,
                 profile_uuid = entry.profile.uuid
             ));
-            query.build().execute(pool).await.unwrap();
-            println!("popped {} from {kind}", entry.player.uuid);
+            query.build().execute(&pool).await.unwrap();
         }
+
+        info!(
+            "Finished updating leaderboards for {}/{}",
+            member.player.base.username, member.profile_name
+        );
     }
 
     async fn create_new_leaderboard(&mut self, pool: &PgPool, kind: &MemberLeaderboardKind) {
@@ -265,10 +267,8 @@ impl FromStr for MemberLeaderboardKind {
         // absolutely not
         let s = s
             .to_lowercase()
-            .replace(" ", "_")
-            .replace("-", "_")
-            .replace("'", "")
-            .replace("\n", "");
+            .replace([' ', '-'], "_")
+            .replace(['\'', '\n'], "");
 
         if let Some(mob) = s.strip_prefix("kills_") {
             return Ok(MemberLeaderboardKind::Kills(mob.to_string()));

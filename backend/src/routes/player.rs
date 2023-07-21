@@ -1,3 +1,5 @@
+use std::sync::Arc;
+
 use axum::{extract::Path, routing::get, Extension, Json, Router};
 use uuid::Uuid;
 
@@ -23,7 +25,7 @@ async fn player(Path(uuid_or_username): Path<String>) -> SkyResult<Json<Player>>
 async fn player_profile(
     mut ctx: Extension<Context>,
     Path((player_uuid_or_username, profile_uuid_or_name)): Path<(String, String)>,
-) -> SkyResult<Json<ProfileMember>> {
+) -> SkyResult<Json<Arc<ProfileMember>>> {
     let mojang_profile = mojang::profile_from_username_or_uuid(&player_uuid_or_username).await?;
 
     // get profile uuid

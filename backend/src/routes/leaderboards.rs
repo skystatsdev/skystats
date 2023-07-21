@@ -4,7 +4,9 @@ use axum::{extract::Path, routing::get, Extension, Json, Router};
 
 use crate::{
     database::leaderboards::MemberLeaderboardKind,
-    models::leaderboard::{LeaderboardListResponse, MemberLeaderboardResponse},
+    models::leaderboard::{
+        LeaderboardListEntry, LeaderboardListResponse, MemberLeaderboardResponse,
+    },
     Context,
 };
 
@@ -17,13 +19,15 @@ pub fn route() -> RouterResponse {
 }
 
 async fn list_leaderboards(ctx: Extension<Context>) -> SkyResult<Json<LeaderboardListResponse>> {
-    let mut leaderboards: Vec<String> = ctx
+    let mut leaderboards: Vec<LeaderboardListEntry> = ctx
         .database
         .leaderboards
         .member_leaderboards
         .iter()
         .map(|l| l.key().clone())
-        .map(|kind| kind.to_string())
+        .map(|kind| LeaderboardListEntry {
+            slug: kind.to_string(),
+        })
         .collect();
     leaderboards.sort();
     Ok(Json(LeaderboardListResponse { leaderboards }))

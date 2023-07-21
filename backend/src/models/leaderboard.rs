@@ -16,13 +16,18 @@ pub struct MemberLeaderboardResponse {
     pub list: Vec<MemberLeaderboardEntry>,
 }
 
-#[derive(Serialize)]
-pub struct LeaderboardListResponse {
-    pub leaderboards: Vec<String>,
-}
-
 #[derive(Debug, Serialize, Clone)]
 pub struct MemberLeaderboardProfile {
     pub uuid: Uuid,
     pub name: String,
+}
+
+#[derive(Serialize)]
+pub struct LeaderboardListResponse {
+    pub leaderboards: Vec<LeaderboardListEntry>,
+}
+
+#[derive(Serialize, PartialEq, PartialOrd, Eq, Ord)]
+pub struct LeaderboardListEntry {
+    pub slug: String,
 }
