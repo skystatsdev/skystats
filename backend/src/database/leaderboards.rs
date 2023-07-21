@@ -6,11 +6,11 @@ use std::{
 };
 
 use dashmap::DashMap;
-use sqlx::{Column, PgPool, QueryBuilder, Row};
+use sqlx::{Column, Execute, PgPool, QueryBuilder, Row};
 use tracing::{info, warn};
 
 use crate::models::{
-    leaderboard::MemberLeaderboardEntry,
+    leaderboard::{MemberLeaderboardEntry, MemberLeaderboardProfile},
     player::{BasePlayer, Rank},
     profile::ProfileMember,
 };
@@ -69,7 +69,10 @@ impl Leaderboards {
                             formatted: entry.try_get("player_rank_formatted").unwrap(),
                         },
                     },
-                    profile_uuid: entry.try_get("profile_uuid").unwrap(),
+                    profile: MemberLeaderboardProfile {
+                        uuid: entry.try_get("profile_uuid").unwrap(),
+                        name: entry.try_get("profile_name").unwrap(),
+                    },
                     value,
                 });
             }
@@ -114,7 +117,10 @@ impl Leaderboards {
         for (kind, &value) in &leaderboards {
             let entry = MemberLeaderboardEntry {
                 player: member.player.base.clone(),
-                profile_uuid: member.profile.uuid,
+                profile: MemberLeaderboardProfile {
+                    uuid: member.profile.uuid,
+                    name: member.profile_name.to_owned(),
+                },
                 value,
             };
             let mut leaderboard = self.member_leaderboards.get_mut(kind).unwrap();
@@ -122,7 +128,7 @@ impl Leaderboards {
             // check if we're already in the leaderboard
             if let Some(index) = leaderboard.iter().position(|entry| {
                 entry.player.uuid == member.player.base.uuid
-                    && entry.profile_uuid == member.profile.uuid
+                    && entry.profile.uuid == member.profile.uuid
             }) {
                 if leaderboard[index].value != value {
                     leaderboard[index].value = value;
@@ -148,15 +154,22 @@ impl Leaderboards {
             "Updating leaderboards for {}: {:?}",
             member.player.base.username, leaderboards
         );
+
         let query = sqlx::query(
             r#"
-                INSERT INTO member_leaderboards(player_uuid, profile_uuid)
-                VALUES ($1, $2)
+                INSERT INTO member_leaderboards(player_uuid, profile_uuid, player_username, player_rank_name, player_rank_color, player_rank_plus_color, player_rank_formatted)
+                VALUES ($1, $2, $2, $3, $4, $5, $6)
                 ON CONFLICT DO NOTHING
             "#,
         )
         .bind(member.player.base.uuid)
-        .bind(member.profile.uuid);
+        .bind(member.profile.uuid)
+        .bind(member.player.base.username.clone())
+        .bind(member.player.base.rank.name.clone())
+        .bind(member.player.base.rank.color.clone())
+        .bind(member.player.base.rank.plus_color.clone())
+        .bind(member.player.base.rank.formatted.clone());
+
         query.execute(pool).await.unwrap();
 
         // update member_leaderboards
@@ -164,20 +177,38 @@ impl Leaderboards {
             "UPDATE member_leaderboards
             SET "
         ));
-        for (i, (kind, value)) in leaderboards.iter().enumerate() {
+        for (kind, value) in &leaderboards {
             query.push(format!("{kind} = {value}"));
-            if i != leaderboards.len() - 1 {
-                query.push(",");
-            }
-            query.push(" ");
+            query.push(", ");
         }
+
+        query.push(format!("player_username = "));
+        query.push_bind(member.player.base.username.to_owned());
+        query.push(", ");
+        query.push(format!("player_rank_name = "));
+        query.push_bind(member.player.base.rank.name.to_owned());
+        query.push(", ");
+        query.push(format!("player_rank_color = "));
+        query.push_bind(member.player.base.rank.color.to_owned());
+        query.push(", ");
+        query.push(format!("player_rank_plus_color = "));
+        query.push_bind(member.player.base.rank.plus_color.to_owned());
+        query.push(", ");
+        query.push(format!("player_rank_formatted = "));
+        query.push_bind(member.player.base.rank.formatted.to_owned());
+        query.push(", ");
+        query.push(format!("profile_name = "));
+        query.push_bind(member.profile_name.to_owned());
+        query.push(" ");
+
         query.push(format!(
             "WHERE player_uuid = '{player_uuid}'
             AND profile_uuid = '{profile_uuid}'",
             player_uuid = member.player.base.uuid,
             profile_uuid = member.profile.uuid
         ));
-        query.build().execute(pool).await.unwrap();
+        let query = query.build();
+        query.execute(pool).await.unwrap();
 
         // update the popped entries (members who were pushed out of the leaderboard)
         for (kind, entry) in popped {
@@ -187,7 +218,7 @@ impl Leaderboards {
                 WHERE player_uuid = '{player_uuid}'
                 AND profile_uuid = '{profile_uuid}'",
                 player_uuid = entry.player.uuid,
-                profile_uuid = entry.profile_uuid
+                profile_uuid = entry.profile.uuid
             ));
             query.build().execute(pool).await.unwrap();
             println!("popped {} from {kind}", entry.player.uuid);
@@ -231,6 +262,14 @@ impl FromStr for MemberLeaderboardKind {
     type Err = ();
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
+        // absolutely not
+        let s = s
+            .to_lowercase()
+            .replace(" ", "_")
+            .replace("-", "_")
+            .replace("'", "")
+            .replace("\n", "");
+
         if let Some(mob) = s.strip_prefix("kills_") {
             return Ok(MemberLeaderboardKind::Kills(mob.to_string()));
         }

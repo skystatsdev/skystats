@@ -6,7 +6,7 @@ use super::player::BasePlayer;
 #[derive(Debug, Serialize, Clone)]
 pub struct MemberLeaderboardEntry {
     pub player: BasePlayer,
-    pub profile_uuid: Uuid,
+    pub profile: MemberLeaderboardProfile,
     pub value: f64,
 }
 
@@ -19,4 +19,10 @@ pub struct MemberLeaderboardResponse {
 #[derive(Serialize)]
 pub struct LeaderboardListResponse {
     pub leaderboards: Vec<String>,
+}
+
+#[derive(Debug, Serialize, Clone)]
+pub struct MemberLeaderboardProfile {
+    pub uuid: Uuid,
+    pub name: String,
 }
