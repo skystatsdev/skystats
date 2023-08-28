@@ -19,7 +19,9 @@ pub enum ApiError {
     #[error("Profile not found")]
     ProfileNotFound { username: String, profile: String },
     #[error("Couldn't decode NBT: {0}")]
-    Nbt(#[from] fastnbt::error::Error),
+    Nbt(#[from] simdnbt::Error),
+    #[error("NBT is missing required fields")]
+    NbtMissingFields,
     #[error("Couldn't decode base64: {0}")]
     Base64(#[from] base64::DecodeError),
 }
@@ -27,9 +29,11 @@ pub enum ApiError {
 impl ApiError {
     fn status_code(&self) -> StatusCode {
         match self {
-            ApiError::Mojang(_) | ApiError::Hypixel(_) | ApiError::Nbt(_) | ApiError::Base64(_) => {
-                StatusCode::INTERNAL_SERVER_ERROR
-            }
+            ApiError::Mojang(_)
+            | ApiError::Hypixel(_)
+            | ApiError::Nbt(_)
+            | ApiError::NbtMissingFields
+            | ApiError::Base64(_) => StatusCode::INTERNAL_SERVER_ERROR,
             ApiError::ProfileNotFound { .. } => StatusCode::NOT_FOUND,
         }
     }
@@ -44,6 +48,7 @@ impl IntoResponse for ApiError {
             ApiError::Hypixel(_) => "hypixel",
             ApiError::ProfileNotFound { .. } => "profile_not_found",
             ApiError::Nbt(_) => "nbt",
+            ApiError::NbtMissingFields => "nbt_missing_fields",
             ApiError::Base64(_) => "base64",
         };
 

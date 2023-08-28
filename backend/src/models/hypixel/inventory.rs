@@ -10,22 +10,6 @@ pub struct Inventory {
 }
 
 #[derive(Deserialize)]
-pub struct InventoryNbt {
-    pub i: Vec<fastnbt::Value>,
-}
-
-#[derive(Deserialize)]
-pub struct ItemNbt {
-    #[serde(rename = "Count")]
-    pub count: i8,
-    #[serde(rename = "Damage")]
-    #[serde(default)]
-    pub damage: i16,
-    pub id: i16,
-    pub tag: ItemTag,
-}
-
-#[derive(Deserialize)]
 pub struct ItemTag {
     #[serde(rename = "HideFlags")]
     #[serde(default)]

@@ -2,12 +2,12 @@ use std::io::{Cursor, Read};
 
 use base64::Engine;
 use flate2::read::GzDecoder;
-use tracing::warn;
+use simdnbt::Nbt;
+use tracing::{debug, warn};
 
 use crate::{
     models::{
         self,
-        hypixel::inventory::InventoryNbt,
         inventory::{Item, ItemDisplay},
     },
     routes::ApiError,
@@ -26,53 +26,86 @@ pub fn inventory(
     decoder.read_to_end(&mut data_bytes).unwrap();
 
     // decode nbt
-    let nbt = fastnbt::from_bytes::<InventoryNbt>(&data_bytes)?;
+    let Some(nbt) = simdnbt::Nbt::new(&mut Cursor::new(&data_bytes))? else {
+        warn!("NBT is empty");
+        return Ok(Vec::new());
+    };
 
+    let items = items_from_nbt(nbt).ok_or_else(|| ApiError::NbtMissingFields)?;
+
+    Ok(items)
+}
+
+fn items_from_nbt(nbt: Nbt) -> Option<Vec<Option<Item>>> {
     let mut items = Vec::new();
-    for item_nbt in nbt.i {
-        // make it a compound and check if "id" is present, if not, skip
-        let fastnbt::Value::Compound(ref item_nbt_compound) = item_nbt else {
-            warn!("ItemNbt is not a compound");
-            items.push(None);
-            continue;
-        };
-        if !item_nbt_compound.contains_key("id") {
+    for item_nbt in nbt
+        .list("i")
+        .and_then(|list| list.compounds())
+        .unwrap_or_default()
+    {
+        // check if "id" is present, if not, skip
+        if !item_nbt.contains("id") {
             // this just means the item isn't present
             items.push(None);
             continue;
         }
 
         // try to parse as ItemNbt
-        let item_nbt: models::hypixel::inventory::ItemNbt = fastnbt::from_value(&item_nbt)?;
+        // let item_nbt: models::hypixel::inventory::ItemNbt = fastnbt::from_value(&item_nbt)?;
+
+        let item_tag = item_nbt.compound("tag")?;
+        let item_extra_attributes = item_tag.compound("ExtraAttributes");
+        let item_display = item_tag.compound("display");
 
         items.push(Some(Item {
-            id: item_nbt.id,
-            damage: item_nbt.damage,
-            count: item_nbt.count,
+            id: item_nbt.short("id")?,
+            damage: item_nbt.short("Damage")?,
+            count: item_nbt.byte("Count")?,
 
-            head_texture_id: item_nbt
-                .tag
-                .skull_owner
-                .and_then(|skull_owner| {
-                    texture_id_from_base64(&skull_owner.properties.textures[0].value)
-                })
-                .or_else(|| item_nbt.tag.extra_attributes.id.clone()),
-
-            skyblock_id: item_nbt.tag.extra_attributes.id,
-            reforge: item_nbt.tag.extra_attributes.modifier,
+            head_texture_id: item_tag
+                .compound("SkullOwner")
+                .and_then(|skull_owner| skull_owner.compound("Properties"))
+                .and_then(|properties| properties.list("textures"))
+                .and_then(|textures| textures.compounds())
+                .and_then(|textures| textures.get(0))
+                .and_then(|texture| texture.string("Value"))
+                .and_then(|value| texture_id_from_base64(&value.to_str())),
+            skyblock_id: item_extra_attributes
+                .and_then(|e| e.string("id"))
+                .map(|id| id.to_string()),
+            reforge: item_extra_attributes
+                .and_then(|e| e.string("modifier"))
+                .map(|id| id.to_string()),
 
             display: ItemDisplay {
-                name: item_nbt.tag.display.name,
-                lore: item_nbt.tag.display.lore,
-                color: item_nbt.tag.display.color,
-                has_glint: item_nbt.tag.ench.is_some(),
+                name: item_display
+                    .and_then(|d| d.string("Name"))
+                    .map(|n| n.to_string())
+                    .unwrap_or_default(),
+                lore: item_display
+                    .and_then(|d| d.list("Lore"))
+                    .and_then(|l| l.strings())
+                    .map(|l| l.iter().map(|s| s.to_string()).collect())
+                    .unwrap_or_default(),
+                color: item_display.and_then(|d| d.int("color")),
+                has_glint: item_extra_attributes
+                    .map(|e| e.contains("ench"))
+                    .unwrap_or_default(),
             },
-            enchantments: item_nbt.tag.extra_attributes.enchantments,
-            timestamp: item_nbt.tag.extra_attributes.timestamp,
+            enchantments: item_extra_attributes
+                .and_then(|e| e.compound("enchantments"))
+                .map(|e| {
+                    e.iter()
+                        .map(|(k, v)| (k.to_string(), v.int().unwrap_or_default()))
+                        .collect()
+                })
+                .unwrap_or_default(),
+            timestamp: item_extra_attributes
+                .and_then(|e| e.string("timestamp"))
+                .map(|t| t.to_string()),
         }))
     }
-
-    Ok(items)
+    Some(items)
 }
 
 fn texture_id_from_base64(base64: &str) -> Option<String> {
