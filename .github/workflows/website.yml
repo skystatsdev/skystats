@@ -13,92 +13,41 @@ env:
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
-  pnpm:
-    name: install dependencies (pnpm)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Git checkout
-        uses: actions/checkout@v3
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 7
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
   es-lint:
-    name: check linting (es-lint)
-    needs: [pnpm]
+    name: Check linting (es-lint)
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 7
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install node dependencies
-        run: pnpm i
+      - name: PNPM Install
+        uses: ./.github/actions/pnpm-install
 
       - name: Check ESlint
         run: pnpm lint
 
   prettier:
-    name: check format (prettier)
-    needs: [pnpm]
+    name: Check formatting (prettier)
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 7
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
-
-      - name: Install node dependencies
-        run: pnpm i
+      - name: PNPM Install
+        uses: ./.github/actions/pnpm-install
 
       - name: Check Prettier
         run: pnpm prettier --check .
 
   sveltecheck:
-    name: check svelte
-    needs: [pnpm]
+    name: Svelte Check
     runs-on: ubuntu-latest
     steps:
       - name: Git checkout
         uses: actions/checkout@v3
 
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v2
-        with:
-          version: 7
-
-      - name: Use Node.js ${{ env.NODE_VERSION }}
-        uses: actions/setup-node@v3
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'pnpm'
+      - name: PNPM Install
+        uses: ./.github/actions/pnpm-install
 
       - name: Install node dependencies
         run: pnpm i
