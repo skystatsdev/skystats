@@ -24,15 +24,12 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 7
-          run_install: |
-            - cwd: frontend
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: 'frontend'
 
   es-lint:
     name: check linting (es-lint)
@@ -46,15 +43,12 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 7
-          run_install: |
-            - cwd: frontend
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: 'frontend'
 
       - name: Install node dependencies
         run: pnpm i
@@ -74,15 +68,12 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 7
-          run_install: |
-            - cwd: frontend
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: 'frontend'
 
       - name: Install node dependencies
         run: pnpm i
@@ -102,15 +93,12 @@ jobs:
         uses: pnpm/action-setup@v2
         with:
           version: 7
-          run_install: |
-            - cwd: frontend
 
       - name: Use Node.js ${{ env.NODE_VERSION }}
         uses: actions/setup-node@v3
         with:
           node-version: ${{ env.NODE_VERSION }}
           cache: 'pnpm'
-          cache-dependency-path: 'frontend'
 
       - name: Install node dependencies
         run: pnpm i
