@@ -49,9 +49,6 @@ jobs:
       - name: PNPM Install
         uses: ./.github/actions/pnpm-install
 
-      - name: Install node dependencies
-        run: pnpm i
-
       - name: Make dummy env for types
         run: |
           echo "ls -a ."
