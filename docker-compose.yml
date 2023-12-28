@@ -1,23 +1,24 @@
 version: '3.9'
 services:
-    api:
-        build: ./backend
-        restart: unless-stopped
-        depends_on:
-            - database
-    website:
-        build: ./frontend
-        restart: unless-stopped
-    database:
-        image: postgres:latest
-        restart: unless-stopped
-        volumes:
-            - db-data:/var/lib/postgresql/data
-            # - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+  website:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - database
+      - redis
+  redis:
+    image: redis:latest
+    restart: unless-stopped
+    command:
+      - /bin/sh
+      - -c
+      # - Double dollars, so that the variable is not expanded by Docker Compose
+      # - Surround by quotes, so that the shell does not split the password
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
 
 networks:
-    default:
-        driver: bridge
+  default:
+    driver: bridge
 
 volumes:
-    db-data: {}
+  redis-data: {}
