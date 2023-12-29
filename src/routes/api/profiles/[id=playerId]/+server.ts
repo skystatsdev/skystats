@@ -1,7 +1,6 @@
 import type { RequestHandler } from './$types';
 import { error } from '@sveltejs/kit';
 import { getPlayer } from '$api/hypixel';
-import { testGetPlayer } from '$api/hypixel';
 
 // GET /api/profiles/[id=playerId]
 export const GET: RequestHandler = async ({ params }) => {
