@@ -1,5 +1,5 @@
 import { HYPIXEL_API_KEY } from '$env/static/private';
-import { redis } from '../db/redis/redis';
+import { redis } from '$redis/redis';
 
 const BASE_URL = 'https://api.hypixel.net/v2';
 
