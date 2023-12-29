@@ -49,6 +49,7 @@
 		"eslint-plugin-deprecation": "^2.0.0",
 		"flowbite": "^1.8.1",
 		"flowbite-svelte": "^0.39.3",
+		"mongodb": "^6.3.0",
 		"redis": "^4.6.12",
 		"tailwind-merge": "^1.14.0"
 	}

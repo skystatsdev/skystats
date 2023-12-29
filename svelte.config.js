@@ -16,7 +16,8 @@ const config = {
 			$params: './src/params',
 			$types: './src/types',
 			$constants: './src/constants',
-			$redis: './src/redis',
+			$redis: './src/db/redis',
+			$mongo: './src/db/mongo',
 			$api: './src/api'
 		}
 	}

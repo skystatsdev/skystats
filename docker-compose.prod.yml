@@ -2,16 +2,10 @@ version: '3.9'
 services:
   redis:
     env_file:
-      - ./frontend/.env.production
-    command:
-      - /bin/sh
-      - -c
-      # - Double dollars, so that the variable is not expanded by Docker Compose
-      # - Surround by quotes, so that the shell does not split the password
-      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+      - .env.production
   website:
     env_file:
-      - ./frontend/.env.production
+      - .env.production
     environment:
       - NODE_ENV=production
     ports:

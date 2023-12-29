@@ -2,11 +2,11 @@ version: '3.9'
 services:
   website:
     env_file:
-      - frontend/.env
+      - .env
     ports:
       - 3033:3000
   redis:
     env_file:
-      - frontend/.env
+      - .env
     ports:
       - 6379:6379
