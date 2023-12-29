@@ -43,6 +43,7 @@
 		"@popperjs/core": "^2.11.8",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
 		"@types/node": "^20.10.5",
+		"eslint-plugin-deprecation": "^2.0.0",
 		"flowbite": "^1.8.1",
 		"flowbite-svelte": "^0.39.3",
 		"redis": "^4.6.12",
