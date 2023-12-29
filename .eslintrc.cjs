@@ -2,7 +2,7 @@ module.exports = {
 	root: true,
 	extends: ['eslint:recommended', 'plugin:@typescript-eslint/recommended', 'plugin:svelte/recommended', 'prettier'],
 	parser: '@typescript-eslint/parser',
-	plugins: ['deprecation', '@typescript-eslint'],
+	plugins: ['deprecation', '@typescript-eslint', 'svelte3'],
 	parserOptions: {
 		sourceType: 'module',
 		ecmaVersion: 2020,
@@ -13,15 +13,6 @@ module.exports = {
 		es2017: true,
 		node: true
 	},
-	overrides: [
-		{
-			files: ['*.svelte'],
-			parser: 'svelte-eslint-parser',
-			parserOptions: {
-				parser: '@typescript-eslint/parser'
-			}
-		}
-	],
 	rules: {
 		curly: ['warn', 'multi-line', 'consistent'],
 		'no-unused-vars': ['error', { args: 'none' }],
@@ -32,9 +23,28 @@ module.exports = {
 		'@typescript-eslint/naming-convention': [
 			'warn',
 			{ selector: 'variableLike', format: ['camelCase'] },
-			{ selector: 'variable', modifiers: ['const'], format: ['camelCase', 'UPPER_CASE'] },
 			{ selector: 'variable', modifiers: ['const', 'exported'], format: ['UPPER_CASE'] },
 			{ selector: 'typeLike', format: ['PascalCase'] }
 		]
-	}
+	},
+	overrides: [
+		{
+			files: ['*.svelte'],
+			parser: 'svelte-eslint-parser',
+			parserOptions: {
+				parser: '@typescript-eslint/parser'
+			}
+		},
+		{
+			files: ['src/routes/**/*.ts', 'src/params/*.ts'],
+			rules: {
+				'@typescript-eslint/naming-convention': [
+					'warn',
+					{ selector: 'variableLike', format: ['camelCase'] },
+					{ selector: 'variable', modifiers: ['const', 'exported'], format: ['camelCase', 'UPPER_CASE'] },
+					{ selector: 'typeLike', format: ['PascalCase'] }
+				]
+			}
+		}
+	]
 };

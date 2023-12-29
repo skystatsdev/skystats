@@ -7,4 +7,4 @@ export const match = ((param) => {
 	);
 }) satisfies ParamMatcher;
 
-export const IsUUID = match;
+export const isUUID = match;
