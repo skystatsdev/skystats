@@ -10,8 +10,7 @@ export const REDIS = createClient({
 REDIS.on('error', console.error);
 REDIS.on('ready', () => console.log('Redis connection established'));
 
-await REDIS.connect();
-
+// Don't connect to redis duing build step
 if (!building) {
 	await REDIS.connect();
 }
