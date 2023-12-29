@@ -1,6 +1,6 @@
 import { HYPIXEL_API_KEY } from '$env/static/private';
 import { IsUUID } from '$params/uuid';
-import { redis } from '$redis/connection';
+import { redis } from '$redis/redis';
 import { FetchUuid } from './mojang';
 
 const BASE_URL = 'https://api.hypixel.net/v2';
