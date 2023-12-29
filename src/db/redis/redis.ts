@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 // Create/get a redis connection to the backend
 import { createClient } from 'redis';
 import { REDIS_PASSWORD, REDIS_HOST, REDIS_PORT } from '$env/static/private';
