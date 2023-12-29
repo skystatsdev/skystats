@@ -1,5 +1,7 @@
 import { HYPIXEL_API_KEY } from '$env/static/private';
+import { IsUUID } from '$params/uuid';
 import { redis } from '$redis/connection';
+import { FetchUuid } from './mojang';
 
 const BASE_URL = 'https://api.hypixel.net/v2';
 
@@ -16,10 +18,20 @@ const headers = {
 // Transformed responses will be stored in a database, not cached in memory like this
 
 export async function FetchPlayerData(uuid: string) {
+	if (IsUUID(uuid) === false) {
+		const playerUUID = await FetchUuid(uuid);
+		if (playerUUID === null) {
+			throw new Error('Player not found!');
+		}
+
+		uuid = playerUUID;
+	}
+
 	if (await redis.EXISTS(`hypixel:player:${uuid}`)) {
 		const data = await redis.GET(`hypixel:player:${uuid}`);
 
 		if (data) {
+			console.log(`Using cached player data for ${uuid}`);
 			return JSON.parse(data);
 		}
 	}
@@ -28,9 +40,19 @@ export async function FetchPlayerData(uuid: string) {
 
 	try {
 		const data = await response.json();
-		redis.SETEX(`hypixel:player:${uuid}`, PLAYER_CACHE_TTL, JSON.stringify(data));
+		if (data.success === false) {
+			throw new Error(data.cause || 'Request to Hypixel API failed. Please try again!');
+		}
 
-		return data;
+		if (data.player === null) {
+			throw new Error('Player not found!');
+		}
+
+		const player = data.player;
+
+		redis.SETEX(`hypixel:player:${uuid}`, PLAYER_CACHE_TTL, JSON.stringify(player));
+
+		return player;
 	} catch (error) {
 		console.error(error);
 		return null;
@@ -38,10 +60,20 @@ export async function FetchPlayerData(uuid: string) {
 }
 
 export async function FetchProfiles(uuid: string) {
+	if (IsUUID(uuid) === false) {
+		const playerUUID = await FetchUuid(uuid);
+		if (playerUUID === null) {
+			throw new Error('Player not found!');
+		}
+
+		uuid = playerUUID;
+	}
+
 	if (await redis.EXISTS(`hypixel:profiles:${uuid}`)) {
 		const data = await redis.GET(`hypixel:profiles:${uuid}`);
 
 		if (data) {
+			console.log(`Using cached profiles for ${uuid}`);
 			return JSON.parse(data);
 		}
 	}
@@ -52,12 +84,18 @@ export async function FetchProfiles(uuid: string) {
 		const data = await response.json();
 
 		if (data.success === false) {
-			return null;
+			throw new Error(data.cause || 'Request to Hypixel API failed. Please try again!');
 		}
 
-		redis.SETEX(`hypixel:profiles:${uuid}`, PROFILES_CACHE_TTL, JSON.stringify(data));
+		if (data.profiles === null || data.profiles.length === 0) {
+			throw new Error('Player has no SkyBlock profiles.');
+		}
 
-		return data;
+		const profiles = data.profiles;
+
+		redis.SETEX(`hypixel:profiles:${uuid}`, PROFILES_CACHE_TTL, JSON.stringify(profiles));
+
+		return profiles;
 	} catch (error) {
 		console.error(error);
 		return null;
