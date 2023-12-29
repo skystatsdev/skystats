@@ -2,13 +2,13 @@
 	import HomePageCard from '$comp/homePageCard.svelte';
 	import { goto } from '$app/navigation';
 
-	export const users = [
+	export const USERS = [
 		{
 			username: 'tonydawhale',
 			description: 'Epic swag awesome gamer'
 		}
 	];
-	$: user = users;
+	$: user = USERS;
 
 	let search: string;
 

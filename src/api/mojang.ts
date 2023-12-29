@@ -1,35 +1,35 @@
-import { IsIGN } from '$params/ign';
-import { IsUUID } from '$params/uuid';
-import { redis } from '$redis/redis';
+import { isUsername } from '$params/ign';
+import { isUUID } from '$params/uuid';
+import { REDIS } from '$redis/redis';
 
 //! TEMPORARY CACHE TIMES (we want to cache transformed data later also, not raw data)
-const ACCOUNT_CACHE_TTL = 600; // 10 minutes
+const accountCacheTTL = 600; // 10 minutes
 
-export async function FetchMinecraftAccount(user: string) {
-	if (IsIGN(user)) {
-		return await FetchMinecraftAccountByUsername(user);
+export async function fetchMinecraftAccount(user: string) {
+	if (isUsername(user)) {
+		return await fetchMinecraftAccountByUsername(user);
 	}
 
-	if (IsUUID(user)) {
-		return await FetchMinecraftAccountByUuid(user);
+	if (isUUID(user)) {
+		return await fetchMinecraftAccountByUuid(user);
 	}
 
 	return null;
 }
 
-export async function FetchExistingMinecraftAccount(user: string) {
+export async function fetchExistingMinecraftAccount(user: string) {
 	let uuid;
 
-	if (IsIGN(user)) {
-		uuid = await FetchUuid(user, false);
-	} else if (IsUUID(user)) {
+	if (isUsername(user)) {
+		uuid = await getUUID(user, false);
+	} else if (isUUID(user)) {
 		uuid = user;
 	} else {
 		return null;
 	}
 
-	if (await redis.EXISTS(`mojang:account:${uuid}`)) {
-		const data = await redis.GET(`mojang:account:${uuid}`);
+	if (await REDIS.EXISTS(`mojang:account:${uuid}`)) {
+		const data = await REDIS.GET(`mojang:account:${uuid}`);
 
 		if (data) {
 			return JSON.parse(data) as MinecraftAccountResponse;
@@ -39,10 +39,10 @@ export async function FetchExistingMinecraftAccount(user: string) {
 	return null;
 }
 
-export async function FetchMinecraftAccountByUuid(uuid: string) {
+export async function fetchMinecraftAccountByUuid(uuid: string) {
 	uuid = uuid.replaceAll('-', '');
 
-	const existing = await FetchExistingMinecraftAccount(uuid);
+	const existing = await fetchExistingMinecraftAccount(uuid);
 	if (existing) {
 		return existing;
 	}
@@ -56,9 +56,9 @@ export async function FetchMinecraftAccountByUuid(uuid: string) {
 			return null;
 		}
 
-		redis.SETEX(`mojang:account:${data.id}`, ACCOUNT_CACHE_TTL, JSON.stringify(data));
-		redis.SETEX(`username:${data.id}`, ACCOUNT_CACHE_TTL, data.name);
-		redis.SETEX(`uuid:${data.name}`, ACCOUNT_CACHE_TTL, data.id);
+		REDIS.SETEX(`mojang:account:${data.id}`, accountCacheTTL, JSON.stringify(data));
+		REDIS.SETEX(`username:${data.id}`, accountCacheTTL, data.name);
+		REDIS.SETEX(`uuid:${data.name}`, accountCacheTTL, data.id);
 
 		return data;
 	} catch (error) {
@@ -67,8 +67,8 @@ export async function FetchMinecraftAccountByUuid(uuid: string) {
 	}
 }
 
-export async function FetchMinecraftAccountByUsername(username: string) {
-	const existing = await FetchExistingMinecraftAccount(username);
+export async function fetchMinecraftAccountByUsername(username: string) {
+	const existing = await fetchExistingMinecraftAccount(username);
 	if (existing) {
 		return existing;
 	}
@@ -82,43 +82,43 @@ export async function FetchMinecraftAccountByUsername(username: string) {
 			return null;
 		}
 
-		return await FetchMinecraftAccountByUuid(data.id);
+		return await fetchMinecraftAccountByUuid(data.id);
 	} catch (error) {
 		console.error(error);
 		return null;
 	}
 }
 
-export async function FetchUsername(uuid: string, fetch = true): Promise<string | null> {
+export async function getUsername(uuid: string, fetch = true): Promise<string | null> {
 	uuid = uuid.replaceAll('-', '');
 
-	const name = await redis.GET(`username:${uuid}`);
+	const name = await REDIS.GET(`username:${uuid}`);
 
 	if (name || !fetch) {
 		return name;
 	}
 
-	const data = await FetchMinecraftAccountByUuid(uuid);
+	const data = await fetchMinecraftAccountByUuid(uuid);
 
 	if (data) {
-		redis.SETEX(`username:${uuid}`, ACCOUNT_CACHE_TTL, data.name);
+		REDIS.SETEX(`username:${uuid}`, accountCacheTTL, data.name);
 		return data.name;
 	}
 
 	return null;
 }
 
-export async function FetchUuid(username: string, fetch = true): Promise<string | null> {
-	const uuid = await redis.GET(`uuid:${username}`);
+export async function getUUID(username: string, fetch = true): Promise<string | null> {
+	const uuid = await REDIS.GET(`uuid:${username}`);
 
 	if (uuid || !fetch) {
 		return uuid;
 	}
 
-	const data = await FetchMinecraftAccountByUsername(username);
+	const data = await fetchMinecraftAccountByUsername(username);
 
 	if (data) {
-		redis.SETEX(`uuid:${username}`, ACCOUNT_CACHE_TTL, data.id);
+		REDIS.SETEX(`uuid:${username}`, accountCacheTTL, data.id);
 		return data.id;
 	}
 

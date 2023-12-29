@@ -1,13 +1,13 @@
 import { HYPIXEL_API_KEY } from '$env/static/private';
-import { IsUUID } from '$params/uuid';
-import { redis } from '$redis/redis';
-import { FetchUuid } from './mojang';
+import { isUUID } from '$params/uuid';
+import { REDIS } from '$redis/redis';
+import { getUUID } from './mojang';
 
-const BASE_URL = 'https://api.hypixel.net/v2';
+const baseURL = 'https://api.hypixel.net/v2';
 
 //! TEMPORARY CACHE TIMES (we want to store transformed data later also, not raw data)
-const PLAYER_CACHE_TTL = 300; // 5 minutes
-const PROFILES_CACHE_TTL = 120; // 2 minutes
+const playerCacheTTL = 300; // 5 minutes
+const profileCacheTTL = 120; // 2 minutes
 
 const headers = {
 	'API-Key': HYPIXEL_API_KEY,
@@ -17,9 +17,9 @@ const headers = {
 //! TEMPORARY EXAMPLE FUNCTIONS
 // Transformed responses will be stored in a database, not cached in memory like this
 
-export async function FetchPlayerData(uuid: string) {
-	if (IsUUID(uuid) === false) {
-		const playerUUID = await FetchUuid(uuid);
+export async function getPlayer(uuid: string) {
+	if (isUUID(uuid) === false) {
+		const playerUUID = await getUUID(uuid);
 		if (playerUUID === null) {
 			throw new Error('Player not found!');
 		}
@@ -27,8 +27,8 @@ export async function FetchPlayerData(uuid: string) {
 		uuid = playerUUID;
 	}
 
-	if (await redis.EXISTS(`hypixel:player:${uuid}`)) {
-		const data = await redis.GET(`hypixel:player:${uuid}`);
+	if (await REDIS.EXISTS(`hypixel:player:${uuid}`)) {
+		const data = await REDIS.GET(`hypixel:player:${uuid}`);
 
 		if (data) {
 			console.log(`Using cached player data for ${uuid}`);
@@ -36,7 +36,7 @@ export async function FetchPlayerData(uuid: string) {
 		}
 	}
 
-	const response = await fetch(`${BASE_URL}/player?uuid=${uuid}`, { headers });
+	const response = await fetch(`${baseURL}/player?uuid=${uuid}`, { headers });
 
 	try {
 		const data = await response.json();
@@ -50,7 +50,7 @@ export async function FetchPlayerData(uuid: string) {
 
 		const player = data.player;
 
-		redis.SETEX(`hypixel:player:${uuid}`, PLAYER_CACHE_TTL, JSON.stringify(player));
+		REDIS.SETEX(`hypixel:player:${uuid}`, playerCacheTTL, JSON.stringify(player));
 
 		return player;
 	} catch (error) {
@@ -59,9 +59,9 @@ export async function FetchPlayerData(uuid: string) {
 	}
 }
 
-export async function FetchProfiles(uuid: string) {
-	if (IsUUID(uuid) === false) {
-		const playerUUID = await FetchUuid(uuid);
+export async function getProfile(uuid: string) {
+	if (isUUID(uuid) === false) {
+		const playerUUID = await getUUID(uuid);
 		if (playerUUID === null) {
 			throw new Error('Player not found!');
 		}
@@ -69,8 +69,8 @@ export async function FetchProfiles(uuid: string) {
 		uuid = playerUUID;
 	}
 
-	if (await redis.EXISTS(`hypixel:profiles:${uuid}`)) {
-		const data = await redis.GET(`hypixel:profiles:${uuid}`);
+	if (await REDIS.EXISTS(`hypixel:profiles:${uuid}`)) {
+		const data = await REDIS.GET(`hypixel:profiles:${uuid}`);
 
 		if (data) {
 			console.log(`Using cached profiles for ${uuid}`);
@@ -78,7 +78,7 @@ export async function FetchProfiles(uuid: string) {
 		}
 	}
 
-	const response = await fetch(`${BASE_URL}/skyblock/profiles?uuid=${uuid}`, { headers });
+	const response = await fetch(`${baseURL}/skyblock/profiles?uuid=${uuid}`, { headers });
 
 	try {
 		const data = await response.json();
@@ -93,7 +93,7 @@ export async function FetchProfiles(uuid: string) {
 
 		const profiles = data.profiles;
 
-		redis.SETEX(`hypixel:profiles:${uuid}`, PROFILES_CACHE_TTL, JSON.stringify(profiles));
+		REDIS.SETEX(`hypixel:profiles:${uuid}`, profileCacheTTL, JSON.stringify(profiles));
 
 		return profiles;
 	} catch (error) {

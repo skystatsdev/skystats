@@ -2,8 +2,8 @@
 	import Head from '$comp/head.svelte';
 	import PlayerRender from '$comp/playerRender.svelte';
 	import Header from '$comp/header.svelte';
-	import PlayerProfile from '$comp/PlayerProfile/PlayerProfile.svelte';
-	import BasicStats from '$comp/BasicStats/BasicStats.svelte';
+	// import PlayerProfile from '$comp/PlayerProfile/PlayerProfile.svelte';
+	// import BasicStats from '$comp/BasicStats/BasicStats.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;

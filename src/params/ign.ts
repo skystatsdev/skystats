@@ -5,4 +5,4 @@ export const match = ((param) => {
 	return param.length <= 24 && /^[a-zA-Z0-9_]+$/.test(param);
 }) satisfies ParamMatcher;
 
-export const IsIGN = match;
+export const isUsername = match;

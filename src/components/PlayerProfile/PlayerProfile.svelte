@@ -20,7 +20,7 @@
 		.filter((profile) => profile.name !== profileName)
 		.sort((a, b) => a.name.localeCompare(b.name));
 
-	let rankRegex = /(§[a-f0-9])/g;
+	const rankRegex = /(§[a-f0-9])/g;
 	$: rankName = rankData?.name;
 	$: rankFormatted = rankData?.formatted.replace(/[^a-zA-Z0-9\][+§]/g, '');
 	$: rankColor = HYPIXEL_RANK_COLORS[rankFormatted.match(rankRegex)?.[0] as keyof typeof HYPIXEL_RANK_COLORS];
