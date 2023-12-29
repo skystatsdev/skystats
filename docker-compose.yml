@@ -1,10 +1,9 @@
 version: '3.9'
 services:
   website:
-    build: ./frontend
+    build: .
     restart: unless-stopped
     depends_on:
-      - database
       - redis
   redis:
     image: redis:latest

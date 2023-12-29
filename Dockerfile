@@ -1,4 +1,4 @@
-FROM node:19
+FROM node:20
 
 RUN npm install -g pnpm
 WORKDIR /app
