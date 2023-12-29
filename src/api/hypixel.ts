@@ -20,9 +20,8 @@ const headers = {
 export async function FetchPlayerData(uuid: string) {
 	if (IsUUID(uuid) === false) {
 		const playerUUID = await FetchMinecraftAccountByUsername(uuid);
-		if (playerUUID) {
-			uuid = playerUUID.id;
-		}
+
+		uuid = playerUUID?.id || uuid;
 	}
 
 	if (await redis.EXISTS(`hypixel:player:${uuid}`)) {
@@ -52,7 +51,7 @@ export async function FetchPlayerData(uuid: string) {
 
 		return player;
 	} catch (error) {
-		console.log(error);
+		console.error(error);
 		return null;
 	}
 }
@@ -60,9 +59,8 @@ export async function FetchPlayerData(uuid: string) {
 export async function FetchProfiles(uuid: string) {
 	if (IsUUID(uuid) === false) {
 		const playerUUID = await FetchMinecraftAccountByUsername(uuid);
-		if (playerUUID) {
-			uuid = playerUUID.id;
-		}
+
+		uuid = playerUUID?.id || uuid;
 	}
 
 	if (await redis.EXISTS(`hypixel:profiles:${uuid}`)) {
