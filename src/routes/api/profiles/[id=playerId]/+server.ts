@@ -4,9 +4,9 @@ import { FetchProfiles } from '$api/hypixel';
 
 // GET /api/profiles/[id=playerId]
 export const GET: RequestHandler = async ({ params }) => {
-	const { uuid } = params;
+	const { id } = params;
 
-	const data = await FetchProfiles(uuid);
+	const data = await FetchProfiles(id);
 
 	if (!data) {
 		throw error(404, 'Player has no SkyBlock profiles.');

@@ -1,7 +1,7 @@
 import { HYPIXEL_API_KEY } from '$env/static/private';
 import { IsUUID } from '$params/uuid';
 import { redis } from '$redis/connection';
-import { FetchMinecraftAccountByUsername } from './mojang';
+import { FetchUuid } from './mojang';
 
 const BASE_URL = 'https://api.hypixel.net/v2';
 
@@ -19,15 +19,18 @@ const headers = {
 
 export async function FetchPlayerData(uuid: string) {
 	if (IsUUID(uuid) === false) {
-		const playerUUID = await FetchMinecraftAccountByUsername(uuid);
+		const playerUUID = await FetchUuid(uuid);
+		if (playerUUID === null) {
+			throw new Error('Player not found!');
+		}
 
-		uuid = playerUUID?.id || uuid;
+		uuid = playerUUID;
 	}
 
 	if (await redis.EXISTS(`hypixel:player:${uuid}`)) {
 		const data = await redis.GET(`hypixel:player:${uuid}`);
 
-		if (data && data !== 'null') {
+		if (data) {
 			console.log(`Using cached player data for ${uuid}`);
 			return JSON.parse(data);
 		}
@@ -58,15 +61,18 @@ export async function FetchPlayerData(uuid: string) {
 
 export async function FetchProfiles(uuid: string) {
 	if (IsUUID(uuid) === false) {
-		const playerUUID = await FetchMinecraftAccountByUsername(uuid);
+		const playerUUID = await FetchUuid(uuid);
+		if (playerUUID === null) {
+			throw new Error('Player not found!');
+		}
 
-		uuid = playerUUID?.id || uuid;
+		uuid = playerUUID;
 	}
 
 	if (await redis.EXISTS(`hypixel:profiles:${uuid}`)) {
 		const data = await redis.GET(`hypixel:profiles:${uuid}`);
 
-		if (data && data !== 'null') {
+		if (data) {
 			console.log(`Using cached profiles for ${uuid}`);
 			return JSON.parse(data);
 		}
