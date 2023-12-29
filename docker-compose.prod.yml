@@ -1,35 +1,34 @@
 version: '3.9'
 services:
-    api:
-        env_file:
-            - ./backend/.env.production
-        ports:
-            - 8000:8000
-    website:
-        env_file:
-            - ./frontend/.env.production
-        environment:
-            - NODE_ENV=production
-        ports:
-            - 3000:3000
-        depends_on:
-            - api
-    database:
-        env_file:
-            - ./backend/.env.production
-    caddy:
-        image: caddy:latest
-        restart: unless-stopped
-        ports:
-            - "80:80"
-            - "443:443"
-            - "443:443/udp"
-        volumes:
-            - ./Caddyfile:/etc/caddy/Caddyfile
-            - /etc/ssl/skystats:/etc/ssl/skystats
-            - caddy-data:/data
-            - caddy-config:/config
+  redis:
+    env_file:
+      - ./frontend/.env.production
+    command:
+      - /bin/sh
+      - -c
+      # - Double dollars, so that the variable is not expanded by Docker Compose
+      # - Surround by quotes, so that the shell does not split the password
+      - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+  website:
+    env_file:
+      - ./frontend/.env.production
+    environment:
+      - NODE_ENV=production
+    ports:
+      - 3000:3000
+  caddy:
+    image: caddy:latest
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - /etc/ssl/skystats:/etc/ssl/skystats
+      - caddy-data:/data
+      - caddy-config:/config
 
 volumes:
-    caddy-data: {}
-    caddy-config: {}
+  caddy-data: {}
+  caddy-config: {}

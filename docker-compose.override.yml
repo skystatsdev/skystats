@@ -1,17 +1,12 @@
 version: '3.9'
 services:
-    api:
-        env_file:
-            - ./backend/.env
-        ports:
-            - 8000:8000
-    website:
-        env_file:
-            - frontend/.env
-        ports:
-            - 3033:3000
-    database:
-        env_file:
-            - ./backend/.env
-        ports:
-            - 5432:5432
+  website:
+    env_file:
+      - frontend/.env
+    ports:
+      - 3033:3000
+  redis:
+    env_file:
+      - frontend/.env
+    ports:
+      - 6379:6379
