@@ -1,6 +1,6 @@
 import { IsIGN } from '$params/ign';
 import { IsUUID } from '$params/uuid';
-import { redis } from '$redis/connection';
+import { redis } from '$redis/redis';
 
 //! TEMPORARY CACHE TIMES (we want to cache transformed data later also, not raw data)
 const ACCOUNT_CACHE_TTL = 600; // 10 minutes
