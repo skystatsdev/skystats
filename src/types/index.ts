@@ -4,6 +4,30 @@ export type HypixelRequestOptions = {
 	usesApiKey?: boolean;
 };
 
+export type SkyblockPlayerStats = {
+	skills: {
+		skills: Record<SkyblockSkillName, SkyblockSkillData>;
+		averageSkillLevel: number;
+		averageSkillLevelWithoutProgress: number;
+		totalSkillXp: number;
+	}
+}
+
+export type SkyblockSkillData = {
+	xp: number;
+	level: number;
+	maxLevel: number;
+	xpCurrent: number;
+	maxExperience?: number;
+	xpForNext: number;
+	progress: number;
+	levelCap: number;
+	uncappedLevel: number;
+	levelWithProgress: number;
+	uncappedLevelWithProgress: number;
+	rank: number;
+}
+
 export type StoredHypixelPlayer = {
 	uuid: string;
 	player: Record<any, any>;
@@ -490,19 +514,6 @@ export type InventoryItem = {
 	};
 	enchantments?: Record<string, number>;
 	timestamp?: string;
-};
-
-export type SkyblockSkillData = {
-	xp: number;
-	level: number;
-	max_level: number;
-	xp_current: number;
-	xp_for_next: number;
-	progress: number;
-	level_cap: number;
-	uncapped_level: number;
-	level_with_progress: number;
-	uncapped_level_with_progress: number;
 };
 
 export type SkyblockSkillName =

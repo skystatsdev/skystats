@@ -111,6 +111,7 @@ export function getLevelByXp(
 		if (uncappedLevel <= levelCap) xpCurrent = xpRemaining;
 	}
 
+	/** adds support for infinite leveling (dungeoneering and skyblock level) */
 	if (extra.infinite) {
 		const maxExperience = Object.values(xpTable).at(-1) ?? 0;
 
@@ -119,28 +120,36 @@ export function getLevelByXp(
 		xpCurrent = xpRemaining;
 	}
 
+	/** the maximum level that any player can achieve (used for gold progress bars) */
 	const maxLevel =
 		extra.ignoreCap && uncappedLevel >= levelCap
 			? uncappedLevel
 			: constants.SKYBLOCK_MAXED_SKILL_CAPS[extra.skill as keyof typeof constants.SKYBLOCK_MAXED_SKILL_CAPS] ??
 			  levelCap;
 
+	/** the maximum amount of experience that any player can acheive (used for skyblock level gold progress bar) */
 	const maxExperience =
 		constants.SKYBLOCK_MAXED_SKILL_CAPS[extra.skill as keyof typeof constants.SKYBLOCK_MAXED_SKILL_CAPS];
 
+	// not sure why this is floored but I'm leaving it in for now
 	xpCurrent = Math.floor(xpCurrent);
 
+	/** the level as displayed by in game UI */
 	const level = extra.ignoreCap ? uncappedLevel : Math.min(levelCap, uncappedLevel);
 
+	/** the amount amount of xp needed to reach the next level (used for calculation progress to next level) */
 	const xpForNext =
 		level < maxLevel
 			? Math.ceil(xpTable[(level + 1) as keyof typeof xpTable] ?? Object.values(xpTable).at(-1))
 			: maxExperience ?? Infinity;
 
+	/** the fraction of the way toward the next level */
 	const progress = level >= maxLevel ? (extra.ignoreCap ? 1 : 0) : Math.max(0, Math.min(xpCurrent / xpForNext, 1));
 
+	/** a floating point value representing the current level for example if you are half way to level 5 it would be 4.5 */
 	const levelWithProgress = level + progress;
 
+	/** a floating point value representing the current level ignoring the in-game unlockable caps for example if you are half way to level 5 it would be 4.5 */
 	const unlockableLevelWithProgress = extra.cap ? Math.min(uncappedLevel + progress, maxLevel) : levelWithProgress;
 
 	return {
