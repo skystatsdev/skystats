@@ -1,9 +1,10 @@
 import type { ParamMatcher } from '@sveltejs/kit';
 
-export const match: ParamMatcher = (param: string): boolean => {
-    const uuidRegex = /^[a-fA-F0-9]+$/;
-    const uuidWithDashesRegex = /^[a-fA-F0-9-]+$/;
+export const match = ((param) => {
+	//* UUIDs are 32 characters long or 36 with dashes
+	return (
+		(param.length === 32 && /^[a-fA-F0-9]+$/.test(param)) || (param.length === 36 && /^[a-fA-F0-9-]+$/.test(param))
+	);
+}) satisfies ParamMatcher;
 
-    return (param.length === 32 && uuidRegex.test(param)) || 
-           (param.length === 36 && uuidWithDashesRegex.test(param));
-};
+export const isUUID = match;
