@@ -1,6 +1,6 @@
 import * as constants from '$constants';
 import type { SkyblockProfile, SkyblockProfileMember } from '$types';
-import { getLevelByXp, getXpByLevel } from './leveling';
+import { getLevelByXp, getXpByLevel } from '$stats/skills/leveling';
 
 async function getLevels(
 	userProfile: SkyblockProfileMember,
