@@ -1,5 +1,5 @@
-export * from './leveling';
-export * from './slayers';
+export * from '$constants/leveling';
+export * from '$constants/slayers';
 
 export const HYPIXEL_RANK_COLORS = {
 	'§0': 'bg-[#000000]',

@@ -1,5 +1,5 @@
-import { match as ign } from './ign';
-import { match as uuid } from './uuid';
+import { match as ign } from '$params/ign';
+import { match as uuid } from '$params/uuid';
 
 import type { ParamMatcher } from '@sveltejs/kit';
 

@@ -18,7 +18,8 @@ const config = {
 			$constants: './src/constants',
 			$redis: './src/db/redis',
 			$mongo: './src/db/mongo',
-			$api: './src/api'
+			$api: './src/api',
+			$stats: './src/lib/stats'
 		}
 	}
 };

@@ -1,10 +1,8 @@
-export * from '../lib/stats/skills';
-
 import { HYPIXEL_API_KEY } from '$env/static/private';
 import { MONGO } from '$mongo/mongo';
 import { isUUID } from '$params/uuid';
 import type { HypixelRequestOptions, SkyblockProfile, StoredHypixelPlayer, StoredSkyblockProfile } from '$types';
-import { getUUID } from './mojang';
+import { getUUID } from '$api/mojang';
 
 const baseURL = 'https://api.hypixel.net/v2';
 
