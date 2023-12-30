@@ -109,6 +109,10 @@ export async function getUsername(uuid: string, fetch = true): Promise<string | 
 }
 
 export async function getUUID(username: string, fetch = true): Promise<string | null> {
+	if (isUUID(username)) {
+		return username;
+	}
+
 	const uuid = await REDIS.GET(`uuid:${username}`);
 
 	if (uuid || !fetch) {

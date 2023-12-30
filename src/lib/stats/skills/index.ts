@@ -2,7 +2,7 @@ import * as constants from '$constants';
 import type { SkyblockProfile, SkyblockProfileMember } from '$types';
 import { getLevelByXp, getXpByLevel } from './leveling';
 
-async function getLevels(
+function getLevels(
 	userProfile: SkyblockProfileMember,
 	profileMembers: SkyblockProfile['members'],
 	hypixelProfile: Record<any, any>,
@@ -76,7 +76,7 @@ async function getLevels(
 	};
 }
 
-export async function getSkills(
+export function getSkills(
 	userProfile: SkyblockProfileMember,
 	hypixelProfile: Record<any, any>,
 	profileMembers: SkyblockProfile['members']
@@ -89,5 +89,5 @@ export async function getSkills(
 			: constants.SKYBLOCK_NON_RUNECRAFTING_LEVEL_CAP
 	};
 
-	return await getLevels(userProfile, profileMembers, hypixelProfile, levelCaps);
+	return getLevels(userProfile, profileMembers, hypixelProfile, levelCaps);
 }
