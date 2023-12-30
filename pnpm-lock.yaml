@@ -106,6 +106,9 @@ devDependencies:
   vite:
     specifier: ^5.0.10
     version: 5.0.10(@types/node@20.10.5)
+  vitest:
+    specifier: ^1.1.0
+    version: 1.1.0(@types/node@20.10.5)
 
 packages:
 
