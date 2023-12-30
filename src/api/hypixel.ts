@@ -118,10 +118,8 @@ export async function getProfiles(paramPlayer: string, paramProfile?: string): P
 
 	let profiles = storedProfiles.map((profile) => profile.profile);
 	if (
-		!(
-			storedProfiles.length &&
-			storedProfiles.every((profile) => (profile.lastUpdated + profileCacheTTL) * 1000 > Date.now())
-		)
+		!storedProfiles.length ||
+		!storedProfiles.every((profile) => (profile.lastUpdated + profileCacheTTL) * 1000 > Date.now())
 	) {
 		const response = await hypixelRequest({ endpoint: 'skyblock/profiles', query: { uuid } });
 		if (response === undefined || response.success === false) {
