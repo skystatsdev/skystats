@@ -1,7 +1,13 @@
 import { HYPIXEL_API_KEY } from '$env/static/private';
 import { MONGO } from '$mongo/mongo';
 import { isUUID } from '$params/uuid';
-import type { HypixelRequestOptions, SkyblockProfile, StoredHypixelPlayer, StoredSkyblockProfile } from '$types';
+import type {
+	HypixelRequestOptions,
+	SkyblockProfile,
+	StoredHypixelPlayer,
+	StoredSkyblockProfile,
+	GetProfiles
+} from '$types';
 import { getUUID } from '$api/mojang';
 
 const baseURL = 'https://api.hypixel.net/v2';
@@ -109,10 +115,26 @@ export async function getProfiles(paramPlayer: string, paramProfile?: string): P
 	const storedProfiles = await MONGO.collection<StoredSkyblockProfile>('profiles')
 		.find({ [`profile.members.${uuid}`]: { $exists: true } })
 		.toArray();
-	if (storedProfiles.length && storedProfiles.every((profile) => profile.lastUpdated + profileCacheTTL > Date.now())) {
-		console.log('Returning cached profile data');
+	if (
+		storedProfiles.length &&
+		storedProfiles.every((profile) => (profile.lastUpdated + profileCacheTTL) * 1000 > Date.now())
+	) {
+		const profiles = storedProfiles.map((profile) => profile.profile);
 
-		// return stuff here (currently broken, won't fix it yet since we won't store raw data)
+		let profile = profiles.find((profile: SkyblockProfile) => profile.cute_name === paramProfile);
+		if (paramProfile) {
+			if (isUUID(paramProfile)) {
+				profile = profiles.find((profile: SkyblockProfile) => profile.profile_id === paramProfile);
+			} else {
+				profile = profiles.find((profile: SkyblockProfile) => profile.cute_name === paramProfile);
+			}
+		}
+
+		if (profile === undefined) {
+			throw new Error('Profile not found!');
+		}
+
+		return { profile, profiles, uuid };
 	}
 
 	const response = await hypixelRequest({
