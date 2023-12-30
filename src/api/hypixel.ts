@@ -100,13 +100,7 @@ export async function getPlayer(uuid: string): Promise<Record<any, any>> {
 	return player;
 }
 
-type getProfilesReturn = {
-	profile: SkyblockProfile;
-	profiles: SkyblockProfile[];
-	uuid: string;
-};
-
-export async function getProfiles(paramPlayer: string, paramProfile?: string): Promise<getProfilesReturn> {
+export async function getProfiles(paramPlayer: string, paramProfile?: string): Promise<GetProfiles> {
 	const uuid = await getUUID(paramPlayer);
 	if (uuid === null) {
 		throw new Error('Player not found!');
