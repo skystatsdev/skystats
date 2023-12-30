@@ -100,15 +100,25 @@ export async function getPlayer(uuid: string): Promise<Record<any, any>> {
 	return player;
 }
 
-export async function getProfiles(paramPlayer: string, paramProfile?: string) /*: Promise<Record<string, any>>*/ {
+type getProfilesReturn = {
+	profile: SkyblockProfile;
+	profiles: SkyblockProfile[];
+	uuid: string;
+};
+
+export async function getProfiles(paramPlayer: string, paramProfile?: string): Promise<getProfilesReturn> {
 	const uuid = await getUUID(paramPlayer);
+	if (uuid === null) {
+		throw new Error('Player not found!');
+	}
 
 	const storedProfiles = await MONGO.collection<StoredSkyblockProfile>('profiles')
 		.find({ [`profile.members.${uuid}`]: { $exists: true } })
 		.toArray();
 	if (storedProfiles.length && storedProfiles.every((profile) => profile.lastUpdated + profileCacheTTL > Date.now())) {
 		console.log('Returning cached profile data');
-		return storedProfiles.map((profile) => profile.profile);
+
+		// return stuff here (currently broken, won't fix it yet since we won't store raw data)
 	}
 
 	const response = await hypixelRequest({
@@ -134,15 +144,13 @@ export async function getProfiles(paramPlayer: string, paramProfile?: string) /*
 		);
 	}
 
-	let profile = {};
+	let profile = profiles.find((profile: SkyblockProfile) => profile.selected);
 	if (paramProfile) {
-		if (paramProfile.length === 36) {
+		if (isUUID(paramProfile)) {
 			profile = profiles.find((profile: SkyblockProfile) => profile.profile_id === paramProfile);
 		} else {
 			profile = profiles.find((profile: SkyblockProfile) => profile.cute_name === paramProfile);
 		}
-	} else {
-		profile = profiles.find((profile: SkyblockProfile) => profile.selected);
 	}
 
 	return { profile, profiles, uuid };
