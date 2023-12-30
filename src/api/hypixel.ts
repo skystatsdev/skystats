@@ -1,6 +1,9 @@
+export * from '../lib/stats/skills';
+
 import { HYPIXEL_API_KEY } from '$env/static/private';
+import { MONGO } from '$mongo/mongo';
 import { isUUID } from '$params/uuid';
-import { REDIS } from '$redis/redis';
+import type { HypixelRequestOptions, SkyblockProfile, StoredHypixelPlayer, StoredSkyblockProfile } from '$types';
 import { getUUID } from './mojang';
 
 const baseURL = 'https://api.hypixel.net/v2';
@@ -9,57 +12,64 @@ const baseURL = 'https://api.hypixel.net/v2';
 const playerCacheTTL = 300; // 5 minutes
 const profileCacheTTL = 120; // 2 minutes
 
-const headers = {
-	'API-Key': HYPIXEL_API_KEY,
-	Accept: 'application/json'
+const baseHeaders = {
+	Accept: 'application/json',
+	'User-Agent': 'SkyStats'
+};
+
+let completedFirstRequest = false;
+const ratelimit = {
+	limit: 0,
+	remaining: 0,
+	reset: 0
 };
 
 //! TEMPORARY EXAMPLE FUNCTIONS
 // Transformed responses will be stored in a database, not cached in memory like this
 
-export async function getPlayer(uuid: string) {
-	if (isUUID(uuid) === false) {
-		const playerUUID = await getUUID(uuid);
-		if (playerUUID === null) {
-			throw new Error('Player not found!');
-		}
+async function hypixelRequest(opts: HypixelRequestOptions = { usesApiKey: true }) {
+	if (!opts.endpoint) throw new Error('No endpoint provided!');
+	if (!opts.query) opts.query = {};
+	const requestUrl = `${baseURL}/${opts?.endpoint}?${new URLSearchParams(opts.query)}`;
 
-		uuid = playerUUID;
+	if (ratelimit.remaining === 0 && completedFirstRequest) {
+		throw new Error('Ratelimit reached!');
 	}
 
-	if (await REDIS.EXISTS(`hypixel:player:${uuid}`)) {
-		const data = await REDIS.GET(`hypixel:player:${uuid}`);
+	const headers: { Accept: string; 'User-Agent': string; 'API-Key'?: string } = {
+		...baseHeaders
+	};
 
-		if (data) {
-			console.log(`Using cached player data for ${uuid}`);
-			return JSON.parse(data);
-		}
+	if (opts.usesApiKey) {
+		headers['API-Key'] = HYPIXEL_API_KEY;
 	}
 
-	const response = await fetch(`${baseURL}/player?uuid=${uuid}`, { headers });
+	const response = await fetch(requestUrl, {
+		headers
+	});
 
 	try {
 		const data = await response.json();
+
 		if (data.success === false) {
 			throw new Error(data.cause || 'Request to Hypixel API failed. Please try again!');
 		}
-
-		if (data.player === null) {
-			throw new Error('Player not found!');
+		// TODO: Handle ratelimiting in an actually good way 💀
+		if (opts.usesApiKey) {
+			ratelimit.limit = parseInt(response.headers.get('ratelimit-limit') as string);
+			ratelimit.remaining = parseInt(response.headers.get('ratelimit-remaining') as string);
+			ratelimit.reset = parseInt(response.headers.get('ratelimit-reset') as string);
+			if (completedFirstRequest === false) completedFirstRequest = true;
 		}
 
-		const player = data.player;
-
-		REDIS.SETEX(`hypixel:player:${uuid}`, playerCacheTTL, JSON.stringify(player));
-
-		return player;
+		return data;
 	} catch (error) {
 		console.error(error);
 		return null;
 	}
 }
 
-export async function getProfile(uuid: string) {
+export async function getPlayer(uuid: string): Promise<Record<any, any>> {
 	if (isUUID(uuid) === false) {
 		const playerUUID = await getUUID(uuid);
 		if (playerUUID === null) {
@@ -69,35 +79,63 @@ export async function getProfile(uuid: string) {
 		uuid = playerUUID;
 	}
 
-	if (await REDIS.EXISTS(`hypixel:profiles:${uuid}`)) {
-		const data = await REDIS.GET(`hypixel:profiles:${uuid}`);
-
-		if (data) {
-			console.log(`Using cached profiles for ${uuid}`);
-			return JSON.parse(data);
-		}
+	const storedPlayer = await MONGO.collection<StoredHypixelPlayer>('players').findOne({ uuid });
+	if (storedPlayer && storedPlayer.lastUpdated + playerCacheTTL > Math.floor(Date.now() / 1000)) {
+		console.log('Returning cached player data');
+		return storedPlayer.player;
 	}
 
-	const response = await fetch(`${baseURL}/skyblock/profiles?uuid=${uuid}`, { headers });
+	const player = await hypixelRequest({ endpoint: 'player', query: { uuid }, usesApiKey: true })
+		.then((res) => res.player)
+		.catch((err) => {
+			throw new Error(err);
+		});
 
-	try {
-		const data = await response.json();
+	if (!player) throw new Error('Player not found!');
 
-		if (data.success === false) {
-			throw new Error(data.cause || 'Request to Hypixel API failed. Please try again!');
+	await MONGO.collection<StoredHypixelPlayer>('players').updateOne(
+		{ uuid },
+		{ $set: { uuid, player, lastUpdated: Math.floor(Date.now() / 1000) } },
+		{ upsert: true }
+	);
+
+	return player;
+}
+
+export async function getProfile(uuid: string): Promise<Record<string, any>> {
+	if (isUUID(uuid) === false) {
+		const playerUUID = await getUUID(uuid);
+		if (playerUUID === null) {
+			throw new Error('Player not found!');
 		}
 
-		if (data.profiles === null || data.profiles.length === 0) {
-			throw new Error('Player has no SkyBlock profiles.');
-		}
-
-		const profiles = data.profiles;
-
-		REDIS.SETEX(`hypixel:profiles:${uuid}`, profileCacheTTL, JSON.stringify(profiles));
-
-		return profiles;
-	} catch (error) {
-		console.error(error);
-		return null;
+		uuid = playerUUID;
 	}
+
+	const storedProfiles = await MONGO.collection<StoredSkyblockProfile>('profiles')
+		.find({ [`profile.members.${uuid}`]: { $exists: true } })
+		.toArray();
+	if (storedProfiles.length && storedProfiles.every((profile) => profile.lastUpdated + profileCacheTTL > Date.now())) {
+		console.log('Returning cached profile data');
+		return storedProfiles.map((profile) => profile.profile);
+	}
+
+	const profiles = await hypixelRequest({ endpoint: 'skyblock/profiles', query: { uuid }, usesApiKey: true })
+		.then((res) => res.profiles)
+		.catch((err) => {
+			throw new Error(err);
+		});
+
+	if (!profiles) throw new Error('Profiles not found!');
+	if (profiles.length === 0) throw new Error('Player has no profiles!');
+
+	for (const profile of profiles as SkyblockProfile[]) {
+		await MONGO.collection<StoredSkyblockProfile>('profiles').updateOne(
+			{ profile_id: profile.profile_id },
+			{ $set: { profile_id: profile.profile_id, profile, lastUpdated: Math.floor(Date.now() / 1000) } },
+			{ upsert: true }
+		);
+	}
+
+	return profiles;
 }

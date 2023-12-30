@@ -1,3 +1,6 @@
+export * from './leveling';
+export * from './slayers';
+
 export const HYPIXEL_RANK_COLORS = {
 	'§0': 'bg-[#000000]',
 	'§1': 'bg-[#0b277a]',

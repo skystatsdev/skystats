@@ -14,6 +14,16 @@ services:
       # - Double dollars, so that the variable is not expanded by Docker Compose
       # - Surround by quotes, so that the shell does not split the password
       - redis-server --requirepass "$${REDIS_PASSWORD:?REDIS_PASSWORD variable is not set}"
+  mongo:
+    image: mongo:latest
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_DATABASE: skystats
+    volumes:
+      - mongo-data:/data/db
+    command: mongod --quiet --logpath /dev/null --port 27017
 
 networks:
   default:
@@ -21,3 +31,4 @@ networks:
 
 volumes:
   redis-data: {}
+  mongo-data: {}
