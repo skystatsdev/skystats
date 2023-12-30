@@ -1,6 +1,4 @@
-import { getSkills } from './stats/index.js';
-
-export * as stats from './stats/index.js';
+import * as stats from '$stats/index';
 
 export function getStats(profile: any, player: any, uuid: string) {
 	const userProfile = profile.members[uuid];
@@ -10,7 +8,7 @@ export function getStats(profile: any, player: any, uuid: string) {
 		skills: {}
 	};
 
-	output.skills = getSkills(userProfile, player, profile.members);
+	output.skills = stats.getSkills(userProfile, player, profile.members);
 
 	return output;
 }
