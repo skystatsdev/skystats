@@ -7,7 +7,7 @@ import { getStats } from '$lib/stats';
 export const GET: RequestHandler = async ({ params }) => {
 	const { id } = params;
 
-	const { profile, profiles, uuid } = await getProfiles(id);
+	const { profile, uuid } = await getProfiles(id);
 	if (profile === undefined) {
 		return error(404, 'Player has no profiles.');
 	}
