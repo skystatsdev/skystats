@@ -1,6 +1,5 @@
 export * from './leveling';
 export * from './slayers';
-export * from './bonuses';
 
 export const HYPIXEL_RANK_COLORS = {
 	'§0': 'bg-[#000000]',
