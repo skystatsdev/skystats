@@ -1,7 +1,7 @@
 import * as stats from '$stats/index';
-import type { SkyblockStats } from '$types';
+import type { SkyblockPlayerStats } from '$types';
 
-export function getStats(profile: any, player: any, uuid: string): SkyblockStats {
+export function getStats(profile: any, player: any, uuid: string): SkyblockPlayerStats {
 	const userProfile = profile.members[uuid];
 
 	const output = {

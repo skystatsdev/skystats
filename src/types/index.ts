@@ -10,8 +10,8 @@ export type SkyblockPlayerStats = {
 		averageSkillLevel: number;
 		averageSkillLevelWithoutProgress: number;
 		totalSkillXp: number;
-	}
-}
+	};
+};
 
 export type SkyblockSkillData = {
 	xp: number;
@@ -26,7 +26,7 @@ export type SkyblockSkillData = {
 	levelWithProgress: number;
 	uncappedLevelWithProgress: number;
 	rank: number;
-}
+};
 
 export type StoredHypixelPlayer = {
 	uuid: string;
