@@ -20,7 +20,7 @@ export const load = (async ({ params }) => {
 
 	const profiles = await getProfiles(account.id);
 
-	if (!profiles || profiles.success === false || profiles.profiles.length === 0) {
+	if (!profiles) {
 		throw error(404, 'Profiles not found!');
 	}
 
