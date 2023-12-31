@@ -31,7 +31,7 @@ export type SkyblockPlayerCurrencies = {
 	purse: number;
 	motes: number;
 	essence: Record<Lowercase<SkyblockEssence>, number>;
-}
+};
 
 export type SkyblockProfile = {
 	profile_id: string;
