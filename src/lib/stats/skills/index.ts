@@ -1,5 +1,5 @@
 import * as constants from '$constants';
-import type { SkyblockProfile, SkyblockProfileMember } from '$types';
+import type { SkyblockPlayerStats, SkyblockProfile, SkyblockProfileMember } from '$types';
 import { getLevelByXp, getXpByLevel } from '$stats/skills/leveling';
 
 function getLevels(
@@ -26,8 +26,8 @@ function getLevels(
 			enchanting: getLevelByXp(SKILL.SKILL_ENCHANTING || 0, { skill: 'enchanting' }),
 			alchemy: getLevelByXp(SKILL.SKILL_ALCHEMY || 0, { skill: 'alchemy' }),
 			carpentry: getLevelByXp(SKILL.SKILL_CARPENTRY || 0, { skill: 'carpentry' }),
-			runecrafting: getLevelByXp(SKILL.SKILL_RUNECRAFTING || 0, { skill: 'runecrafting', cap: levelCaps.runecrafting }),
-			social: getLevelByXp(socialExperience, { skill: 'social' })
+			runecrafting: getLevelByXp(SKILL.SKILL_RUNECRAFTING || 0, { type: 'runecrafting', cap: levelCaps.runecrafting }),
+			social: getLevelByXp(socialExperience, { type: 'social' })
 		});
 	} else {
 		const achievementSkills: Record<string, any> = {
@@ -80,7 +80,7 @@ export function getSkills(
 	userProfile: SkyblockProfileMember,
 	hypixelProfile: Record<any, any>,
 	profileMembers: SkyblockProfile['members']
-) {
+): SkyblockPlayerStats['skills'] {
 	const levelCaps = {
 		farming:
 			constants.SKYBLOCK_DEFAULT_SKILL_CAPS.farming + (userProfile.jacobs_contest?.perks?.farming_level_cap ?? 0),
