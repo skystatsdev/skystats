@@ -121,7 +121,7 @@ export async function getProfiles(paramPlayer: string, paramProfile?: string): P
 		!storedProfiles.length ||
 		!storedProfiles.every((profile) => (profile.lastUpdated + profileCacheTTL) * 1000 > Date.now())
 	) {
-		const response = await hypixelRequest({ endpoint: 'skyblock/profiles', query: { uuid } });
+		const response = await hypixelRequest({ endpoint: 'skyblock/profiles', query: { uuid }, usesApiKey: true });
 		if (response === undefined || response.success === false) {
 			throw new Error(response.cause || 'Request to Hypixel API failed. Please try again!');
 		}

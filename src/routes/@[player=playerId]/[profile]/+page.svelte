@@ -3,10 +3,11 @@
 	import PlayerRender from '$comp/playerRender.svelte';
 	import Header from '$comp/header.svelte';
 	// import PlayerProfile from '$comp/PlayerProfile/PlayerProfile.svelte';
-	// import BasicStats from '$comp/BasicStats/BasicStats.svelte';
+	import BasicStats from '$comp/BasicStats/BasicStats.svelte';
 	import type { PageData } from './$types';
 
 	export let data: PageData;
+	console.log(data.stats);
 
 	$: ign = data.account.name;
 </script>
@@ -17,14 +18,14 @@
 
 <PlayerRender username={ign} />
 <div
-	class="relative ml-[30vw] backdrop-blur-lg backdrop-brightness-50 p-[30px] pt-[calc(48px)] pb-[30px] min-h-[1500px] box-border select-none"
+	class="relative ml-[30vw] backdrop-blur-lg backdrop-brightness-50 p-[30px] pt-[calc(48px)] pb-[30px] min-h-[1500px] box-border select-none overflow-x-hidden"
 >
 	<!-- <PlayerProfile
 		rankData={data.player.rank}
 		username={data.player.username}
 		playerProfiles={data.player.skyblock.profiles}
-		profileMembers={data.profile.members}
+		profileMembers={data.profile?.members}
 		profileName={data.profile_name}
-	/>
-	<BasicStats skillData={data.skills} /> -->
+	/> -->
+	<BasicStats skillData={data.stats.skills.skills} />
 </div>
