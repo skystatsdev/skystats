@@ -97,15 +97,16 @@ export async function parseProfile(profile: SkyblockProfile): Promise<StoredProf
 		if (!member || member.profile?.coop_invitation?.confirmed === false) continue;
 
 		memberPromises.push(
-			new Promise(async (resolve) => {
-				const ign = await getUsername(memberId);
-				if (!ign) return resolve(null);
+			new Promise((resolve) =>
+				getUsername(memberId).then((ign) => {
+					if (!ign) return resolve(null);
 
-				resolve({
-					ign,
-					uuid: memberId.replace(/-/g, '')
-				});
-			})
+					resolve({
+						ign,
+						uuid: memberId.replace(/-/g, '')
+					});
+				})
+			)
 		);
 
 		if (member?.player_data?.crafted_generators?.length) {

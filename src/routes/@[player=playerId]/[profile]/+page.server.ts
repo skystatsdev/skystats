@@ -1,5 +1,5 @@
-import { getPlayer, getProfileMember } from '$api/hypixel';
-import { getStats } from '$lib/stats';
+import { getProfileMember } from '$api/hypixel';
+import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load = (async ({ parent, params }) => {
@@ -10,6 +10,10 @@ export const load = (async ({ parent, params }) => {
 		profiles.find((p) => p.cuteName?.toUpperCase() === profile.toUpperCase() || p.id === profile) ?? profiles[0];
 
 	const member = await getProfileMember(account.id, selected.id);
+
+	if (!member) {
+		throw error(404, 'Profile member not found!');
+	}
 
 	return {
 		profile: selected,

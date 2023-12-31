@@ -1,10 +1,4 @@
-import type SkillComponent from '$comp/SkillComponent/SkillComponent.svelte';
-import type {
-	SkyblockPlayerSkillStats,
-	SkyblockProfileMember,
-	SkyblockSkillData,
-	SkyblockSkillName
-} from '$types/hypixel';
+import type { SkyblockPlayerSkillStats, SkyblockProfileMember } from '$types/hypixel';
 
 export interface StoredProfileMember {
 	id: {

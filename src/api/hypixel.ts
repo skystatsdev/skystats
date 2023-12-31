@@ -145,7 +145,7 @@ export async function getProfileMember(player: string, profileId: string) {
 		return await getStoredProfileMember(uuid, profileId);
 	}
 
-	let profiles = await getProfiles(uuid);
+	const profiles = await getProfiles(uuid);
 	if (!profiles) {
 		return null;
 	}
