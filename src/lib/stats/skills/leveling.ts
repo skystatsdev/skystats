@@ -70,6 +70,9 @@ export function getXpByLevel(uncappedLevel: number, extra: { type?: string; cap?
 	/** a floating point value representing the current level for example if you are half way to level 5 it would be 4.5 */
 	const levelWithProgress = level + progress;
 
+	/** a floating point value representing the current level ignoring the in-game unlockable caps for example if you are half way to level 5 it would be 4.5 */
+	const uncappedLevelWithProgress = Math.min(uncappedLevel + progress, maxLevel);
+
 	return {
 		xp,
 		level,
@@ -79,7 +82,8 @@ export function getXpByLevel(uncappedLevel: number, extra: { type?: string; cap?
 		progress,
 		levelCap,
 		uncappedLevel,
-		levelWithProgress
+		levelWithProgress,
+		uncappedLevelWithProgress
 	};
 }
 
