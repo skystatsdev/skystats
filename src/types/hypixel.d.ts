@@ -23,7 +23,7 @@ export type SkyblockSkillData = {
 	uncappedLevel: number;
 	levelWithProgress: number;
 	uncappedLevelWithProgress: number;
-	rank: number;
+	rank?: number;
 };
 
 export type SkyblockProfile = {
@@ -581,4 +581,13 @@ export interface HypixelPlayerData {
 			[key: string]: string;
 		};
 	};
+
+	achievements: {
+		[string: string]: number;
+	};
 }
+
+export type LevelCaps = {
+	farming: number;
+	runecrafting: number;
+};

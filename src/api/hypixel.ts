@@ -138,7 +138,7 @@ export async function getProfileMember(player: string, profileId: string) {
 	if (isUUID(profileId)) {
 		const member = await getStoredProfileMember(uuid, profileId);
 
-		if (memberNeedsRefresh(member)) {
+		if (true /*memberNeedsRefresh(member)*/) {
 			await fetchProfiles(uuid);
 		}
 
