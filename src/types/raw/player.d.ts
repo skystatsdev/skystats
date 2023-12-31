@@ -20,4 +20,8 @@ export interface HypixelPlayerData {
 			[key: string]: string;
 		};
 	};
+
+	achievements: {
+		[string: string]: number;
+	};
 }

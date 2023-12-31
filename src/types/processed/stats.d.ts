@@ -51,3 +51,8 @@ export type PlayerHypixelRankData = {
 	plus_color?: string;
 	formatted: string;
 };
+
+export type LevelCaps = {
+	farming: number;
+	runecrafting: number;
+};
