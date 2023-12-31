@@ -7,8 +7,8 @@ export function getStats(profile: SkyblockProfile, player: HypixelPlayerData, uu
 
 	const output = {
 		skills: stats.getSkills(userProfile, player, profile.members),
-		slayers: stats.getSlayers(userProfile),
-		unparsed: userProfile
+		slayers: stats.getSlayers(userProfile)
+		// unparsed: userProfile
 	};
 
 	return output;

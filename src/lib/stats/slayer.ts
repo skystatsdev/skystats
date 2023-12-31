@@ -29,7 +29,7 @@ function getSlayerLevel(
 
 		const tier = parseInt(property.split('_').at(-1) as string) + 1;
 
-		kills[tier] = slayer[property];
+		kills[tier] = slayer[property as keyof typeof slayer] as number;
 	}
 
 	kills.total = Object.values(kills).reduce((a, b) => a + b, 0);

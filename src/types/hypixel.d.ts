@@ -30,7 +30,6 @@ export type SkyblockProfile = {
 	profile_id: string;
 	cute_name: string;
 	game_mode?: string;
-	game_mode?: string;
 	community_upgrades: {
 		currently_upgrading?: string;
 		upgrade_states: {
@@ -200,17 +199,7 @@ export type SkyblockProfileMember = {
 			recent_mob_kills: { xp: number; timestamp: number }[];
 			last_killed_mob_island: string;
 		};
-		slayer_bosses: {
-			[slayer in SkyblockSlayerBoss]: {
-				claimed_levels: Record<string, boolean>;
-				xp: number;
-				boss_kills_tier_0: number;
-				boss_kills_tier_1: number;
-				boss_kills_tier_2: number;
-				boss_kills_tier_3: number;
-				boss_kills_tier_4: number;
-			} & Record<string, number>;
-		};
+		slayer_bosses: Record<SkyblockSlayerBoss, SkyblockSlayerInfo>;
 	};
 	trophy_fish: {
 		rewards: number[];
@@ -609,4 +598,14 @@ export type SkyblocPlayerSlayerData = {
 	xpForNext: number | null;
 	progress: number;
 	kills: Record<string, number>;
+};
+
+export type SkyblockSlayerInfo = {
+	claimed_levels: Record<string, boolean>;
+	xp: number;
+	boss_kills_tier_0: number;
+	boss_kills_tier_1: number;
+	boss_kills_tier_2: number;
+	boss_kills_tier_3: number;
+	boss_kills_tier_4: number;
 };
