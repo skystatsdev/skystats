@@ -7,13 +7,13 @@ export default defineConfig({
 		globals: true,
 		environment: 'jsdom',
 		coverage: {
-			enabled: true,
+			enabled: true
 		},
 		watch: true,
 		setupFiles: ['./test/setup.ts'],
 		testTimeout: 5000,
 		isolate: false,
 		reporters: 'default',
-		silent: false,
+		silent: false
 	}
 });
