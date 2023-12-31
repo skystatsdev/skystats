@@ -30,6 +30,7 @@ export type SkyblockProfile = {
 	profile_id: string;
 	cute_name: string;
 	game_mode?: string;
+	game_mode?: string;
 	community_upgrades: {
 		currently_upgrading?: string;
 		upgrade_states: {
@@ -544,6 +545,13 @@ export type PlayerSkyblockProfileData = {
 export type ProfileMemberData = {
 	uuid: string;
 	username: string;
+};
+
+export type PlayerHypixelRankData = {
+	name: string;
+	color: string;
+	plus_color?: string;
+	formatted: string;
 };
 
 export type PlayerHypixelRankData = {
