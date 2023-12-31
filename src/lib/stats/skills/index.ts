@@ -1,9 +1,9 @@
 import * as constants from '$constants';
-import type { SkyblockPlayerStats, SkyblockProfile, SkyblockProfileMember } from '$types';
+import type { SkyblockPlayerSkillStats, SkyblockProfile, SkyblockProfileMember } from '$types/hypixel';
 import { getLevelByXp, getXpByLevel } from '$stats/skills/leveling';
 
 function getLevels(
-	userProfile: SkyblockProfileMember,
+	userProfile: Partial<SkyblockProfileMember>,
 	profileMembers: SkyblockProfile['members'],
 	hypixelProfile: Record<any, any>,
 	levelCaps: Record<any, any>
@@ -77,10 +77,10 @@ function getLevels(
 }
 
 export function getSkills(
-	userProfile: SkyblockProfileMember,
+	userProfile: Partial<SkyblockProfileMember>,
 	hypixelProfile: Record<any, any>,
 	profileMembers: SkyblockProfile['members']
-): SkyblockPlayerStats['skills'] {
+): SkyblockPlayerSkillStats {
 	const levelCaps = {
 		farming:
 			constants.SKYBLOCK_DEFAULT_SKILL_CAPS.farming + (userProfile.jacobs_contest?.perks?.farming_level_cap ?? 0),
