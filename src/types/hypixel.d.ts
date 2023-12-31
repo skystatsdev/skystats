@@ -554,13 +554,6 @@ export type PlayerHypixelRankData = {
 	formatted: string;
 };
 
-export type PlayerHypixelRankData = {
-	name: string;
-	color: string;
-	plus_color?: string;
-	formatted: string;
-};
-
 export type GetProfiles = {
 	profile: SkyblockProfile;
 	profiles: SkyblockProfile[];
