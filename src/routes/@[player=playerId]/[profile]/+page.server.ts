@@ -1,4 +1,4 @@
-import { getPlayer } from '$api/hypixel';
+import { getPlayer, getProfileMember } from '$api/hypixel';
 import { getStats } from '$lib/stats';
 import type { PageServerLoad } from './$types';
 
@@ -6,17 +6,13 @@ export const load = (async ({ parent, params }) => {
 	const { profile } = params;
 	const { profiles, account } = await parent();
 
-	const selected = profiles.profiles.find(
-		(p: { cute_name: string; profile_id: string }) => p.cute_name === profile || p.profile_id === profile
-	);
+	const selected =
+		profiles.find((p) => p.cuteName?.toUpperCase() === profile.toUpperCase() || p.id === profile) ?? profiles[0];
 
-	const player = await getPlayer(account.id);
-
-	const stats = await getStats(selected, player, account.id);
+	const member = await getProfileMember(account.id, selected.id);
 
 	return {
-		player,
 		profile: selected,
-		stats
+		member
 	};
 }) satisfies PageServerLoad;

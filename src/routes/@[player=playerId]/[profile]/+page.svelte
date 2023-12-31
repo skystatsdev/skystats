@@ -7,7 +7,6 @@
 	import type { PageData } from './$types';
 
 	export let data: PageData;
-	console.log(data.stats);
 
 	$: ign = data.account.name;
 </script>
@@ -27,5 +26,5 @@
 		profileMembers={data.profile?.members}
 		profileName={data.profile_name}
 	/> -->
-	<BasicStats skillData={data.stats.skills.skills} />
+	<BasicStats skillData={data.member?.stats.skills} />
 </div>

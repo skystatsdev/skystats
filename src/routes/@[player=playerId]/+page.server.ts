@@ -4,11 +4,11 @@ import type { PageServerLoad } from './$types';
 export const load = (async ({ parent }) => {
 	const { account, profiles } = await parent();
 
-	const selected = profiles.profile;
+	const selected = profiles.find((p) => p.selected);
 
 	if (!selected) {
-		throw redirect(301, `/@${account.name}/${profiles.profiles[0].profile_id}`);
+		throw redirect(301, `/@${account.name}/${profiles[0].cuteName}`);
 	}
 
-	throw redirect(301, `/@${account.name}/${selected.cute_name}`);
+	throw redirect(301, `/@${account.name}/${selected.cuteName}`);
 }) satisfies PageServerLoad;
