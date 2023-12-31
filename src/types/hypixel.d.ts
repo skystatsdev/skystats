@@ -531,14 +531,16 @@ export type SkyblockInventoryType =
 	| 'personal_vault';
 
 export type PlayerSkyblockProfileData = {
-	uuid: string;
-	name: string;
-	game_mode: string;
+	id: string;
+	cuteName: string;
+	selected: boolean;
+	removed: boolean;
+	members: ProfileMemberData[];
 };
 
 export type ProfileMemberData = {
 	uuid: string;
-	username: string;
+	ign: string;
 };
 
 export type PlayerHypixelRankData = {
