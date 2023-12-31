@@ -17,7 +17,7 @@ function getSlayerLevel(
 			continue;
 		}
 
-		const parsedLevel = parseInt(levelName.split('_').at(-1) as string);
+		const parsedLevel = parseInt(levelName.split('_').at(1) as string);
 		level = Math.max(level, parsedLevel);
 	}
 
