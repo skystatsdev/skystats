@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { PlayerSkyblockProfileData } from '$types/hypixel';
-	import { RANKS, RANK_PLUS_COLORS, type RankInformation } from '$constants';
+	import { type RankInformation } from '$constants';
 
 	import Popover from '$comp/PlayerProfile/Popover.svelte';
 	import PopoverItem from '$comp/PlayerProfile/PopoverItem.svelte';
@@ -11,15 +11,15 @@
 	export let playerProfiles: PlayerSkyblockProfileData[];
 	export let cuteName: string;
 
-	$: selectedProfile = playerProfiles.find((profile) => profile.selected);
+	$: currentProfile = playerProfiles.find((profile) => profile.cuteName === cuteName);
 
 	$: profileMembers =
-		selectedProfile?.members
-			.filter((member) => member.uuid !== account.id)
-			.sort((a, b) => b.ign.localeCompare(a.ign)) ?? [];
+		currentProfile?.members.filter((member) => member.uuid !== account.id).sort((a, b) => b.ign.localeCompare(a.ign)) ??
+		[];
 
 	$: profiles = playerProfiles
-		.filter((profile) => profile.id !== selectedProfile?.id)
+		.filter((profile) => profile.id !== currentProfile?.id)
+		.filter((profile) => profile.removed === false)
 		.sort((a, b) => b.cuteName.localeCompare(a.cuteName));
 </script>
 
