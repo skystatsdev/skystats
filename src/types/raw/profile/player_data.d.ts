@@ -1,19 +1,20 @@
 export type SkyblockProfilePlayerData = {
 	visited_zones: string[];
-	last_death: number;
-	perks: Record<string, number>;
-	active_effects: PlayerDataActivePotionEffect[];
-	paused_effects: Record<string, PlayerDataTempStatBuffs>[];
-	reaper_peppers_eaten: number;
-	temp_stat_buffs: Record<string, any>[];
-	death_count: number;
-	disabled_potion_effects: string[];
-	achievement_spawned_island_types: string[];
-	visited_modes: string[];
-	unlocked_coll_tiers: string[];
-	crafted_generators: string[];
-	fishing_treasure_caught: number;
-	experience: Record<SkyblockSkillType, number>;
+	last_death?: number;
+	perks?: Record<string, number>;
+	active_effects?: PlayerDataActivePotionEffect[];
+	paused_effects?: Record<string, PlayerDataTempStatBuffs>[];
+	reaper_peppers_eaten?: number;
+	// TODO: Figure out what this is
+	// temp_stat_buffs: Record<string, any>[];
+	death_count?: number;
+	disabled_potion_effects?: string[];
+	achievement_spawned_island_types?: string[];
+	visited_modes?: string[];
+	unlocked_coll_tiers?: string[];
+	crafted_generators?: string[];
+	fishing_treasure_caught?: number;
+	experience?: Record<SkyblockSkillType, number>;
 };
 
 export type PlayerDataActivePotionEffect = {

@@ -1,7 +1,7 @@
 export type SkyblockProfilePetsData = {
-	autopet: {
-		rules_limit: number;
-		rules: {
+	autopet?: {
+		rules_limit?: number;
+		rules?: {
 			uuid: string;
 			id: string;
 			name: string;
@@ -10,10 +10,10 @@ export type SkyblockProfilePetsData = {
 			disabled: boolean;
 			data: Record<AutoPetRulesDataCategory, string>;
 		}[];
-		migrated: boolean;
-		migrated_2: boolean;
+		migrated?: boolean;
+		migrated_2?: boolean;
 	};
-	pets: {
+	pets?: {
 		uuid: string;
 		uniqueId: string;
 		type: string;

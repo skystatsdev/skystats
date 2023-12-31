@@ -1,7 +1,7 @@
 export type SkyblockProfileCurrencies = {
-	coin_purse: number;
-	motes_purse: number;
-	essence: Record<Essence, EssenceData>;
+	coin_purse?: number;
+	motes_purse?: number;
+	essence?: Record<Essence, EssenceData>;
 };
 
 type Essence = 'WITHER' | 'DRAGON' | 'SPIDER' | 'UNDEAD' | 'DIAMOND' | 'GOLD' | 'ICE' | 'CRIMSON';

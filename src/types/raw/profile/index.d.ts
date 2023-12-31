@@ -22,3 +22,4 @@ export * from './inventory';
 export * from './banking';
 export * from './community_upgrades';
 export * from './item_data';
+export * from './dungeons';

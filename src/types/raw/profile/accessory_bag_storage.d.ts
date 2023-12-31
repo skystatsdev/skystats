@@ -1,9 +1,9 @@
 export type SkyblockProfileAccessoryBagStorage = {
-	tuning: Record<AccessoryBagStorageTuningSlotIDs, AccessoryBagStorageTuningSlotData>;
-	unlocked_powers: string[];
-	selected_power: string;
-	bag_upgrades_purchased: number;
-	highest_magical_power: number;
+	tuning?: Record<AccessoryBagStorageTuningSlotIDs, AccessoryBagStorageTuningSlotData>;
+	unlocked_powers?: string[];
+	selected_power?: string;
+	bag_upgrades_purchased?: number;
+	highest_magical_power?: number;
 };
 
 type AccessoryBagStorageTuningSlotIDs = 'slot_0' | 'slot_1' | 'slot_2' | 'sllot_3';

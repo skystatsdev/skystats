@@ -1,13 +1,13 @@
 export type SkyblockProfileJacobsContest = {
-	medals_inv: Partial<Record<Exclude<JacobsContestMedal, 'platinum' | 'diamond'>, number>>;
-	perks: {
+	medals_inv?: Partial<Record<Exclude<JacobsContestMedal, 'platinum' | 'diamond'>, number>>;
+	perks?: {
 		double_drops?: number;
 		farming_level_cap?: number;
 		personal_bests?: true;
 	};
-	contests: Record<string, JacobsContest>;
+	contests?: Record<string, JacobsContest>;
 	talked?: true;
-	unique_brackets: Partial<Record<JacobsContestMedal, JacobContestCrop[]>>;
+	unique_brackets?: Partial<Record<JacobsContestMedal, JacobContestCrop[]>>;
 	migration?: true;
 	personal_bests?: Partial<Record<JacobContestCrop, number>>;
 };

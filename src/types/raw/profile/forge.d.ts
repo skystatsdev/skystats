@@ -1,5 +1,5 @@
 export type SkyBlockProfileForge = {
-	forge_processes: Record<string, ForgeProcess>;
+	forge_processes?: Record<string, ForgeProcess>;
 };
 
 type ForgeProcess = Record<string, ForgeProcessDetail>;
