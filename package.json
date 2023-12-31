@@ -13,7 +13,8 @@
 		"deploy": "node build/index.js",
 		"storybook": "storybook dev -p 6006",
 		"build-storybook": "storybook build",
-		"fix": "prettier --write . && eslint --fix"
+		"fix": "prettier --write . && eslint --fix",
+		"gh": "pnpm lint && pnpm prettier --check . && pnpm run check"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-auto": "^3.0.1",
