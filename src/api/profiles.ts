@@ -77,6 +77,8 @@ export async function parseProfileMember(
 			collections: member.collection !== undefined,
 			inventory: member.inventory?.inv_contents !== undefined,
 			vault: member.inventory?.personal_vault_contents !== undefined,
+			essence: member.currencies?.essence !== undefined,
+			banking: profile.banking?.balance !== undefined,
 			// TODO: Update museum value somehow
 			museum: true
 		},
