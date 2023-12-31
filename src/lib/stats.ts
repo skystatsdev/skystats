@@ -7,6 +7,7 @@ export function getStats(profile: SkyblockProfile, player: HypixelPlayerData, uu
 
 	const output = {
 		skills: stats.getSkills(userProfile, player, profile.members),
+		currencies: stats.getCurrencies(userProfile, profile),
 		unparsed: userProfile
 	};
 

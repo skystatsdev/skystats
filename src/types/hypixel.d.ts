@@ -26,6 +26,13 @@ export type SkyblockSkillData = {
 	rank?: number;
 };
 
+export type SkyblockPlayerCurrencies = {
+	bank: number;
+	purse: number;
+	motes: number;
+	essence: Record<Lowercase<SkyblockEssence>, number>;
+}
+
 export type SkyblockProfile = {
 	profile_id: string;
 	cute_name: string;
