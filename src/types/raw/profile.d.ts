@@ -22,7 +22,7 @@ import {
 	SkyBlockProfileTrophyFish,
 	SkyBlockProfileInventory,
 	SkyblockProfileBanking,
-	SkyBlockProfileCommunityUpgrades,
+	SkyBlockProfileCommunityUpgrades
 } from './profile/index.d.ts';
 
 export type SkyblockProfile = {
