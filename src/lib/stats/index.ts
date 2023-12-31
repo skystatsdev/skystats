@@ -1,1 +1,1 @@
-export * from './skills';
+export * from '$lib/stats/skills';
