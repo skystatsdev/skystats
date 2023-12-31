@@ -9,6 +9,11 @@ export type SkyblockPlayerSkillStats = {
 	averageSkillLevel: number;
 	averageSkillLevelWithoutProgress: number;
 	totalSkillXp: number;
+export type SkyblockPlayerSkillStats = {
+	skills: Record<SkyblockSkillName, SkyblockSkillData>;
+	averageSkillLevel: number;
+	averageSkillLevelWithoutProgress: number;
+	totalSkillXp: number;
 };
 
 export type SkyblockSkillData = {
@@ -29,6 +34,7 @@ export type SkyblockSkillData = {
 export type SkyblockProfile = {
 	profile_id: string;
 	cute_name: string;
+	game_mode?: string;
 	game_mode?: string;
 	community_upgrades: {
 		currently_upgrading?: string;
@@ -70,6 +76,9 @@ export type SkyblockProfileMember = {
 	profile: {
 		first_join: number;
 		personal_bank_upgrade: number;
+		coop_invitation?: {
+			confirmed: boolean;
+		};
 		coop_invitation?: {
 			confirmed: boolean;
 		};
@@ -539,6 +548,13 @@ export type PlayerSkyblockProfileData = {
 export type ProfileMemberData = {
 	uuid: string;
 	username: string;
+};
+
+export type PlayerHypixelRankData = {
+	name: string;
+	color: string;
+	plus_color?: string;
+	formatted: string;
 };
 
 export type PlayerHypixelRankData = {
