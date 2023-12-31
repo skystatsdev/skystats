@@ -4,13 +4,11 @@ export type HypixelRequestOptions = {
 	usesApiKey?: boolean;
 };
 
-export type SkyblockPlayerStats = {
-	skills: {
-		skills: Record<SkyblockSkillName, SkyblockSkillData>;
-		averageSkillLevel: number;
-		averageSkillLevelWithoutProgress: number;
-		totalSkillXp: number;
-	};
+export type SkyblockPlayerSkillStats = {
+	skills: Record<SkyblockSkillName, SkyblockSkillData>;
+	averageSkillLevel: number;
+	averageSkillLevelWithoutProgress: number;
+	totalSkillXp: number;
 };
 
 export type SkyblockSkillData = {
@@ -28,21 +26,10 @@ export type SkyblockSkillData = {
 	rank: number;
 };
 
-export type StoredHypixelPlayer = {
-	uuid: string;
-	player: Record<any, any>;
-	lastUpdated: number;
-};
-
-export type StoredSkyblockProfile = {
-	profile_id: string;
-	profile: SkyblockProfile;
-	lastUpdated: number;
-};
-
 export type SkyblockProfile = {
 	profile_id: string;
 	cute_name: string;
+	game_mode?: string;
 	community_upgrades: {
 		currently_upgrading?: string;
 		upgrade_states: {
@@ -83,6 +70,9 @@ export type SkyblockProfileMember = {
 	profile: {
 		first_join: number;
 		personal_bank_upgrade: number;
+		coop_invitation?: {
+			confirmed: boolean;
+		};
 	};
 	pets_data: SkyblockProfilePetsData;
 	player_id: string;
@@ -540,13 +530,6 @@ export type SkyblockInventoryType =
 	| 'wardrobe'
 	| 'personal_vault';
 
-export type PlayerHypixelRankData = {
-	name: string;
-	color: string;
-	plus_color?: string;
-	formatted: string;
-};
-
 export type PlayerSkyblockProfileData = {
 	uuid: string;
 	name: string;
@@ -558,8 +541,44 @@ export type ProfileMemberData = {
 	username: string;
 };
 
+export type PlayerHypixelRankData = {
+	name: string;
+	color: string;
+	plus_color?: string;
+	formatted: string;
+};
+
 export type GetProfiles = {
 	profile: SkyblockProfile;
 	profiles: SkyblockProfile[];
 	uuid: string;
 };
+
+export interface HypixelPlayerResponse {
+	success: true;
+	player: HypixelPlayerData;
+}
+
+export interface HypixelPlayerData {
+	uuid: string;
+	firstLogin: number;
+	lastLogin: number;
+	playername: string;
+	displayname: string;
+	karma: number;
+
+	prefix?: string;
+	rank?: string;
+	monthlyPackageRank?: string;
+	monthlyRankColor?: string;
+	newPackageRank?: string;
+	rankPlusColor?: string;
+
+	socialMedia?: {
+		links?: {
+			DISCORD?: string;
+			HYPIXEL?: string;
+			[key: string]: string;
+		};
+	};
+}
