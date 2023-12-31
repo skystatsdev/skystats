@@ -4,29 +4,29 @@ import type { LayoutServerLoad } from './$types';
 import { getPlayer, getProfiles } from '$api/hypixel';
 
 export const load = (async ({ params }) => {
-	const { player } = params;
+	const { player: playerId } = params;
 
-	const account = await fetchMinecraftAccount(player);
+	const account = await fetchMinecraftAccount(playerId);
 
 	if (!account) {
 		throw error(404, 'Player not found!');
 	}
 
-	const playerData = await getPlayer(account.id);
+	const player = await getPlayer(account.id);
 
-	if (!playerData) {
+	if (!player) {
 		throw error(404, 'Player data not found!');
 	}
 
 	const profiles = await getProfiles(account.id);
 
-	if (!profiles) {
+	if (!profiles?.length) {
 		throw error(404, 'Profiles not found!');
 	}
 
 	return {
 		account,
-		playerData,
+		player,
 		profiles
 	};
 }) satisfies LayoutServerLoad;

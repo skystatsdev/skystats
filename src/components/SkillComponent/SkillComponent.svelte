@@ -1,12 +1,10 @@
 <script lang="ts">
-	import type { SkyblockSkillData } from '$types';
+	import type { SkyblockSkillData } from '$types/hypixel';
 
 	export let skillData: SkyblockSkillData;
 	export let skillName: string;
 
 	$: maxed = skillData.level === skillData.maxLevel;
-
-	console.log(skillName, skillData);
 
 	$: skillBarColor = maxed ? 'bg-[#dd980e]' : 'bg-[#C24100]';
 </script>

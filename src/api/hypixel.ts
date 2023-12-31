@@ -1,14 +1,13 @@
 import { HYPIXEL_API_KEY } from '$env/static/private';
-import { MONGO } from '$mongo/mongo';
 import { isUUID } from '$params/uuid';
-import type {
-	HypixelRequestOptions,
-	SkyblockProfile,
-	StoredHypixelPlayer,
-	StoredSkyblockProfile,
-	GetProfiles
-} from '$types';
+import type { HypixelRequestOptions, SkyblockProfile } from '$types/hypixel';
 import { getUUID } from '$api/mojang';
+import { getStoredPlayer, updateStoredPlayerData } from '$mongo/players';
+import type { ProfileDetails, StoredPlayer, StoredProfile, StoredProfileMember } from '$mongo/collections';
+import type { HypixelPlayerResponse } from '$types/hypixel';
+import { parsePlayerData } from '$lib/player';
+import { getStoredProfileMember, getStoredProfiles } from '$mongo/profiles';
+import { parseProfilesResponse } from './profiles';
 
 const baseURL = 'https://api.hypixel.net/v2';
 
@@ -31,7 +30,7 @@ const ratelimit = {
 //! TEMPORARY EXAMPLE FUNCTIONS
 // Transformed responses will be stored in a database, not cached in memory like this
 
-async function hypixelRequest(opts: HypixelRequestOptions = { usesApiKey: true }) {
+async function hypixelRequest<T = unknown>(opts: HypixelRequestOptions = { usesApiKey: true }) {
 	if (!opts.endpoint) throw new Error('No endpoint provided!');
 	if (!opts.query) opts.query = {};
 	const requestUrl = `${baseURL}/${opts?.endpoint}?${new URLSearchParams(opts.query)}`;
@@ -66,92 +65,140 @@ async function hypixelRequest(opts: HypixelRequestOptions = { usesApiKey: true }
 			if (completedFirstRequest === false) completedFirstRequest = true;
 		}
 
-		return data;
+		return data as T;
 	} catch (error) {
 		console.error(error);
 		return null;
 	}
 }
 
-export async function getPlayer(uuid: string): Promise<Record<any, any>> {
-	if (isUUID(uuid) === false) {
+export async function getPlayer(uuid: string): Promise<StoredPlayer | null> {
+	if (!isUUID(uuid)) {
 		const playerUUID = await getUUID(uuid);
-		if (playerUUID === null) {
+
+		if (!playerUUID) {
 			throw new Error('Player not found!');
 		}
 
 		uuid = playerUUID;
 	}
 
-	const storedPlayer = await MONGO.collection<StoredHypixelPlayer>('players').findOne({ uuid });
-	if (storedPlayer && storedPlayer.lastUpdated + playerCacheTTL > Math.floor(Date.now() / 1000)) {
-		console.log('Returning cached player data');
-		return storedPlayer.player;
+	const storedPlayer = await getStoredPlayer(uuid);
+
+	if (storedPlayer?.data?.lastUpdated && !outOfDateSeconds(storedPlayer.data.lastUpdated, playerCacheTTL)) {
+		return storedPlayer;
 	}
 
-	const player = await hypixelRequest({ endpoint: 'player', query: { uuid }, usesApiKey: true })
-		.then((res) => res.player)
-		.catch((err) => {
-			throw new Error(err);
-		});
+	return await fetchPlayerData(uuid);
+}
+
+async function fetchPlayerData(uuid: string) {
+	const player = await hypixelRequest<HypixelPlayerResponse>({
+		endpoint: 'player',
+		query: { uuid },
+		usesApiKey: true
+	});
 
 	if (!player) throw new Error('Player not found!');
 
-	await MONGO.collection<StoredHypixelPlayer>('players').updateOne(
-		{ uuid },
-		{ $set: { uuid, player, lastUpdated: Math.floor(Date.now() / 1000) } },
-		{ upsert: true }
-	);
+	const mapped = parsePlayerData(player.player);
+	await updateStoredPlayerData(uuid, mapped);
 
-	return player;
+	return await getStoredPlayer(uuid);
 }
 
-export async function getProfiles(paramPlayer: string, paramProfile?: string): Promise<GetProfiles> {
+export async function getProfiles(paramPlayer: string): Promise<ProfileDetails[]> {
 	const uuid = await getUUID(paramPlayer);
-	if (uuid === null) {
+	if (!uuid) {
 		throw new Error('Player not found!');
 	}
 
-	const storedProfiles = await MONGO.collection<StoredSkyblockProfile>('profiles')
-		.find({ [`profile.members.${uuid}`]: { $exists: true } })
-		.toArray();
+	let profiles = await getStoredProfiles(uuid);
 
-	let profiles = storedProfiles.map((profile) => profile.profile);
-	if (
-		!storedProfiles.length ||
-		!storedProfiles.every((profile) => (profile.lastUpdated + profileCacheTTL) * 1000 > Date.now())
-	) {
-		const response = await hypixelRequest({ endpoint: 'skyblock/profiles', query: { uuid }, usesApiKey: true });
-		if (response === undefined || response.success === false) {
-			throw new Error(response.cause || 'Request to Hypixel API failed. Please try again!');
-		}
-
-		profiles = response.profiles;
-		if (profiles === undefined || profiles.length === 0) {
-			throw new Error('Player has no profiles!');
-		}
-
-		for (const profile of profiles as SkyblockProfile[]) {
-			await MONGO.collection<StoredSkyblockProfile>('profiles').updateOne(
-				{ profile_id: profile.profile_id },
-				{ $set: { profile_id: profile.profile_id, profile, lastUpdated: Math.floor(Date.now() / 1000) } },
-				{ upsert: true }
-			);
-		}
+	if (profilesNeedRefresh(profiles)) {
+		await fetchProfiles(uuid);
 	}
 
-	let profile = profiles.find((profile: SkyblockProfile) => profile.selected);
-	if (paramProfile) {
-		if (isUUID(paramProfile)) {
-			profile = profiles.find((profile: SkyblockProfile) => profile.profile_id === paramProfile);
-		} else {
-			profile = profiles.find((profile: SkyblockProfile) => profile.cute_name === paramProfile);
+	profiles = await getStoredProfiles(uuid);
+
+	if (profiles.length > 0 && profilesNeedRefresh(profiles)) {
+		throw new Error('Failed to update profiles!');
+	}
+
+	return profiles;
+}
+
+export async function getProfileMember(player: string, profileId: string) {
+	const uuid = await getUUID(player);
+
+	if (!uuid) {
+		throw new Error('Player not found!');
+	}
+
+	if (isUUID(profileId)) {
+		const member = await getStoredProfileMember(uuid, profileId);
+
+		if (memberNeedsRefresh(member)) {
+			await fetchProfiles(uuid);
 		}
+
+		return await getStoredProfileMember(uuid, profileId);
 	}
 
-	if (profile === undefined) {
-		throw new Error('Profile not found!');
+	const profiles = await getProfiles(uuid);
+	if (!profiles) {
+		return null;
 	}
 
-	return { profile, profiles, uuid };
+	const profile = profiles.find((p) => p.cuteName.toUpperCase() === profileId.toUpperCase());
+
+	return await getProfileMemberFromUuids(uuid, profile?.id ?? profileId);
+}
+
+async function getProfileMemberFromUuids(uuid: string, profileUuid: string) {
+	const member = await getStoredProfileMember(uuid, profileUuid);
+
+	if (memberNeedsRefresh(member)) {
+		await fetchProfiles(uuid);
+	}
+
+	return member;
+}
+
+export async function fetchProfiles(uuid: string) {
+	const response = await hypixelRequest<{ success: boolean; cause?: string; profiles?: SkyblockProfile[] }>({
+		endpoint: 'skyblock/profiles',
+		query: { uuid },
+		usesApiKey: true
+	});
+
+	if (!response?.success) {
+		throw new Error(response?.cause ?? 'Request to Hypixel API failed. Please try again!');
+	}
+
+	const { profiles } = response;
+
+	if (!profiles || profiles.length === 0) {
+		throw new Error('Player has no profiles!');
+	}
+
+	await parseProfilesResponse(uuid, profiles);
+}
+
+function profilesNeedRefresh(profiles?: StoredProfile[]) {
+	if (!profiles?.length) return true;
+
+	return profiles
+		.filter((p) => p.members.some((m) => !m.removed))
+		.some((p) => outOfDateSeconds(p.lastUpdated, profileCacheTTL));
+}
+
+function memberNeedsRefresh(member?: StoredProfileMember | null) {
+	if (!member?.lastUpdated) return true;
+
+	return outOfDateSeconds(member.lastUpdated, profileCacheTTL);
+}
+
+function outOfDateSeconds(lastUpdated: number, ttl: number) {
+	return lastUpdated + ttl < Math.floor(Date.now() / 1000);
 }

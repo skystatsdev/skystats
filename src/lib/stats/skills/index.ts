@@ -1,32 +1,32 @@
 import * as constants from '$constants';
-import type { SkyblockPlayerStats, SkyblockProfile, SkyblockProfileMember } from '$types';
+import type { SkyblockPlayerSkillStats, SkyblockProfile, SkyblockProfileMember } from '$types/hypixel';
 import { getLevelByXp, getXpByLevel } from '$stats/skills/leveling';
 
 function getLevels(
-	userProfile: SkyblockProfileMember,
+	userProfile: Partial<SkyblockProfileMember>,
 	profileMembers: SkyblockProfile['members'],
 	hypixelProfile: Record<any, any>,
 	levelCaps: Record<any, any>
 ) {
 	const skillLevels: Record<string, any> = {};
 	if (userProfile.player_data && 'experience' in userProfile.player_data) {
-		const SKILL = userProfile.player_data.experience;
+		const skills = userProfile.player_data.experience;
 
 		const socialExperience = Object.keys(profileMembers).reduce((a, b) => {
 			return a + (profileMembers[b].player_data?.experience?.SKILL_SOCIAL || 0);
 		}, 0);
 
 		Object.assign(skillLevels, {
-			taming: getLevelByXp(SKILL.SKILL_TAMING || 0, { skill: 'taming' }),
-			farming: getLevelByXp(SKILL.SKILL_FARMING || 0, { skill: 'farming', cap: levelCaps.farming }),
-			mining: getLevelByXp(SKILL.SKILL_MINING || 0, { skill: 'mining' }),
-			combat: getLevelByXp(SKILL.SKILL_COMBAT || 0, { skill: 'combat' }),
-			foraging: getLevelByXp(SKILL.SKILL_FORAGING || 0, { skill: 'foraging' }),
-			fishing: getLevelByXp(SKILL.SKILL_FISHING || 0, { skill: 'fishing' }),
-			enchanting: getLevelByXp(SKILL.SKILL_ENCHANTING || 0, { skill: 'enchanting' }),
-			alchemy: getLevelByXp(SKILL.SKILL_ALCHEMY || 0, { skill: 'alchemy' }),
-			carpentry: getLevelByXp(SKILL.SKILL_CARPENTRY || 0, { skill: 'carpentry' }),
-			runecrafting: getLevelByXp(SKILL.SKILL_RUNECRAFTING || 0, { type: 'runecrafting', cap: levelCaps.runecrafting }),
+			taming: getLevelByXp(skills.SKILL_TAMING || 0, { skill: 'taming' }),
+			farming: getLevelByXp(skills.SKILL_FARMING || 0, { skill: 'farming', cap: levelCaps.farming }),
+			mining: getLevelByXp(skills.SKILL_MINING || 0, { skill: 'mining' }),
+			combat: getLevelByXp(skills.SKILL_COMBAT || 0, { skill: 'combat' }),
+			foraging: getLevelByXp(skills.SKILL_FORAGING || 0, { skill: 'foraging' }),
+			fishing: getLevelByXp(skills.SKILL_FISHING || 0, { skill: 'fishing' }),
+			enchanting: getLevelByXp(skills.SKILL_ENCHANTING || 0, { skill: 'enchanting' }),
+			alchemy: getLevelByXp(skills.SKILL_ALCHEMY || 0, { skill: 'alchemy' }),
+			carpentry: getLevelByXp(skills.SKILL_CARPENTRY || 0, { skill: 'carpentry' }),
+			runecrafting: getLevelByXp(skills.SKILL_RUNECRAFTING || 0, { type: 'runecrafting', cap: levelCaps.runecrafting }),
 			social: getLevelByXp(socialExperience, { type: 'social' })
 		});
 	} else {
@@ -77,10 +77,10 @@ function getLevels(
 }
 
 export function getSkills(
-	userProfile: SkyblockProfileMember,
+	userProfile: Partial<SkyblockProfileMember>,
 	hypixelProfile: Record<any, any>,
 	profileMembers: SkyblockProfile['members']
-): SkyblockPlayerStats['skills'] {
+): SkyblockPlayerSkillStats {
 	const levelCaps = {
 		farming:
 			constants.SKYBLOCK_DEFAULT_SKILL_CAPS.farming + (userProfile.jacobs_contest?.perks?.farming_level_cap ?? 0),

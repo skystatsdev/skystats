@@ -1,12 +1,11 @@
 <script lang="ts">
-	import type { PlayerHypixelRankData, PlayerSkyblockProfileData, ProfileMemberData } from '$types';
-
-	import { HYPIXEL_RANK_COLORS } from '$constants';
+	import type { PlayerSkyblockProfileData, ProfileMemberData } from '$types/hypixel';
+	import type { RankInformation } from '$constants';
 
 	import Popover from '$comp/PlayerProfile/Popover.svelte';
 	import PopoverItem from '$comp/PlayerProfile/PopoverItem.svelte';
 
-	export let rankData: PlayerHypixelRankData;
+	export let rankData: RankInformation | undefined;
 	export let username: string;
 	export let playerProfiles: PlayerSkyblockProfileData[];
 	export let profileName: string;
@@ -19,33 +18,24 @@
 	$: playerProfiles = playerProfiles
 		.filter((profile) => profile.name !== profileName)
 		.sort((a, b) => a.name.localeCompare(b.name));
-
-	const rankRegex = /(§[a-f0-9])/g;
-	$: rankName = rankData?.name;
-	$: rankFormatted = rankData?.formatted.replace(/[^a-zA-Z0-9\][+§]/g, '');
-	$: rankColor = HYPIXEL_RANK_COLORS[rankFormatted.match(rankRegex)?.[0] as keyof typeof HYPIXEL_RANK_COLORS];
-	$: rankPlus = rankData.plus_color
-		? HYPIXEL_RANK_COLORS[rankFormatted.match(rankRegex)?.[1] as keyof typeof HYPIXEL_RANK_COLORS]
-		: undefined;
 </script>
 
 <div class="text-[36px] mt-[50px] mb-[20px] flex flex-wrap gap-x-[10px] gap-y-[8px] items-center">
 	<span>Stats for</span>
 	<Popover id="stats-for-player">
 		<div slot="display-content">
-			{#if rankName !== 'NONE'}
+			{#if rankData}
 				<div
 					class="inline-flex text-[18px] h-[34px] leading-[34px] mt-[10px] ml-[-5px] rounded-[100px] align-top font-[700] overflow-clip"
 				>
-					<div class="{rankColor} px-[15px] inline-block">
-						{rankName?.replaceAll('+', '')}
+					<div class="bg-[{rankData.color}] px-[15px] inline-block">
+						{rankData.tag}
 					</div>
-					{#if rankPlus !== undefined}
+					{#if rankData.plus}
 						<div
-							class="{rankPlus ||
-								''} pr-[8px] relative z-[1] inline-block before:content-[''] before:z-[-1] before:absolute before:top-0 before:bottom-[-0.1rem] before:left-[-7px] before:right-0 before:[transform:skew(-20deg)] before:bg-inherit"
+							class="pr-[8px] relative z-[1] inline-block before:content-[''] before:z-[-1] before:absolute before:top-0 before:bottom-[-0.1rem] before:left-[-7px] before:right-0 before:[transform:skew(-20deg)] before:bg-inherit"
 						>
-							{rankName?.replace(/[A-z]/g, '')}
+							{rankData.plus}
 						</div>
 					{/if}
 				</div>
