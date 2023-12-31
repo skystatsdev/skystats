@@ -11,7 +11,7 @@ A _blazingly fast_ SkyBlock stats website using SvelteKit 🚀 🚀 🚀
 3. Start up the needed service(s) with the following:
 
 ```bash
-docker-compose up -d redis
+docker-compose up -d redis mongo
 ```
 
 4. Start the website with:
