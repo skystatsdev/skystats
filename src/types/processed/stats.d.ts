@@ -17,7 +17,7 @@ export type SkyblockSkillData = {
 	uncappedLevel: number;
 	levelWithProgress: number;
 	uncappedLevelWithProgress: number;
-	rank: number;
+	rank?: number;
 };
 
 export type SkyblockSkillName =
