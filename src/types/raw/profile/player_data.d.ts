@@ -14,7 +14,7 @@ export type SkyblockProfilePlayerData = {
 	unlocked_coll_tiers?: string[];
 	crafted_generators?: string[];
 	fishing_treasure_caught?: number;
-	experience?: Record<SkyblockSkillType, number>;
+	experience: Record<SkyblockSkillType, number>;
 };
 
 export type PlayerDataActivePotionEffect = {
