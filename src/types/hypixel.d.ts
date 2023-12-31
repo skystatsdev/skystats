@@ -203,6 +203,11 @@ export type SkyblockProfileMember = {
 			[slayer in SkyblockSlayerBoss]: {
 				claimed_levels: Record<string, boolean>;
 				xp: number;
+				boss_kills_tier_0: number;
+				boss_kills_tier_1: number;
+				boss_kills_tier_2: number;
+				boss_kills_tier_3: number;
+				boss_kills_tier_4: number;
 			} & Record<string, number>;
 		};
 	};
@@ -589,4 +594,18 @@ export interface HypixelPlayerData {
 export type LevelCaps = {
 	farming: number;
 	runecrafting: number;
+};
+
+export type SkyblockPlayerSlayerStats = {
+	slayers: Record<SkyblockSlayerBoss, SkyblocPlayerSlayerData>;
+	total_slayer_xp: number;
+};
+
+export type SkyblocPlayerSlayerData = {
+	xp: number;
+	level: number;
+	maxLevel: number;
+	xpForNext: number | null;
+	progress: number;
+	kills: Record<string, number>;
 };
