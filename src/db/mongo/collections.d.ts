@@ -16,7 +16,7 @@ export interface StoredProfileMember {
 export interface StoredProfileMemberData {
 	skills?: SkyblockPlayerSkillStats;
 	collections?: Record<string, number>;
-	unparsed: Partial<SkyblockProfileMember>;
+	unparsed?: Partial<SkyblockProfileMember>;
 }
 
 export interface StoredProfile {
