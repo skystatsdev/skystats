@@ -25,10 +25,14 @@
 	function getGameModeIcon(gameMode?: string) {
 		if (!gameMode) return '';
 		switch (gameMode) {
-			case 'ironman': return '/icons/ironman.png';
-			case 'island': return '/icons/island.png';
-			case 'bingo': return '/icons/bingo.png';
-			default: return '';
+			case 'ironman':
+				return '/icons/ironman.png';
+			case 'island':
+				return '/icons/island.png';
+			case 'bingo':
+				return '/icons/bingo.png';
+			default:
+				return '';
 		}
 	}
 </script>
@@ -68,7 +72,11 @@
 		<span slot="display-content" class="flex relative items-center space-x-4">
 			{cuteName}
 			{#if currentProfile?.gameMode !== 'normal'}
-				<img class="h-[32px] mt-[-5px] ml-[-5px] align-middle" src={getGameModeIcon(currentProfile?.gameMode)} alt="game mode"/>
+				<img
+					class="h-[32px] mt-[-5px] ml-[-5px] align-middle"
+					src={getGameModeIcon(currentProfile?.gameMode)}
+					alt="game mode"
+				/>
 			{/if}
 		</span>
 		<div slot="popover-content" data-sveltekit-preload-data="tap">
@@ -76,7 +84,11 @@
 				<PopoverItem href="/@{account.name}/{profile.cuteName}" index={profileIndex} totalItems={profiles.length}>
 					{profile.cuteName}
 					{#if profile.gameMode !== 'normal'}
-						<img class="h-[32px] mt-[-5px] ml-[-5px] align-middle overflow-clip overflow-clip-margin-content-box" src={getGameModeIcon(profile.gameMode)} alt="game mode"/>
+						<img
+							class="h-[32px] mt-[-5px] ml-[-5px] align-middle overflow-clip overflow-clip-margin-content-box"
+							src={getGameModeIcon(profile.gameMode)}
+							alt="game mode"
+						/>
 					{/if}
 				</PopoverItem>
 			{/each}
