@@ -36,15 +36,15 @@ async function hypixelRequest<T = unknown>(opts: HypixelRequestOptions = { usesA
 	if (!opts.endpoint) throw new Error('No endpoint provided!');
 	if (!opts.query) opts.query = {};
 
+	const requestUrl = `${baseURL}/${opts?.endpoint}?${new URLSearchParams(opts.query)}`;
+
 	if (dev) {
 		// Use redis to cache requests in dev mode for easy reparsing of data
-		const cachedRequest = await REDIS.GET(`dev:hypixelrequest:${opts.endpoint}`);
+		const cachedRequest = await REDIS.GET(`dev:hypixelrequest:${requestUrl}`);
 		if (cachedRequest) {
 			return JSON.parse(cachedRequest) as T;
 		}
 	}
-
-	const requestUrl = `${baseURL}/${opts?.endpoint}?${new URLSearchParams(opts.query)}`;
 
 	if (ratelimit.remaining === 0 && completedFirstRequest) {
 		throw new Error('Ratelimit reached!');
