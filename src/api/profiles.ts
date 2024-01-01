@@ -46,14 +46,13 @@ export async function parseProfilesResponse(
 	// Mark newly missing profile members as removed for the requester
 	const existingProfiles = await getStoredProfileMembers(requesterUuid);
 
-	// Loop through each profile member that we think isn't removed
-	for (const existing of existingProfiles.filter((p) => !p.removed)) {
-		// Check if the profile still exists
-		if (parsedProfiles.some((profile) => profile.id === existing.id.profile)) continue;
+	// Update "removed" status for each profile member of the requester
+	for (const existing of existingProfiles) {
+		const present = profiles.some((profile) => profile.profile_id.replace(/-/g, '') === existing.id.profile);
+		if (!existing.removed && present) continue;
 
-		// If it doesn't, mark it as removed
 		await updateStoredProfileMember(existing.id.player, existing.id.profile, {
-			removed: true
+			removed: !present
 		});
 	}
 
