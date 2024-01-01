@@ -81,7 +81,7 @@ export async function parseProfileMember(
 			museum: true
 		},
 		removed: false,
-		stats: getStats(profile, player?.data?.unparsed, memberId),
+		stats: await getStats(profile, player?.data?.unparsed, memberId),
 		lastUpdated: Math.floor(Date.now() / 1000)
 	};
 }
