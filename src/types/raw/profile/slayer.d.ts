@@ -10,12 +10,12 @@ export type SkyBlockProfileSlayer = {
 		recent_mob_kills: { xp: number; timestamp: number }[];
 		last_killed_mob_island: string;
 	};
-	slayer_bosses: Record<SkyblockSlayerBoss, SlayerData>;
+	slayer_bosses: Record<SkyblockSlayerBoss, SkyblocPlayerSlayerData>;
 };
 
 export type SkyblockSlayerBoss = 'zombie' | 'spider' | 'wolf' | 'enderman' | 'blaze' | 'vampire';
 
-type SlayerData = {
+type SkyblocPlayerSlayerData = {
 	claimed_levels: Record<string, boolean>;
 	xp: number;
 	boss_kills_tier_0: number;
