@@ -21,6 +21,16 @@
 		.filter((profile) => profile.id !== currentProfile?.id)
 		.filter((profile) => profile.removed === false)
 		.sort((a, b) => b.cuteName.localeCompare(a.cuteName));
+
+	function getGameModeIcon(gameMode?: string) {
+		if (!gameMode) return '';
+		switch (gameMode) {
+			case 'ironman': return '/icons/ironman.png';
+			case 'island': return '/icons/island.png';
+			case 'bingo': return '/icons/bingo.png';
+			default: return '';
+		}
+	}
 </script>
 
 <div class="text-[36px] mt-[50px] mb-[20px] flex flex-wrap gap-x-[10px] gap-y-[8px] items-center">
@@ -55,12 +65,20 @@
 	</Popover>
 	<span>on</span>
 	<Popover id="stats-for-profile">
-		<div slot="display-content">{cuteName}</div>
+		<span slot="display-content" class="flex relative items-center space-x-4">
+			{cuteName}
+			{#if currentProfile?.gameMode !== 'normal'}
+				<img class="h-[32px] mt-[-5px] ml-[-5px] align-middle" src={getGameModeIcon(currentProfile?.gameMode)} alt="game mode"/>
+			{/if}
+		</span>
 		<div slot="popover-content" data-sveltekit-preload-data="tap">
 			{#each profiles as profile, profileIndex (profile.id)}
-				<PopoverItem href="/@{account.name}/{profile.cuteName}" index={profileIndex} totalItems={profiles.length}
-					>{profile.cuteName}</PopoverItem
-				>
+				<PopoverItem href="/@{account.name}/{profile.cuteName}" index={profileIndex} totalItems={profiles.length}>
+					{profile.cuteName}
+					{#if profile.gameMode !== 'normal'}
+						<img class="h-[32px] mt-[-5px] ml-[-5px] align-middle overflow-clip overflow-clip-margin-content-box" src={getGameModeIcon(profile.gameMode)} alt="game mode"/>
+					{/if}
+				</PopoverItem>
 			{/each}
 		</div>
 	</Popover>

@@ -535,6 +535,7 @@ export type PlayerSkyblockProfileData = {
 	cuteName: string;
 	selected: boolean;
 	removed: boolean;
+	gameMode: string;
 	members: ProfileMemberData[];
 };
 
