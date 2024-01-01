@@ -1,4 +1,4 @@
-export type SkyBlockProfileForge = {
+export type Forge = {
 	forge_processes?: Record<string, ForgeProcess>;
 };
 

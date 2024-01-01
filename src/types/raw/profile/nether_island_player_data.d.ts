@@ -1,4 +1,4 @@
-export type SkyblockProfileNetherIslandPlayerData = {
+export type NetherIslandPlayerData = {
 	kuudra_completed_tiers?: KuudraCompletedTiers;
 	dojo?: Record<string, number>;
 	abiphone?: Abiphone;

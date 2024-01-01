@@ -1,6 +1,6 @@
 import { HYPIXEL_API_KEY } from '$env/static/private';
 import { isUUID } from '$params/uuid';
-import type { HypixelRequestOptions, SkyblockProfile } from '$types/hypixel';
+import type { HypixelRequestOptions, SkyBlockProfile } from '$types/hypixel';
 import { getUUID } from '$api/mojang';
 import { getStoredPlayer, updateStoredPlayerData } from '$mongo/players';
 import type { ProfileDetails, StoredPlayer, StoredProfile, StoredProfileMember } from '$mongo/collections';
@@ -166,7 +166,7 @@ async function getProfileMemberFromUuids(uuid: string, profileUuid: string) {
 }
 
 export async function fetchProfiles(uuid: string) {
-	const response = await hypixelRequest<{ success: boolean; cause?: string; profiles?: SkyblockProfile[] }>({
+	const response = await hypixelRequest<{ success: boolean; cause?: string; profiles?: SkyBlockProfile[] }>({
 		endpoint: 'skyblock/profiles',
 		query: { uuid },
 		usesApiKey: true

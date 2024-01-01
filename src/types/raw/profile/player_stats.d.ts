@@ -1,4 +1,4 @@
-export type SkyBlockProfilePlayerStats = {
+export type PlayerStats = {
 	candy_collected?: {
 		total: number;
 		purple_candy: number;

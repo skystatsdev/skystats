@@ -1,4 +1,4 @@
-export type SkyblockProfileDungeons = {
+export type Dungeons = {
 	dungeon_types?: {
 		catacombs?: DungeonType & { experience: number };
 		master_catacombs?: DungeonType;

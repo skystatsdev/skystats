@@ -1,4 +1,4 @@
-export type SkyblockProfileLeveling = {
+export type Leveling = {
 	experience?: number;
 	completions?: Record<SkyBlockLevelCompletions, number>;
 	completed_tasks?: string[];

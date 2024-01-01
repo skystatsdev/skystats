@@ -1,6 +1,6 @@
 import { SkyblockNBTData } from './inventory';
 
-export type SkyBlockProfileRift = {
+export type Rift = {
 	village_plaza?: RiftVillagePlaza;
 	wither_cage?: RiftWitherCage;
 	black_lagoon?: RiftBlackLagoon;

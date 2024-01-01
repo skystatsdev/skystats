@@ -1,4 +1,4 @@
-export type SkyblockProfilePlayerData = {
+export type PlayerData = {
 	visited_zones: string[];
 	last_death?: number;
 	perks?: Record<string, number>;

@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { SkyblockSkillData } from '$types/hypixel';
+	import type { SkyBlockStatsSkillData } from '$types/hypixel';
 
-	export let skillData: SkyblockSkillData;
+	export let skillData: SkyBlockStatsSkillData;
 	export let skillName: string;
 
 	$: maxed = skillData.level === skillData.maxLevel;

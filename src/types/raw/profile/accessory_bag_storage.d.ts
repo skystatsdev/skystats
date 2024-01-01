@@ -1,4 +1,4 @@
-export type SkyblockProfileAccessoryBagStorage = {
+export type AccessoryBagStorage = {
 	tuning?: Record<AccessoryBagStorageTuningSlotIDs, AccessoryBagStorageTuningSlotData>;
 	unlocked_powers?: string[];
 	selected_power?: string;

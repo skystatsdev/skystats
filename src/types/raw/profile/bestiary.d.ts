@@ -1,4 +1,4 @@
-export type SkyBlockProfileBestiary = {
+export type Bestiary = {
 	migrated_stats?: boolean;
 	migration?: boolean;
 	kills?: Record<string, number>;

@@ -1,4 +1,4 @@
-export type SkyBlockProfileInventory = {
+export type Inventory = {
 	inv_contents?: NBTData;
 	ender_chest_contents?: NBTData;
 	backpack_icons?: Record<string, NBTData>;

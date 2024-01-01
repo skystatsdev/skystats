@@ -1,4 +1,4 @@
-export type SkyblockProfileMiningCore = {
+export type MiningCore = {
 	nodes?: Record<string, number>;
 	recieved_free_tier?: boolean;
 	tokens?: number;

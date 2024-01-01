@@ -1,4 +1,4 @@
-export type SkyblockProfileCurrencies = {
+export type Currencies = {
 	coin_purse?: number;
 	motes_purse?: number;
 	essence?: Record<Essence, EssenceData>;

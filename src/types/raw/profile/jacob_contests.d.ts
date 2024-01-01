@@ -1,4 +1,4 @@
-export type SkyblockProfileJacobsContest = {
+export type JacobsContest = {
 	medals_inv?: Partial<Record<Exclude<JacobsContestMedal, 'platinum' | 'diamond'>, number>>;
 	perks?: {
 		double_drops?: number;

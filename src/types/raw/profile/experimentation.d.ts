@@ -1,4 +1,4 @@
-export type SkyBlockProfileExperimentation = {
+export type Experimentation = {
 	simon?: Record<string, number>;
 	pairings?: Record<string, number>;
 	numbers?: Record<string, number>;

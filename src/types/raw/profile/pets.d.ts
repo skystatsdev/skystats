@@ -1,4 +1,4 @@
-export type SkyblockProfilePetsData = {
+export type PetsData = {
 	autopet?: {
 		rules_limit?: number;
 		rules?: {
