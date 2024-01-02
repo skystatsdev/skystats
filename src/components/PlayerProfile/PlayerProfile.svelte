@@ -82,14 +82,16 @@
 		<div slot="popover-content" data-sveltekit-preload-data="tap">
 			{#each profiles as profile, profileIndex (profile.id)}
 				<PopoverItem href="/@{account.name}/{profile.cuteName}" index={profileIndex} totalItems={profiles.length}>
-					{profile.cuteName}
-					{#if profile.gameMode !== 'normal'}
-						<img
-							class="h-[32px] mt-[-5px] ml-[-5px] align-middle overflow-clip overflow-clip-margin-content-box"
-							src={getGameModeIcon(profile.gameMode)}
-							alt="game mode"
-						/>
-					{/if}
+					<div class="flex items-center space-x-4">
+						{profile.cuteName}
+						{#if profile.gameMode !== 'normal'}
+							<img
+								class="h-[32px] align-middle overflow-clip overflow-clip-margin-content-box"
+								src={getGameModeIcon(profile.gameMode)}
+								alt="game mode"
+							/>
+						{/if}
+					</div>
 				</PopoverItem>
 			{/each}
 		</div>
