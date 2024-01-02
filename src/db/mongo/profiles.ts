@@ -65,7 +65,7 @@ export async function getStoredProfiles(playerId: string): Promise<ProfileDetail
 					_id: 0,
 					id: '$id.profile',
 					cuteName: '$cuteName',
-					gameMode: '$profile.game_mode',
+					gameMode: '$profile.gameMode',
 					selected: '$selected',
 					removed: '$removed',
 					members: '$profile.members',

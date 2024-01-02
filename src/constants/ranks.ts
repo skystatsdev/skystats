@@ -76,6 +76,25 @@ export const RANK_PLUS_COLORS: { [color in PlusColor]?: string } = {
 	WHITE: '#929292'
 };
 
+// export const TAILWIND_RANK_PLUS_COLORS = {
+// 	BLACK: 'bg-[#000000]',
+// 	DARK_BLUE: 'bg-[#0b277a]',
+// 	DARK_GREEN: 'bg-[#00aa00]',
+// 	DARK_AQUA: 'bg-[#038d8d]',
+// 	DARK_RED: 'bg-[#920909]',
+// 	DARK_PURPLE: 'bg-[#a305a3]',
+// 	GOLD: 'bg-[#d88f07]',
+// 	GRAY: 'bg-[#636363]',
+// 	DARK_GRAY: 'bg-[#2f2f2f]',
+// 	BLUE: 'bg-[#4444f3]',
+// 	GREEN: 'bg-[#40bb40]',
+// 	AQUA: 'bg-[#33aec3]',
+// 	RED: 'bg-[#c43c3c]',
+// 	LIGHT_PURPLE: 'bg-[#e668c6]',
+// 	YELLOW: 'bg-[#efc721]',
+// 	WHITE: 'bg-[#929292]'
+// }
+
 export interface RankInformation {
 	color: string;
 	tag: string;

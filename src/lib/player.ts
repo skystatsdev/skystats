@@ -19,8 +19,13 @@ export function getRankInfo(player: HypixelPlayerData): RankInformation | undefi
 	if (rank === 'SUPERSTAR' && player.monthlyRankColor === 'AQUA') {
 		return {
 			...defaults,
-			color: '#33aec3'
+			color: '#33aec3',
+			plusColor: convertPlusColorToHex(player.rankPlusColor as PlusColor)
 		};
+	}
+
+	if (player?.rankPlusColor) {
+		defaults['plusColor'] = convertPlusColorToHex(player.rankPlusColor as PlusColor);
 	}
 
 	return defaults;

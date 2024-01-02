@@ -6,7 +6,7 @@
 </script>
 
 <span
-	class="relative inline-block font-semibold cursor-context-menu bg-[rgba(127,127,127,.2)] rounded-[100px] h-[54px] leading-[54px] px-[15px] align-middle text-[30px]"
+	class="relative inline-block font-semibold cursor-context-menu bg-[rgba(127,127,127,.2)] rounded-[100px] h-[54px] leading-[54px] px-[15px] align-middle text-[30px] min-w-[fit-content]"
 	{id}
 >
 	<slot name="display-content" />

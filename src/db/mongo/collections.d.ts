@@ -42,6 +42,7 @@ export interface ProfileDetails extends StoredProfile {
 	cuteName: string;
 	selected: boolean;
 	removed: boolean;
+	gameMode: string;
 }
 
 export interface StoredPlayer {
