@@ -71,7 +71,7 @@ async function hypixelRequest<T = unknown>(opts: HypixelRequestOptions = { usesA
 
 		if (dev) {
 			// Store request in redis if in dev mode
-			REDIS.SETEX(`dev:hypixelrequest:${opts.endpoint}`, profileCacheTTL, JSON.stringify(data));
+			REDIS.SETEX(`dev:hypixelrequest:${requestUrl}`, profileCacheTTL, JSON.stringify(data));
 		}
 
 		// TODO: Handle ratelimiting in an actually good way 💀
