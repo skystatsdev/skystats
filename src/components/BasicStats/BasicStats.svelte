@@ -1,8 +1,8 @@
 <script lang="ts">
 	import SkillComponent from '$comp/SkillComponent/SkillComponent.svelte';
-	import type { SkyblockPlayerSkillStats } from '$types/hypixel';
+	import type { SkyBlockStatsSkills } from '$types/hypixel';
 
-	export let skillData: SkyblockPlayerSkillStats | undefined;
+	export let skillData: SkyBlockStatsSkills | undefined;
 
 	$: skills = skillData?.skills;
 </script>

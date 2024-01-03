@@ -1,22 +1,22 @@
+import { getLevelByXp, getXpByLevel } from '$stats/skills/leveling';
 import * as constants from '$constants';
 import type {
-	SkyblockPlayerSkillStats,
-	SkyblockProfile,
-	SkyblockProfileMember,
+	SkyBlockProfileMember,
+	SkyBlockProfile,
 	HypixelPlayerData,
-	LevelCaps,
-	SkyblockSkillName,
-	SkyblockSkillData
+	SkyBlockStatsLevelCaps,
+	SkyBlockStatsSkillName,
+	SkyBlockStatsSkillData,
+	SkyBlockStatsSkills
 } from '$types/hypixel';
-import { getLevelByXp, getXpByLevel } from '$stats/skills/leveling';
 
 function getLevels(
-	userProfile: Partial<SkyblockProfileMember>,
-	profileMembers: SkyblockProfile['members'],
+	userProfile: Partial<SkyBlockProfileMember>,
+	profileMembers: SkyBlockProfile['members'],
 	hypixelProfile: HypixelPlayerData,
-	levelCaps: LevelCaps
-): SkyblockPlayerSkillStats {
-	const skillLevels: Partial<Record<SkyblockSkillName, SkyblockSkillData>> = {};
+	levelCaps: SkyBlockStatsLevelCaps
+): SkyBlockStatsSkills {
+	const skillLevels: Partial<Record<SkyBlockStatsSkillName, SkyBlockStatsSkillData>> = {};
 	if (userProfile.player_data && 'experience' in userProfile.player_data) {
 		const skills = userProfile.player_data.experience;
 
@@ -37,7 +37,7 @@ function getLevels(
 			social: getLevelByXp(socialExperience, { type: 'social' })
 		});
 	} else {
-		const achievementSkills: Record<SkyblockSkillName, number> = {
+		const achievementSkills: Record<SkyBlockStatsSkillName, number> = {
 			farming: hypixelProfile.achievements.skyblock_harvester || 0,
 			mining: hypixelProfile.achievements.skyblock_excavator || 0,
 			combat: hypixelProfile.achievements.skyblock_combat || 0,
@@ -52,19 +52,20 @@ function getLevels(
 		};
 
 		for (const skill in achievementSkills) {
-			skillLevels[skill as SkyblockSkillName] = getXpByLevel(achievementSkills[skill as SkyblockSkillName] as number, {
-				skill
-			});
+			skillLevels[skill as SkyBlockStatsSkillName] = getXpByLevel(
+				achievementSkills[skill as SkyBlockStatsSkillName] as number,
+				{ skill }
+			);
 		}
 	}
 
-	const getNonCosmeticSkills = (skillLevels: Record<string, SkyblockSkillData>) => {
-		return (Object.keys(skillLevels) as SkyblockSkillName[]).filter(
+	const getNonCosmeticSkills = (skillLevels: Record<string, SkyBlockStatsSkillData>) => {
+		return (Object.keys(skillLevels) as SkyBlockStatsSkillName[]).filter(
 			(skill) => !constants.SKYBLOCK_COSMETIC_SKILLS.includes(skill)
 		);
 	};
 
-	const nonCosmeticSkills: SkyblockSkillName[] = getNonCosmeticSkills(skillLevels);
+	const nonCosmeticSkills: SkyBlockStatsSkillName[] = getNonCosmeticSkills(skillLevels);
 	const nonCosmeticSkillsCount = Math.max(nonCosmeticSkills.length, 9);
 
 	const totalSkillXp = nonCosmeticSkills.reduce((total, skill) => total + (skillLevels[skill]?.xp || 0), 0);
@@ -80,11 +81,11 @@ function getLevels(
 
 	// TODO: Implement this once leaaderboards are implemented
 	// for (const skill in skillLevels) {
-	//	 skillLevels[skill as SkyblockSkillName].rank = 0;
+	//	 skillLevels[skill as SkyBlockStatsSkillName].rank = 0;
 	// }
 
 	return {
-		skills: skillLevels as Record<SkyblockSkillName, SkyblockSkillData>,
+		skills: skillLevels as Record<SkyBlockStatsSkillName, SkyBlockStatsSkillData>,
 		averageSkillLevel,
 		averageSkillLevelWithoutProgress,
 		totalSkillXp
@@ -92,9 +93,9 @@ function getLevels(
 }
 
 export function getSkills(
-	userProfile: Partial<SkyblockProfileMember>,
+	userProfile: Partial<SkyBlockProfileMember>,
 	hypixelProfile: HypixelPlayerData,
-	profileMembers: SkyblockProfile['members']
+	profileMembers: SkyBlockProfile['members']
 ) {
 	const levelCaps = {
 		farming:

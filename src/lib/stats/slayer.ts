@@ -1,10 +1,7 @@
+import type { SlayerBossData, SlayerBoss, SkyBlockProfileMember, SkyBlockStatsSlayers } from '$types/hypixel';
 import * as constants from '$constants';
-import type { SkyblockProfileMember, SkyblockSlayerBoss, SkyblockPlayerSlayerStats } from '$types/hypixel';
 
-function getSlayerLevel(
-	slayer: SkyblockProfileMember['slayer']['slayer_bosses'][SkyblockSlayerBoss],
-	slayerName: SkyblockSlayerBoss
-) {
+function getSlayerLevel(slayer: SlayerBossData, slayerName: SlayerBoss) {
 	const xpTable = constants.SKYBLOCK_SLAYER_XP_TABLE[slayerName];
 
 	const maxLevel = Object.keys(xpTable).length;
@@ -44,14 +41,14 @@ function getSlayerLevel(
 	return Object.assign(constants.SLAYER_INFO[slayerName], { xp, level, maxLevel, xpForNext: null, progress: 1, kills });
 }
 
-export function getSlayers(userProfile: Partial<SkyblockProfileMember>): SkyblockPlayerSlayerStats {
-	const output = { slayers: {} as SkyblockPlayerSlayerStats['slayers'], total_slayer_xp: 0 };
+export function getSlayers(userProfile: Partial<SkyBlockProfileMember>): SkyBlockStatsSlayers {
+	const output = { slayers: {} as SkyBlockStatsSlayers['slayers'], total_slayer_xp: 0 };
 	if (userProfile.slayer?.slayer_bosses === undefined) {
 		return output;
 	}
 
 	for (const [slayerName, slayer] of Object.entries(userProfile.slayer.slayer_bosses)) {
-		output.slayers[slayerName as SkyblockSlayerBoss] = getSlayerLevel(slayer, slayerName as SkyblockSlayerBoss);
+		output.slayers[slayerName as SlayerBoss] = getSlayerLevel(slayer, slayerName as SlayerBoss);
 	}
 
 	output.total_slayer_xp = Object.values(output.slayers).reduce((a, b) => a + b.xp, 0);
