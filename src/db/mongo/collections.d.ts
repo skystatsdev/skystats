@@ -65,6 +65,5 @@ export interface APISettings {
 	inventory: boolean;
 	vault: boolean;
 	museum: boolean;
-	essence: boolean;
 	banking: boolean;
 }
