@@ -4,7 +4,7 @@ export type Currencies = {
 	essence?: Record<Essence, EssenceData>;
 };
 
-type Essence = 'WITHER' | 'DRAGON' | 'SPIDER' | 'UNDEAD' | 'DIAMOND' | 'GOLD' | 'ICE' | 'CRIMSON';
+export type Essence = 'WITHER' | 'DRAGON' | 'SPIDER' | 'UNDEAD' | 'DIAMOND' | 'GOLD' | 'ICE' | 'CRIMSON';
 
 type EssenceData = {
 	current: number;
