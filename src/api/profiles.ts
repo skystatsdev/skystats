@@ -6,13 +6,13 @@ import {
 	updateStoredProfile,
 	updateStoredProfileMember
 } from '$mongo/profiles';
-import type { SkyblockProfile } from '$types/hypixel';
+import type { SkyBlockProfile } from '$types/hypixel';
 import { getPlayer } from './hypixel';
 import { getUsername } from './mojang';
 
 export async function parseProfilesResponse(
 	requesterUuid: string,
-	profiles: SkyblockProfile[]
+	profiles: SkyBlockProfile[]
 ): Promise<StoredProfile[]> {
 	requesterUuid = requesterUuid.replace(/-/g, '');
 	const parsedProfiles: StoredProfile[] = [];
@@ -61,9 +61,9 @@ export async function parseProfilesResponse(
 }
 
 export async function parseProfileMember(
-	profile: SkyblockProfile,
+	profile: SkyBlockProfile,
 	memberId: string,
-	member: SkyblockProfile['members'][string]
+	member: SkyBlockProfile['members'][string]
 ): Promise<Partial<StoredProfileMember>> {
 	const player = await getPlayer(memberId);
 
@@ -86,7 +86,7 @@ export async function parseProfileMember(
 	};
 }
 
-export async function parseProfile(profile: SkyblockProfile): Promise<StoredProfile> {
+export async function parseProfile(profile: SkyBlockProfile): Promise<StoredProfile> {
 	const minions = [];
 	const memberPromises: Promise<ProfileMemberDetails | null>[] = [];
 
