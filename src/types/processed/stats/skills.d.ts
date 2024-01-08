@@ -1,5 +1,5 @@
 export type SkyBlockStatsSkills = {
-	skills: Record<SkyblockSkillName, SkyblockSkillData>;
+	skills: Record<SkyblockSkillName, SkyBlockStatsSkillData>;
 	averageSkillLevel: number;
 	averageSkillLevelWithoutProgress: number;
 	totalSkillXp: number;

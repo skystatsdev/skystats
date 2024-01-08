@@ -21,6 +21,9 @@ export type MiningCore = {
 	powder_spent_gemstone?: number;
 	daily_ores_mined_day?: number;
 	daily_ores_mined?: number;
+	selected_pickaxe_ability?: string;
+	current_daily_effect?: string;
+	current_daily_effect_last_changed?: number;
 };
 
 type CrystalNames =

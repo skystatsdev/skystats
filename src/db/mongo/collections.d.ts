@@ -1,4 +1,9 @@
-import type { SkyblockPlayerSkillStats, SkyblockProfileMember, SkyblockPlayerCurrencies } from '$types/hypixel';
+import type {
+	SkyblockPlayerSkillStats,
+	SkyblockProfileMember,
+	SkyblockPlayerCurrencies,
+	SkyBlockMiningData
+} from '$types/hypixel';
 
 export interface StoredProfileMember {
 	id: {
@@ -17,6 +22,7 @@ export interface StoredProfileMemberData {
 	skills?: SkyblockPlayerSkillStats;
 	currencies?: SkyblockPlayerCurrencies;
 	collections?: Record<string, number>;
+	mining?: SkyBlockMiningData;
 	unparsed?: Partial<SkyblockProfileMember>;
 }
 
