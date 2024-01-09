@@ -4,7 +4,6 @@ export type ForgeItem = {
 	id: string;
 	slot: number;
 	timeFinished: number;
-	timeFinishedText: string;
 	name?: string;
 };
 

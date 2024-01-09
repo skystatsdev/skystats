@@ -10,8 +10,6 @@ import type { Range } from '$types/util';
 import { HOTM, FORGE_TIMES, QUICK_FORGE_MULTIPLIER } from '$constants';
 import { calcHotmTokens } from '$lib/stats/mining/hotm';
 
-import moment from 'moment';
-
 export function getMiningCore(userProfile: Partial<SkyBlockProfileMember>): SkyBlockMiningData['core'] {
 	const data = userProfile.mining_core;
 	if (!data) return undefined;
@@ -82,8 +80,7 @@ export function getForge(userProfile: Partial<SkyBlockProfileMember>): SkyBlockM
 				const item: ForgeItem = {
 					id: process.id,
 					slot: process.slot,
-					timeFinished: 0,
-					timeFinishedText: ''
+					timeFinished: 0
 				};
 				if (item.id in FORGE_TIMES) {
 					let forgeTime = FORGE_TIMES[item.id as keyof typeof FORGE_TIMES] * 60 * 1000;
@@ -97,7 +94,6 @@ export function getForge(userProfile: Partial<SkyBlockProfileMember>): SkyBlockM
 
 					const timeFinished = process.startTime + forgeTime;
 					item.timeFinished = timeFinished;
-					item.timeFinishedText = moment(timeFinished).fromNow();
 				} else {
 					item.id = `UNKNOWN-${item.id}`;
 				}
@@ -116,11 +112,11 @@ export function getMining(
 	return {
 		commissions: {
 			milestone: userProfile.objectives?.tutorial
-				? Math.max(
-						...userProfile.objectives.tutorial
-							.filter((objective) => objective.startsWith('commission_milestone_reward_skyblock_xp_tier_'))
-							.map((objective) => parseInt(objective.split('_').pop() ?? '0'))
-				  )
+				? userProfile.objectives.tutorial.reduce((highest, objective) => {
+						if (!objective.startsWith('commission_milestone_reward_skyblock_xp_tier_')) return highest;
+
+						return Math.max(parseInt(objective[45]), highest);
+				  }, 0)
 				: 0,
 			completions: hypixelProfile.achievements.skyblock_hard_working_miner ?? 0
 		},
