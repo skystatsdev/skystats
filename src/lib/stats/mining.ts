@@ -1,9 +1,14 @@
 import { getLevelByXp } from '$lib/stats/skills/leveling';
-import type { SkyBlockProfileMember, HypixelPlayerData, MiningCore } from '$types/hypixel';
+import type {
+	SkyBlockProfileMember,
+	HypixelPlayerData,
+	MiningCore,
+	ForgeItem,
+	SkyBlockMiningData
+} from '$types/hypixel';
 import type { Range } from '$types/util';
 import { HOTM, FORGE_TIMES, QUICK_FORGE_MULTIPLIER } from '$constants';
 import { calcHotmTokens } from '$lib/stats/mining/hotm';
-import type { ForgeItem, SkyBlockMiningData } from '$types/processed/stats/mining';
 
 import moment from 'moment';
 
