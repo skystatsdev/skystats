@@ -19,6 +19,7 @@
 		"@sveltejs/adapter-auto": "^3.0.1",
 		"@sveltejs/adapter-node": "^2.0.2",
 		"@sveltejs/kit": "2.0.6",
+		"@types/lodash": "^4.14.202",
 		"@typescript-eslint/eslint-plugin": "^5.62.0",
 		"@typescript-eslint/parser": "^5.62.0",
 		"autoprefixer": "^10.4.16",
@@ -50,6 +51,7 @@
 		"eslint-plugin-deprecation": "^2.0.0",
 		"flowbite": "^1.8.1",
 		"flowbite-svelte": "^0.39.3",
+		"lodash": "^4.17.21",
 		"mongodb": "^6.3.0",
 		"redis": "^4.6.12",
 		"tailwind-merge": "^1.14.0"

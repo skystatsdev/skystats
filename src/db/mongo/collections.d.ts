@@ -23,6 +23,7 @@ export interface StoredProfileMemberData {
 	currencies?: SkyblockPlayerCurrencies;
 	collections?: Record<string, number>;
 	mining?: SkyBlockMiningData;
+	enchanting?: SkyblockEnchantingData;
 	unparsed?: Partial<SkyblockProfileMember>;
 }
 

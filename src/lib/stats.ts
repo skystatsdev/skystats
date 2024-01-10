@@ -9,7 +9,8 @@ export function getStats(profile: SkyBlockProfile, player: HypixelPlayerData, uu
 		skills: stats.getSkills(userProfile, player, profile.members),
 		currencies: stats.getCurrencies(userProfile, profile),
 		slayers: stats.getSlayers(userProfile),
-		mining: stats.getMining(userProfile, player)
+		mining: stats.getMining(userProfile, player),
+		enchanting: stats.getEnchanting(userProfile)
 		// unparsed: userProfile
 	};
 
