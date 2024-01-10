@@ -34,3 +34,43 @@ export const ESSENCE = {
 		head: '/head/67c41930f8ff0f2b0430e169ae5f38e984df1244215705c6f173862844543e9d'
 	}
 };
+
+export const EXPERIMENTS = {
+	games: {
+		simon: {
+			name: 'Chronomatron'
+		},
+		numbers: {
+			name: 'Ultrasequencer'
+		},
+		pairings: {
+			name: 'Superpairs'
+		}
+	},
+	tiers: [
+		{
+			name: 'Beginner',
+			icon: 'INK_SACK:12'
+		},
+		{
+			name: 'High',
+			icon: 'INK_SACK:10'
+		},
+		{
+			name: 'Grand',
+			icon: 'INK_SACK:11'
+		},
+		{
+			name: 'Supreme',
+			icon: 'INK_SACK:14'
+		},
+		{
+			name: 'Transcendent',
+			icon: 'INK_SACK:1'
+		},
+		{
+			name: 'Metaphysical',
+			icon: 'INK_SACK:13'
+		}
+	]
+};
