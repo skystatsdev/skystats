@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import adapter from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
+import builtins from 'rollup-plugin-node-builtins';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	// Consult https://kit.svelte.dev/docs/integrations#preprocessors
-	// for more information about preprocessors
 	preprocess: preprocess(),
 
 	kit: {
@@ -20,6 +19,13 @@ const config = {
 			$mongo: './src/db/mongo',
 			$api: './src/api',
 			$stats: './src/lib/stats'
+		}
+	},
+	vite: {
+		resolve: {
+			alias: {
+				fs: builtins
+			}
 		}
 	}
 };

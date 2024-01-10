@@ -46,12 +46,31 @@
 	"dependencies": {
 		"@popperjs/core": "^2.11.8",
 		"@sveltejs/vite-plugin-svelte": "^3.0.1",
+		"@types/css": "^0.0.37",
+		"@types/fs-extra": "^11.0.4",
+		"@types/lodash": "^4.14.202",
+		"@types/micromatch": "^4.0.6",
+		"@types/mongo-sanitize": "^1.0.3",
 		"@types/node": "^20.10.5",
+		"@types/relaxed-json": "^1.0.4",
+		"@types/upng-js": "^2.1.5",
+		"apng2gif-bin": "^1.7.1",
+		"canvas": "^2.11.2",
+		"css": "^3.0.0",
 		"eslint-plugin-deprecation": "^2.0.0",
 		"flowbite": "^1.8.1",
 		"flowbite-svelte": "^0.39.3",
+		"fs-extra": "^11.2.0",
+		"lodash": "^4.17.21",
+		"micromatch": "^4.0.5",
+		"minecraft-data": "^3.59.2",
+		"mongo-sanitize": "^1.1.0",
 		"mongodb": "^6.3.0",
 		"redis": "^4.6.12",
-		"tailwind-merge": "^1.14.0"
+		"relaxed-json": "^1.0.3",
+		"rollup-plugin-node-builtins": "^2.1.2",
+		"sharp": "^0.33.1",
+		"tailwind-merge": "^1.14.0",
+		"upng-js": "^2.1.0"
 	}
 }
