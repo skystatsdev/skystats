@@ -2258,7 +2258,7 @@ type BestiaryCategoryData = {
 	mobs: BestiaryMobData[];
 };
 
-type BestiaryMobData = {
+export type BestiaryMobData = {
 	name: string;
 	cap: number;
 	texture: string;

@@ -1,5 +1,6 @@
 import * as constants from '$constants';
 import type { SkyBlockProfileMember } from '$types/hypixel';
+import type { SkyBlockStatsBestiary } from '$types/processed/stats/bestiary';
 
 function formatBestiaryKills(kills: Record<string, number>, mobs: (typeof constants.BESTIARY)['dynamic']['mobs']) {
 	const output = [];
@@ -26,34 +27,12 @@ function formatBestiaryKills(kills: Record<string, number>, mobs: (typeof consta
 }
 
 export function getBestiary(userProfile: Partial<SkyBlockProfileMember>) {
-	const output = {
-		bestiary: {} as Record<
-			string,
-			{
-				name: string;
-				texture: string;
-				mobs: {
-					name: string;
-					texture: string;
-					kills: number;
-					nextTierKills: number | null;
-					maxKills: number;
-					tier: number;
-					maxTier: number;
-				}[];
-				mobsUnlocked: number;
-				mobsMaxed: number;
-			}
-		>,
-		milestone: 0,
-		maxMilestone: 0,
-		tiers: 0,
-		totalTiers: 0
-	};
+	const output: Partial<SkyBlockStatsBestiary> = {};
 	if (userProfile?.bestiary?.kills === undefined) {
 		return output;
 	}
 
+	output.bestiary = {};
 	for (const [category, data] of Object.entries(constants.BESTIARY)) {
 		output.bestiary[category] = {
 			name: data.name,
