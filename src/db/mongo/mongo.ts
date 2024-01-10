@@ -58,6 +58,5 @@ export const MONGO = mongoClient.db(MONGO_DATABASE);
 
 const scripts = fs.readdirSync(path.resolve('src/db/mongo/scripts'));
 for (const script of scripts) {
-	/* @vite-ignore */
-	import(`./scripts/${script}`);
+	import(/* @vite-ignore */ `./scripts/${script}`);
 }
