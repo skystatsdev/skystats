@@ -41,7 +41,6 @@ const CACHE_FOLDER_PATH = getCacheFolderPath();
 const PACK_HASH_CACHE_FILE = getCacheFilePath(CACHE_FOLDER_PATH, 'json', 'pack_hashes', 'json');
 const RESOURCES_CACHE_FILE = getCacheFilePath(CACHE_FOLDER_PATH, 'json', 'custom_resources', 'json');
 
-
 let resourcesReady = false;
 const readyPromise = new Promise<void>((resolve) => {
 	setInterval(() => {
