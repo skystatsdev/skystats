@@ -20,15 +20,15 @@ import apng2gif from 'apng2gif-bin';
 import child_process from 'child_process';
 import { getFileHash } from './hashes';
 import type {
-	OutputPack,
-	ResourcePack,
-	TextureModel,
-	TextureMetadata,
+	CustomResourcesOutputPack,
+	CustomResourcesResourcePack,
+	CustomResourcesTextureModel,
+	CustomResourcesTextureMetadata,
+	CustomResourcesTextureAnimation,
+	CustomResourcesOutputTexture,
+	CustomResourcesDebugStats,
 	ItemTexture,
-	SkyBlockItem,
-	OutputTexture,
-	DebugStatsOutputTexture,
-	TextureAnimation
+	SkyBlockItem
 } from '$types/hypixel.js';
 const execFile = util.promisify(child_process.execFile);
 
@@ -80,10 +80,10 @@ function getFrame(src: Canvas, frame: number) {
 	return dst;
 }
 
-let resourcePacks: ResourcePack[] = [];
+let resourcePacks: CustomResourcesResourcePack[] = [];
 let packConfigHashes: { [key: string]: string } = {};
 
-const outputPacks: OutputPack[] = [];
+const outputPacks: CustomResourcesOutputPack[] = [];
 
 export async function init() {
 	console.log(`Custom Resources loading started.`);
@@ -109,7 +109,7 @@ export async function init() {
 		resourcesUpToDate = true;
 	} catch (e) {
 		packConfigHashes = {};
-		resourcePacks.forEach((pack: ResourcePack) => {
+		resourcePacks.forEach((pack: CustomResourcesResourcePack) => {
 			packConfigHashes[pack.config.id] = pack.config.hash;
 		});
 
@@ -235,7 +235,7 @@ async function loadResourcePacks() {
 				const modelFile = path.resolve(path.dirname(file), properties['model']);
 
 				try {
-					const model = RJSON.parse(await fs.readFile(modelFile, 'utf8')) as TextureModel;
+					const model = RJSON.parse(await fs.readFile(modelFile, 'utf8')) as CustomResourcesTextureModel;
 
 					if (model.parent == 'builtin/generated') {
 						const layers = Object.keys(model.textures).sort((a, b) => Number(a) - Number(b));
@@ -279,7 +279,7 @@ async function loadResourcePacks() {
 						await fs.access(leather[part], fs.constants.F_OK);
 
 						const leatherImage = sharp(leather[part]);
-						const leatherMetadata = (await leatherImage.metadata()) as unknown as TextureMetadata;
+						const leatherMetadata = (await leatherImage.metadata()) as unknown as CustomResourcesTextureMetadata;
 
 						if (leatherMetadata.width != normalizedSize) {
 							await fs.writeFile(
@@ -320,7 +320,7 @@ async function loadResourcePacks() {
 			texture.path = textureFile;
 
 			const textureImage = sharp(textureFile);
-			const textureMetadata = (await textureImage.metadata()) as unknown as TextureMetadata;
+			const textureMetadata = (await textureImage.metadata()) as unknown as CustomResourcesTextureMetadata;
 
 			if (textureMetadata.width != normalizedSize) {
 				await fs.writeFile(
@@ -404,7 +404,7 @@ async function loadResourcePacks() {
 			}
 
 			if ('animation' in metaProperties && textureMetadata.width != textureMetadata.height) {
-				const animation = metaProperties.animation as TextureAnimation;
+				const animation = metaProperties.animation as CustomResourcesTextureAnimation;
 				if (animation.frames === undefined) {
 					continue;
 				}
@@ -598,25 +598,25 @@ export function getTexture(item: SkyBlockItem, { ignore_id = false, pack_ids = [
 
 	const timeStarted = Date.now();
 
-	const debugStats: DebugStatsOutputTexture = {
+	const debugStats: CustomResourcesDebugStats = {
 		processed_packs: 0,
 		processed_textures: 0,
 		found_matches: 0,
 		time_spent_ms: 0
 	};
 
-	let outputTexture: Partial<OutputTexture> = { weight: -9999, file: '' };
+	let outputTexture: Partial<CustomResourcesOutputTexture> = { weight: -9999, file: '' };
 
 	// pack_ids = pack_ids && typeof pack_ids === 'string' ? pack_ids.split(',') : [];
 
-	let tempPacks: ResourcePack[] = resourcePacks;
+	let tempPacks: CustomResourcesResourcePack[] = resourcePacks;
 
 	const packIdsArray: string[] = Array.isArray(pack_ids) ? pack_ids : [];
 	const packIdsSet: Set<string> = new Set(packIdsArray);
 
 	if (packIdsArray.length > 0) {
 		tempPacks = tempPacks
-			.filter((a: ResourcePack) => packIdsSet.has(a.config.id))
+			.filter((a: CustomResourcesResourcePack) => packIdsSet.has(a.config.id))
 			.sort((a, b) => packIdsArray.indexOf(a.config.id) - packIdsArray.indexOf(b.config.id))
 			.reverse();
 	}

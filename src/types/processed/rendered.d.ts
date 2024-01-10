@@ -44,7 +44,7 @@ export type SkyBlockDBItem = {
 	damage?: number;
 };
 
-export type ResourcePack = {
+export type CustomResourcesResourcePack = {
 	base_path: string;
 	config: {
 		id: string;
@@ -78,7 +78,7 @@ export type ItemTexture = {
 	skyblock_id: string;
 };
 
-export type OutputPack = {
+export type CustomResourcesOutputPack = {
 	base_path: string;
 	id: string;
 	name: string;
@@ -89,7 +89,7 @@ export type OutputPack = {
 	hash: string;
 };
 
-export type TextureModel = {
+export type CustomResourcesTextureModel = {
 	parent: string;
 	textures: { [key: string]: string };
 	display: {
@@ -97,7 +97,7 @@ export type TextureModel = {
 	};
 };
 
-export type TextureMetadata = {
+export type CustomResourcesTextureMetadata = {
 	format: string;
 	width: number;
 	height: number;
@@ -111,27 +111,27 @@ export type TextureMetadata = {
 	hasAlpha: boolean;
 };
 
-export type OutputTexture = {
+export type CustomResourcesOutputTexture = {
 	weight: number;
 	file: string;
 	path: string;
-	debug: DebugStatsOutputTexture;
+	debug: CustomResourcesDebugStats;
 };
 
-export type DebugStatsOutputTexture = {
+export type CustomResourcesDebugStats = {
 	processed_packs: number;
 	time_spent_ms: number;
 	found_matches: number;
 	processed_textures: number;
 };
 
-export type TextureAnimation = {
-	frames?: AnimationFrame[];
+export type CustomResourcesTextureAnimation = {
+	frames?: CustomResourcesAnimationFrame[];
 	frametime: number;
 	interpolate?: boolean;
 };
 
-export type AnimationFrame = {
+export type CustomResourcesAnimationFrame = {
 	index: number;
 	time: number;
 	totalTime?: number;
