@@ -6,13 +6,13 @@ import {
 	updateStoredProfile,
 	updateStoredProfileMember
 } from '$mongo/profiles';
-import type { SkyblockProfile } from '$types/hypixel';
+import type { SkyBlockProfile } from '$types/hypixel';
 import { getPlayer } from './hypixel';
 import { getUsername } from './mojang';
 
 export async function parseProfilesResponse(
 	requesterUuid: string,
-	profiles: SkyblockProfile[]
+	profiles: SkyBlockProfile[]
 ): Promise<StoredProfile[]> {
 	requesterUuid = requesterUuid.replace(/-/g, '');
 	const parsedProfiles: StoredProfile[] = [];
@@ -46,14 +46,13 @@ export async function parseProfilesResponse(
 	// Mark newly missing profile members as removed for the requester
 	const existingProfiles = await getStoredProfileMembers(requesterUuid);
 
-	// Loop through each profile member that we think isn't removed
-	for (const existing of existingProfiles.filter((p) => !p.removed)) {
-		// Check if the profile still exists
-		if (parsedProfiles.some((profile) => profile.id === existing.id.profile)) continue;
+	// Update "removed" status for each profile member of the requester
+	for (const existing of existingProfiles) {
+		const present = profiles.some((profile) => profile.profile_id.replace(/-/g, '') === existing.id.profile);
+		if (!existing.removed && present) continue;
 
-		// If it doesn't, mark it as removed
 		await updateStoredProfileMember(existing.id.player, existing.id.profile, {
-			removed: true
+			removed: !present
 		});
 	}
 
@@ -61,9 +60,9 @@ export async function parseProfilesResponse(
 }
 
 export async function parseProfileMember(
-	profile: SkyblockProfile,
+	profile: SkyBlockProfile,
 	memberId: string,
-	member: SkyblockProfile['members'][string]
+	member: SkyBlockProfile['members'][string]
 ): Promise<Partial<StoredProfileMember>> {
 	const player = await getPlayer(memberId);
 
@@ -77,6 +76,7 @@ export async function parseProfileMember(
 			collections: member.collection !== undefined,
 			inventory: member.inventory?.inv_contents !== undefined,
 			vault: member.inventory?.personal_vault_contents !== undefined,
+			banking: profile.banking?.balance !== undefined,
 			// TODO: Update museum value somehow
 			museum: true
 		},
@@ -86,7 +86,7 @@ export async function parseProfileMember(
 	};
 }
 
-export async function parseProfile(profile: SkyblockProfile): Promise<StoredProfile> {
+export async function parseProfile(profile: SkyBlockProfile): Promise<StoredProfile> {
 	const minions = [];
 	const memberPromises: Promise<ProfileMemberDetails | null>[] = [];
 

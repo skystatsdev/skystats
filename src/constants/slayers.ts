@@ -1,4 +1,6 @@
-export const SKYBLOCK_SLAYER_XP_TABLE = {
+import type { SlayerBoss } from '$types/raw/profile';
+
+export const SKYBLOCK_SLAYER_XP_TABLE: Record<SlayerBoss, Record<number, number>> = {
 	zombie: {
 		1: 5,
 		2: 15,
