@@ -7,6 +7,7 @@ import _ from 'lodash';
 import sharp from 'sharp';
 import canvasModule, { Canvas } from 'canvas';
 const { createCanvas, loadImage } = canvasModule;
+import { building } from '$app/environment';
 import minecraftData from 'minecraft-data';
 const mcData = minecraftData('1.8.9');
 import UPNG from 'upng-js';
@@ -31,15 +32,15 @@ import type {
 } from '$types/hypixel.js';
 const execFile = util.promisify(child_process.execFile);
 
-const NORMALIZED_SIZE = 128;
-const RESOURCE_CACHING = false;
+const normalizedSize = 128;
+const resourceCaching = true;
 
-const FOLDER_PATH = getFolderPath();
-const RESOURCE_PACK_FOLDER = path.resolve(getFolderPath(), '..', '..', 'public', 'resourcepacks');
+const folderPath = getFolderPath();
+const resourcePackFolder = path.resolve(getFolderPath(), '..', '..', 'public', 'resourcepacks');
 
-const CACHE_FOLDER_PATH = getCacheFolderPath();
-const PACK_HASH_CACHE_FILE = getCacheFilePath(CACHE_FOLDER_PATH, 'json', 'pack_hashes', 'json');
-const RESOURCES_CACHE_FILE = getCacheFilePath(CACHE_FOLDER_PATH, 'json', 'custom_resources', 'json');
+const cacheFolderPath = getCacheFolderPath();
+const packHashCacheFile = getCacheFilePath(cacheFolderPath, 'json', 'pack_hashes', 'json');
+const resourceCacheFile = getCacheFilePath(cacheFolderPath, 'json', 'custom_resources', 'json');
 
 let resourcesReady = false;
 const readyPromise = new Promise<void>((resolve) => {
@@ -71,10 +72,10 @@ async function getFiles(dir: string, fileList: string[]) {
 }
 
 function getFrame(src: Canvas, frame: number) {
-	const dst = createCanvas(NORMALIZED_SIZE, NORMALIZED_SIZE);
+	const dst = createCanvas(normalizedSize, normalizedSize);
 	const ctx = dst.getContext('2d');
 
-	ctx.drawImage(src, 0, frame * NORMALIZED_SIZE * -1);
+	ctx.drawImage(src, 0, frame * normalizedSize * -1);
 
 	return dst;
 }
@@ -93,7 +94,7 @@ export async function init() {
 
 	try {
 		packConfigHashes = {};
-		packConfigHashes = JSON.parse(fs.readFileSync(PACK_HASH_CACHE_FILE, 'utf8'));
+		packConfigHashes = JSON.parse(fs.readFileSync(packHashCacheFile, 'utf8'));
 
 		if (Object.keys(packConfigHashes).length !== resourcePacks.length) {
 			throw new Error('The amount of config hashes does not match the amount of packs');
@@ -112,23 +113,23 @@ export async function init() {
 			packConfigHashes[pack.config.id] = pack.config.hash;
 		});
 
-		fs.writeFileSync(PACK_HASH_CACHE_FILE, JSON.stringify(packConfigHashes));
+		fs.writeFileSync(packHashCacheFile, JSON.stringify(packConfigHashes));
 	}
 
 	try {
-		if (!RESOURCE_CACHING) {
+		if (!resourceCaching) {
 			throw new Error('Resource caching has been disabled!');
 		}
 
 		if (resourcesUpToDate) {
-			resourcePacks = JSON.parse(fs.readFileSync(RESOURCES_CACHE_FILE, 'utf8'));
+			resourcePacks = JSON.parse(fs.readFileSync(resourceCacheFile, 'utf8'));
 		} else {
 			throw new Error('Resources need to be loaded!');
 		}
 	} catch (e) {
 		await loadResourcePacks();
 
-		fs.writeFileSync(RESOURCES_CACHE_FILE, JSON.stringify(resourcePacks));
+		fs.writeFileSync(resourceCacheFile, JSON.stringify(resourcePacks));
 	}
 
 	resourcePacks = resourcePacks.sort((a, b) => b.config.priority - a.config.priority);
@@ -136,7 +137,7 @@ export async function init() {
 		outputPacks.push(
 			Object.assign(
 				{
-					base_path: '/' + path.relative(path.resolve(FOLDER_PATH, '..', 'public'), pack.base_path)
+					base_path: '/' + path.relative(path.resolve(folderPath, '..', 'public'), pack.base_path)
 				},
 				pack.config
 			)
@@ -150,13 +151,13 @@ export async function init() {
 }
 
 async function loadPackConfigs() {
-	for (const packOrFile of await fs.readdir(RESOURCE_PACK_FOLDER, { withFileTypes: true })) {
+	for (const packOrFile of await fs.readdir(resourcePackFolder, { withFileTypes: true })) {
 		if (!packOrFile.isDirectory()) {
 			continue;
 		}
 
 		const pack = packOrFile.name;
-		const basePath = path.resolve(RESOURCE_PACK_FOLDER, pack);
+		const basePath = path.resolve(resourcePackFolder, pack);
 
 		try {
 			const configPath = path.resolve(basePath, 'config.json');
@@ -280,11 +281,11 @@ async function loadResourcePacks() {
 						const leatherImage = sharp(leather[part]);
 						const leatherMetadata = (await leatherImage.metadata()) as unknown as TextureMetadata;
 
-						if (leatherMetadata.width != NORMALIZED_SIZE) {
+						if (leatherMetadata.width != normalizedSize) {
 							await fs.writeFile(
 								leather[part],
 								await leatherImage
-									.resize(NORMALIZED_SIZE, leatherMetadata.height * (NORMALIZED_SIZE / leatherMetadata.width), {
+									.resize(normalizedSize, leatherMetadata.height * (normalizedSize / leatherMetadata.width), {
 										kernel: sharp.kernel.nearest
 									})
 									.toBuffer()
@@ -321,11 +322,11 @@ async function loadResourcePacks() {
 			const textureImage = sharp(textureFile);
 			const textureMetadata = (await textureImage.metadata()) as unknown as TextureMetadata;
 
-			if (textureMetadata.width != NORMALIZED_SIZE) {
+			if (textureMetadata.width != normalizedSize) {
 				await fs.writeFile(
 					textureFile,
 					await textureImage
-						.resize(NORMALIZED_SIZE, textureMetadata.height * (NORMALIZED_SIZE / textureMetadata.width), {
+						.resize(normalizedSize, textureMetadata.height * (normalizedSize / textureMetadata.width), {
 							kernel: sharp.kernel.nearest
 						})
 						.toBuffer()
@@ -410,7 +411,7 @@ async function loadResourcePacks() {
 
 				texture.animated = true;
 
-				const canvas = createCanvas(NORMALIZED_SIZE, NORMALIZED_SIZE);
+				const canvas = createCanvas(normalizedSize, normalizedSize);
 				const ctx = canvas.getContext('2d');
 
 				const image = (await loadImage(textureFile)) as unknown as Canvas;
@@ -498,7 +499,7 @@ async function loadResourcePacks() {
 				}
 
 				if (pngFrames.length > 0) {
-					const apng = UPNG.encode(pngFrames, NORMALIZED_SIZE, NORMALIZED_SIZE, 0, pngDelays);
+					const apng = UPNG.encode(pngFrames, normalizedSize, normalizedSize, 0, pngDelays);
 
 					await fs.writeFile(textureFile, Buffer.from(apng));
 
@@ -645,7 +646,7 @@ export function getTexture(item: SkyBlockItem, { ignore_id = false, pack_ids = [
 					}
 
 					const pathResult = getPath(item, 'tag', ...value.split('.'));
-					matchValues = Array.isArray(pathResult) ? pathResult : [];
+					matchValues = Array.isArray(pathResult) ? pathResult : [pathResult];
 
 					const slash = regex.lastIndexOf('/');
 					regex = new RegExp(regex.slice(1, slash), regex.slice(slash + 1));
@@ -729,11 +730,13 @@ export function getTexture(item: SkyBlockItem, { ignore_id = false, pack_ids = [
 		return null;
 	}
 
-	outputTexture.path = path.posix.relative(path.resolve(FOLDER_PATH, '..', 'public'), outputTexture.path as string);
+	outputTexture.path = path.posix.relative(path.resolve(folderPath, '..', 'public'), outputTexture.path as string);
 	debugStats.time_spent_ms = Date.now() - timeStarted;
 	outputTexture.debug = debugStats;
 
 	return outputTexture;
 }
 
-init();
+if (!building) {
+	await init();
+}
