@@ -1,5 +1,5 @@
 import * as constants from '$constants';
-import type { SkyblockProfileMember } from '$types/hypixel';
+import type { SkyBlockProfileMember } from '$types/hypixel';
 
 function formatBestiaryKills(kills: Record<string, number>, mobs: (typeof constants.BESTIARY)['dynamic']['mobs']) {
 	const output = [];
@@ -25,7 +25,7 @@ function formatBestiaryKills(kills: Record<string, number>, mobs: (typeof consta
 	return output;
 }
 
-export function getBestiary(userProfile: Partial<SkyblockProfileMember>) {
+export function getBestiary(userProfile: Partial<SkyBlockProfileMember>) {
 	const output = {
 		bestiary: {} as Record<
 			string,
