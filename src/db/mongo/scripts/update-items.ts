@@ -1,4 +1,5 @@
 import { MONGO } from '../mongo';
+import _ from 'lodash';
 
 const updateInterval = 1000 * 60 * 60 * 12; // 12 hours
 const baseHeaders = {
@@ -27,11 +28,22 @@ async function updateItems() {
 			return Object.assign(item, skyblockItem);
 		});
 
-		await Promise.all(
-			items.map((item) => MONGO.collection('items').updateOne({ id: item.id }, { $set: item }, { upsert: true }))
-		);
+		const chunks = _.chunk(items, 250);
+		const promises = chunks.map((chunk) => {
+			const bulkOps = chunk.map((item) => ({
+				updateOne: {
+					filter: { skyblock_id: item.skyblock_id },
+					update: { $set: item },
+					upsert: true
+				}
+			}));
 
-		console.log(`[ITEMS] Retrieved items in ${(Date.now() - timeNow).toLocaleString()}ms`);
+			return MONGO.collection('items').bulkWrite(bulkOps);
+		});
+
+		await Promise.all(promises);
+
+		console.log(`[ITEMS] Updated items in ${(Date.now() - timeNow).toLocaleString()}ms`);
 	} catch (e) {
 		console.error(e);
 	}
