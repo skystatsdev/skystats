@@ -1,4 +1,4 @@
-import type { Crop } from "farming-weight";
+import type { Crop } from 'farming-weight';
 
 export type JacobsContest = {
 	medals_inv?: Partial<Record<Exclude<JacobsContestMedal, 'platinum' | 'diamond'>, number>>;
