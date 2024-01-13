@@ -9,6 +9,7 @@ import {
 	Crop,
 	LIST_OF_CROPS,
 	SkyBlockTime,
+	calculateJacobContestMedal,
 	fortuneFromPersonalBestContest,
 	getCropFromContestKey
 } from 'farming-weight';
@@ -51,7 +52,7 @@ function formatContests(contests: Record<string, JacobsContestParticipation>, cr
 				collected: particpation.collected,
 				position: particpation.claimed_position ?? -1,
 				participants: particpation.claimed_participants ?? -1,
-				medal: particpation.claimed_medal ?? undefined
+				medal: calculateJacobContestMedal(particpation)
 			};
 		});
 }
