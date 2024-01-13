@@ -17,6 +17,9 @@ dependencies:
   eslint-plugin-deprecation:
     specifier: ^2.0.0
     version: 2.0.0(eslint@8.56.0)(typescript@5.1.6)
+  farming-weight:
+    specifier: ^0.3.0
+    version: 0.3.0
   flowbite:
     specifier: ^1.8.1
     version: 1.8.1
@@ -1885,6 +1888,10 @@ packages:
       signal-exit: 4.1.0
       strip-final-newline: 3.0.0
     dev: true
+
+  /farming-weight@0.3.0:
+    resolution: {integrity: sha512-zIZ7HxJmzDS0VKiTe75Ou6E4b2ChFlLa6hgfE3X6Yte3gTTT4SxS0U3BLcJPeDYeOSgwfLBUApkGpPbCZsqeqg==}
+    dev: false
 
   /fast-deep-equal@3.1.3:
     resolution: {integrity: sha512-f3qQ9oQy9j2AhBe/H9VC91wLmKBCCU/gDOnKNAYG5hswO7BLKj09Hc5HYNz9cGI++xlpDCIgDaitVs03ATR84Q==}
