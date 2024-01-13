@@ -1,3 +1,5 @@
+import type { Crop } from "farming-weight";
+
 export type JacobsContest = {
 	medals_inv?: Partial<Record<Exclude<JacobsContestMedal, 'platinum' | 'diamond'>, number>>;
 	perks?: {
@@ -5,14 +7,14 @@ export type JacobsContest = {
 		farming_level_cap?: number;
 		personal_bests?: true;
 	};
-	contests?: Record<string, JacobsContest>;
+	contests?: Record<string, JacobsContestParticipation>;
 	talked?: true;
-	unique_brackets?: Partial<Record<JacobsContestMedal, JacobContestCrop[]>>;
+	unique_brackets?: Record<JacobsContestMedal, (JacobContestCrop | Crop)[] | undefined>;
 	migration?: true;
-	personal_bests?: Partial<Record<JacobContestCrop, number>>;
+	personal_bests?: Record<JacobContestCrop | Crop, number | undefined>;
 };
 
-type JacobsContest = {
+type JacobsContestParticipation = {
 	collected: number;
 	claimed_medal?: JacobsContestMedal;
 	claimed_rewards?: boolean;
