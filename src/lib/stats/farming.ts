@@ -22,28 +22,51 @@ export function getFarming(userProfile: Partial<SkyBlockProfileMember>): JacobCo
 	} = userProfile.jacobs_contest?.perks ?? {};
 
 	const cropStats = getCropStats(userProfile.jacobs_contest);
-	const contests = formatContests(userProfile.jacobs_contest?.contests ?? {}, cropStats);
 
-	return {
+	const stats = {
 		perks: {
 			doubleDrops,
 			farmingLevelCap,
 			personalBests
 		},
-		participations: contests.length,
-		contests: contests,
+		medals: {
+			gold: 0,
+			silver: 0,
+			bronze: 0,
+			...(userProfile.jacobs_contest?.medals_inv ?? {})
+		},
+		earnedMedals: {
+			diamond: 0,
+			platinum: 0,
+			gold: 0,
+			silver: 0,
+			bronze: 0
+		},
+		participations: 0,
+		contests: [] as JacobContest[],
 		crops: cropStats
 	};
+
+	stats.contests = parseContests(userProfile.jacobs_contest?.contests ?? {}, stats);
+	stats.participations = stats.contests.length;
+
+	return stats;
 }
 
-function formatContests(contests: Record<string, JacobsContestParticipation>, crops: Record<string, JacobCropStats>) {
+function parseContests(contests: Record<string, JacobsContestParticipation>, stats: JacobContestData) {
 	return Object.entries(contests)
 		.filter(([, p]) => p.collected >= 100) // Less than 100 aren't counted in the game, so skip them
 		.map<JacobContest>(([key, particpation]) => {
 			const crop = getCropFromContestKey(key);
 
-			if (crop && crops[crop]) {
-				crops[crop].participations++;
+			if (crop && stats.crops[crop]) {
+				stats.crops[crop].participations++;
+			}
+
+			const medal = calculateJacobContestMedal(particpation);
+
+			if (medal) {
+				stats.earnedMedals[medal]++;
 			}
 
 			return {
@@ -52,7 +75,7 @@ function formatContests(contests: Record<string, JacobsContestParticipation>, cr
 				collected: particpation.collected,
 				position: particpation.claimed_position ?? -1,
 				participants: particpation.claimed_participants ?? -1,
-				medal: calculateJacobContestMedal(particpation)
+				medal: medal
 			};
 		});
 }

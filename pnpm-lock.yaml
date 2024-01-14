@@ -18,8 +18,8 @@ dependencies:
     specifier: ^2.0.0
     version: 2.0.0(eslint@8.56.0)(typescript@5.1.6)
   farming-weight:
-    specifier: ^0.3.1
-    version: 0.3.1
+    specifier: ^0.3.2
+    version: 0.3.2
   flowbite:
     specifier: ^1.8.1
     version: 1.8.1
@@ -1889,8 +1889,8 @@ packages:
       strip-final-newline: 3.0.0
     dev: true
 
-  /farming-weight@0.3.1:
-    resolution: {integrity: sha512-iFE3u55lAVO5gInqFq3dGCXH8EqIiTbctx+gABO/Ujz3ycIt6In2O36ywfTywvA0zSyhJyhHsTwgSF0qtEzj0Q==}
+  /farming-weight@0.3.2:
+    resolution: {integrity: sha512-Cj7NvDdc2nbLuZJD0DWgG/NvC3aLJduYv7ZydRCxDkpL+BSPMV2T/8/htvOS4E5XC382NEdbtIf9RjJjYSV5Gg==}
     dev: false
 
   /fast-deep-equal@3.1.3:

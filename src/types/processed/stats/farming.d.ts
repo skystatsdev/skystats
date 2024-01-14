@@ -1,7 +1,11 @@
+import type { JacobsContestMedal } from '$types/raw/profile/jacob_contests';
+
 export interface JacobContestData {
 	perks: JacobPerks;
 	participations: number;
 	contests: JacobContest[];
+	medals: Record<Exclude<JacobsContestMedal, 'platinum' | 'diamond'>, number>;
+	earnedMedals: Record<JacobsContestMedal, number>;
 	crops: Record<string, JacobCropStats>;
 }
 
