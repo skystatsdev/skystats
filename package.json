@@ -58,6 +58,7 @@
 		"canvas": "^2.11.2",
 		"css": "^3.0.0",
 		"eslint-plugin-deprecation": "^2.0.0",
+		"farming-weight": "^0.3.2",
 		"flowbite": "^1.8.1",
 		"flowbite-svelte": "^0.39.3",
 		"fs-extra": "^11.2.0",
