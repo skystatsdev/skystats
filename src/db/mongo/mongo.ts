@@ -2,6 +2,8 @@
 import { MongoClient } from 'mongodb';
 import { MONGO_HOST, MONGO_PORT, MONGO_DATABASE } from '$env/static/private';
 import { building } from '$app/environment';
+import fs from 'fs';
+import path from 'path';
 
 export enum Collections {
 	Players = 'players',
@@ -53,3 +55,8 @@ if (!building) {
 }
 
 export const MONGO = mongoClient.db(MONGO_DATABASE);
+
+const scripts = fs.readdirSync(path.resolve('src/db/mongo/scripts'));
+for (const script of scripts) {
+	import(/* @vite-ignore */ `./scripts/${script}`);
+}

@@ -12,3 +12,7 @@ pnpm-lock.yaml
 package-lock.json
 yarn.lock
 .pnpm-store
+
+/public/resources/css/**
+/public/resourcepacks/**
+/cache/json/**
