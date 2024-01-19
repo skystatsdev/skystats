@@ -1,4 +1,4 @@
-import { MONGO } from '../mongo';
+import { MONGO } from '$mongo/mongo';
 import _ from 'lodash';
 
 const updateInterval = 1000 * 60 * 60 * 12; // 12 hours
@@ -7,7 +7,7 @@ const baseHeaders = {
 	'User-Agent': 'SkyStats'
 };
 
-async function updateItems() {
+export async function updateItems() {
 	try {
 		const timeNow = Date.now();
 		const response = await fetch('https://api.slothpixel.me/api/skyblock/items', {
@@ -50,5 +50,3 @@ async function updateItems() {
 
 	setTimeout(updateItems, updateInterval);
 }
-
-updateItems();

@@ -1,15 +1,11 @@
 import path from 'path';
 import fs from 'fs-extra';
-import { fileURLToPath } from 'url';
+import { base } from '$app/paths';
 
 await fs.ensureDir(getCacheFolderPath());
 
-export function getFolderPath() {
-	return path.resolve(path.dirname(fileURLToPath(import.meta.url)), '../');
-}
-
 export function getCacheFolderPath() {
-	return path.resolve(getFolderPath(), '../../cache');
+	return path.resolve(base, 'cache');
 }
 
 export function getCacheFilePath(dirPath: string, type: string, name: string, format = 'png') {

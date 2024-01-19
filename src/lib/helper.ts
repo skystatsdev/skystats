@@ -1,6 +1,5 @@
-import type { SkyBlockItem } from '$types/hypixel.js';
-
-export * from './helper/cache.js';
+import type { SkyBlockItem } from '$types/hypixel';
+export * from '$lib/helper/cache';
 
 /**
  * Converts an RGB color value to its corresponding hexadecimal representation.

@@ -13,6 +13,6 @@ package-lock.json
 yarn.lock
 .pnpm-store
 
-/public/resources/css/**
-/public/resourcepacks/**
+/static/resources/css/**
+/static/resourcepacks/**
 /cache/json/**
