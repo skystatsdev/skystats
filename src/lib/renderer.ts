@@ -8,8 +8,7 @@ Hat layers, transparency and shading added by @LeaPhant
 
 export const CACHE_PATH = helper.getCacheFolderPath();
 
-import canvasModule from 'canvas';
-const { createCanvas, loadImage } = canvasModule;
+import { createCanvas, loadImage } from '@napi-rs/canvas';
 import css from 'css';
 import path from 'path';
 import { base } from '$app/paths';
