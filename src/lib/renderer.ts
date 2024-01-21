@@ -65,6 +65,7 @@ function resize(src: Canvas | Image, scale: number) {
 
 	// Set the pattern quality to "fast" to avoid blurring on resize
 	ctx.patternQuality = 'fast';
+	ctx.imageSmoothingEnabled = false;
 
 	// Draw the source image onto the new canvas with resized dimensions
 	ctx.drawImage(src, 0, 0, src.width * scale, src.height * scale);
