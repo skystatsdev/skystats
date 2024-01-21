@@ -8,11 +8,10 @@ Hat layers, transparency and shading added by @LeaPhant
 
 export const CACHE_PATH = helper.getCacheFolderPath();
 
-import canvasModule, { Canvas, Image } from 'canvas';
-const { createCanvas, loadImage } = canvasModule;
+import { createCanvas, loadImage } from '@napi-rs/canvas';
 import css from 'css';
 import path from 'path';
-import { fileURLToPath } from 'url';
+import { base } from '$app/paths';
 import * as customResources from './custom-resources';
 import sanitize from 'mongo-sanitize';
 import fs from 'fs-extra';
@@ -20,8 +19,6 @@ import fs from 'fs-extra';
 import * as helper from './helper.js';
 import { getItemData } from './helper/item.js';
 import type { RenderItemOutput, SkyBlockItemQuery } from '$types/hypixel.js';
-
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const skewA = 26 / 45;
 const skewB = skewA * 2;
@@ -68,6 +65,7 @@ function resize(src: Canvas | Image, scale: number) {
 
 	// Set the pattern quality to "fast" to avoid blurring on resize
 	ctx.patternQuality = 'fast';
+	ctx.imageSmoothingEnabled = false;
 
 	// Draw the source image onto the new canvas with resized dimensions
 	ctx.drawImage(src, 0, 0, src.width * scale, src.height * scale);
@@ -160,7 +158,7 @@ function darken(src: Canvas | Image, factor: number) {
 
 let itemsSheet: Image, itemsCss: css.Stylesheet;
 
-const textureDir = path.resolve(__dirname, '..', 'public', 'resources', 'img', 'textures', 'item');
+const textureDir = path.resolve(base, 'resources', 'img', 'textures', 'item');
 
 async function renderColoredItem(color: string, baseImage: Canvas, overlayImage: Canvas) {
 	const canvas = createCanvas(16, 16);
@@ -220,9 +218,16 @@ async function renderHead(textureId: string, scale: number) {
 	const headCanvas = createCanvas(scale * 20 * hatFactor, scale * 18.5);
 
 	const ctx = canvas.getContext('2d');
+	ctx.imageSmoothingEnabled = false;
+
 	const hat = hatCanvas.getContext('2d');
+	hat.imageSmoothingEnabled = false;
+
 	const hatBg = hatBgCanvas.getContext('2d');
+	hatBg.imageSmoothingEnabled = false;
+
 	const head = headCanvas.getContext('2d');
+	head.imageSmoothingEnabled = false;
 
 	const skin = await loadImage(`https://textures.minecraft.net/texture/${textureId}`);
 
@@ -491,7 +496,7 @@ export async function renderItem(skyblockId: string | undefined, query: SkyBlock
 
 		outputTexture.path = customTexture.path;
 		outputTexture.debug = customTexture.debug;
-		outputTexture.image = fs.readFileSync(path.resolve(__dirname, '..', 'public', customTexture.path));
+		outputTexture.image = fs.readFileSync(path.resolve(base, customTexture.path));
 	}
 
 	if (!('image' in outputTexture)) {
@@ -503,10 +508,8 @@ export async function renderItem(skyblockId: string | undefined, query: SkyBlock
 
 export async function init() {
 	[itemsSheet, itemsCss] = await Promise.all([
-		loadImage(path.resolve(__dirname, '..', '..', 'public', 'resources', 'img', 'inventory', `items.png`)),
-		css.parse(
-			fs.readFileSync(path.resolve(__dirname, '..', '..', 'public', 'resources', 'css', `inventory.css`), 'utf8')
-		)
+		loadImage(path.resolve(base, 'static', 'resources', 'img', 'inventory', `items.png`)),
+		css.parse(fs.readFileSync(path.resolve(base, 'static', 'resources', 'css', `inventory.css`), 'utf8'))
 	]);
 }
 

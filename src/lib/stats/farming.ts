@@ -6,7 +6,7 @@ import type {
 	JacobCropStats
 } from '$types/hypixel';
 import {
-	Crop,
+	type Crop,
 	LIST_OF_CROPS,
 	SkyBlockTime,
 	calculateJacobContestMedal,

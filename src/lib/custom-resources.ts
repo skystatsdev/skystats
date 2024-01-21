@@ -1,13 +1,13 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { getFolderPath, getCacheFolderPath, getCacheFilePath, hasPath, getPath, getId } from './helper.js';
+import { getCacheFolderPath, getCacheFilePath, hasPath, getPath, getId } from '$lib/helper';
 import mm from 'micromatch';
 import util from 'util';
 import _ from 'lodash';
 import sharp from 'sharp';
-import canvasModule, { Canvas } from 'canvas';
-const { createCanvas, loadImage } = canvasModule;
+import { createCanvas, loadImage, type Canvas } from '@napi-rs/canvas';
 import { building } from '$app/environment';
+import { base } from '$app/paths';
 import minecraftData from 'minecraft-data';
 const mcData = minecraftData('1.8.9');
 import UPNG from 'upng-js';
@@ -35,8 +35,7 @@ const execFile = util.promisify(child_process.execFile);
 const normalizedSize = 128;
 const resourceCaching = true;
 
-const folderPath = getFolderPath();
-const resourcePackFolder = path.resolve(getFolderPath(), '..', '..', 'public', 'resourcepacks');
+const resourcePackFolder = path.resolve(base, 'static', 'resourcepacks');
 
 const cacheFolderPath = getCacheFolderPath();
 const packHashCacheFile = getCacheFilePath(cacheFolderPath, 'json', 'pack_hashes', 'json');
@@ -137,7 +136,7 @@ export async function init() {
 		outputPacks.push(
 			Object.assign(
 				{
-					base_path: '/' + path.relative(path.resolve(folderPath, '..', 'public'), pack.base_path)
+					base_path: '/' + path.relative(base, pack.base_path)
 				},
 				pack.config
 			)
@@ -729,7 +728,7 @@ export function getTexture(item: SkyBlockItem, { ignore_id = false, pack_ids = [
 		return null;
 	}
 
-	outputTexture.path = path.posix.relative(path.resolve(folderPath, '..', 'public'), outputTexture.path as string);
+	outputTexture.path = path.posix.relative(base, outputTexture.path as string);
 	debugStats.time_spent_ms = Date.now() - timeStarted;
 	outputTexture.debug = debugStats;
 
